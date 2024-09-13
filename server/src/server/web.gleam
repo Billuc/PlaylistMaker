@@ -1,6 +1,8 @@
 import wisp
 
-pub type Context
+pub type Context {
+  Context(client_id: String, secret_key: String)
+}
 
 pub fn middleware(
   req: wisp.Request,

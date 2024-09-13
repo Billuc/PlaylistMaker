@@ -1,7 +1,10 @@
+import dot_env
+import dot_env/env
 import gleam/erlang/process
 import mist
 import server/db
 import server/router
+import server/web
 import wisp
 import wisp/wisp_mist
 
@@ -9,9 +12,13 @@ pub fn main() {
   wisp.configure_logger()
 
   let secret_key_base = wisp.random_string(64)
-  use db <- db.get_db()
+  dot_env.load_default()
 
-  let context = todo
+  let client_id = env.get_string_or("CLIENT_ID", "")
+
+  // use db <- db.get_db()
+
+  let context = web.Context(client_id, secret_key_base)
   let handler = router.handle_request(_, context)
   let assert Ok(_) =
     handler
