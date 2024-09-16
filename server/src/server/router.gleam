@@ -26,9 +26,10 @@ pub fn handle_request(req: Request, ctx: web.Context) -> Response {
     fn(_) { Ok(Nil) },
     authentication_service.login(ctx, req, _),
   )
-  |> glitr_wisp.try(
+  |> glitr_wisp.try_map(
     authentication_routes.callback(),
     authentication_service.callback(ctx, req, _),
+    authentication_service.callback_redirect(req, _),
   )
   |> glitr_wisp.unwrap
 }

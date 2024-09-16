@@ -9,6 +9,7 @@ import gleam/list
 import gleam/option
 import gleam/result
 import gleam/string
+import gleam/string_builder
 import gleam/uri
 import glitr
 import glitr_wisp/errors
@@ -104,6 +105,22 @@ pub fn callback(
         |> result.replace_error(errors.InternalError(res.body))
       })
     }
+  }
+}
+
+pub fn callback_redirect(req: wisp.Request, res: wisp.Response) -> wisp.Response {
+  use <- bool.guard(res.status != 200, res)
+
+  case res.body {
+    wisp.Text(token) ->
+      wisp.redirect(
+        req
+        |> request.set_path("")
+        |> request.set_query([#("q", string_builder.to_string(token))])
+        |> request.to_uri
+        |> uri.to_string,
+      )
+    _ -> res
   }
 }
 
