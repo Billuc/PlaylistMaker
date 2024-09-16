@@ -1,1 +1,3 @@
-pub type Msg
+pub type Msg {
+  ServerSentToken(token: String)
+}

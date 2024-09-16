@@ -1,1 +1,3 @@
-pub type Model
+pub type Model {
+  Model(token: String)
+}

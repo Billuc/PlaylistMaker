@@ -1,8 +1,11 @@
+import client/types/model.{type Model, Model}
+import client/types/msg
 import lustre
+import lustre/attribute
 import lustre/effect.{type Effect}
 import lustre/element.{type Element}
-import types/model.{type Model}
-import types/msg
+import lustre/element/html
+import plinth/javascript/console
 
 // ------------------ MAIN -------------------
 
@@ -16,19 +19,22 @@ pub fn main() {
 // ----------------- INIT --------------------
 
 fn init(_) -> #(Model, Effect(msg.Msg)) {
-  todo
+  #(Model(""), effect.none())
 }
 
 // ------------------ UPDATE ---------------------
 
-fn update(model: Model, msg: msg.Msg) -> #(Model, Effect(msg.Msg)) {
+fn update(_model: Model, msg: msg.Msg) -> #(Model, Effect(msg.Msg)) {
   case msg {
-    _ -> todo
+    msg.ServerSentToken(token) -> #(
+      Model(token),
+      effect.from(fn(_dispatch) { console.log(token) }),
+    )
   }
 }
 
 // ------------------------ VIEW -------------------------
 
-fn view(model: Model) -> Element(msg.Msg) {
-  todo
+fn view(_model: Model) -> Element(msg.Msg) {
+  html.div([], [html.a([attribute.href("/login")], [html.text("Login")])])
 }

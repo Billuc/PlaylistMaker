@@ -1,7 +1,7 @@
 import wisp
 
 pub type Context {
-  Context(client_id: String, secret_key: String)
+  Context(client_id: String, client_secret: String, secret_key: String)
 }
 
 pub fn middleware(

@@ -3,14 +3,14 @@ import gleam/http/request
 import gleam/httpc
 import gleam/json
 import gleam/result
-import glitr_wisp
+import glitr
 import glitr_wisp/errors
 import server/web
 import shared/types/song
 
 pub fn search(
-  ctx: web.Context,
-  opts: glitr_wisp.RouteOptions(String, Nil),
+  _ctx: web.Context,
+  opts: glitr.RouteOptions(Nil, String, Nil),
 ) -> Result(List(song.Song), errors.AppError) {
   use base_req <- result.try(
     request.to("https://api.spotify.com/v1/search")
@@ -22,7 +22,7 @@ pub fn search(
   let req =
     base_req
     |> request.prepend_header("Authorization", "Bearer XXX")
-    |> request.set_query([#("q", opts.path), #("type", "track")])
+    |> request.set_query([#("q", opts.query), #("type", "track")])
 
   use resp <- result.try(
     httpc.send(req)

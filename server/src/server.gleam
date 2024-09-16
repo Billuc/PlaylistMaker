@@ -14,11 +14,11 @@ pub fn main() {
   let secret_key_base = wisp.random_string(64)
   dot_env.load_default()
 
-  let client_id = env.get_string_or("CLIENT_ID", "")
-
+  let assert Ok(client_id) = env.get_string("CLIENT_ID")
+  let assert Ok(client_secret) = env.get_string("CLIENT_SECRET")
   // use db <- db.get_db()
 
-  let context = web.Context(client_id, secret_key_base)
+  let context = web.Context(client_id, client_secret, secret_key_base)
   let handler = router.handle_request(_, context)
   let assert Ok(_) =
     handler
