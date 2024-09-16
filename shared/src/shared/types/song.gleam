@@ -1,7 +1,6 @@
 import gleam/dynamic
 import gleam/json
 import gleam/result
-import glitr
 
 pub type Song {
   Song(title: String, artists: List(String), album: String, source: SongSource)
@@ -10,18 +9,6 @@ pub type Song {
 pub type SongSource {
   Youtube(url: String)
   Spotify(url: String)
-}
-
-pub fn song_converter() {
-  glitr.JsonConverter(song_encoder, song_decoder)
-}
-
-pub fn song_list_converter() {
-  glitr.JsonConverter(
-    fn(list) { list |> json.array(song_encoder) },
-    //
-    fn(values) { values |> dynamic.list(song_decoder) },
-  )
 }
 
 pub fn song_encoder(song: Song) -> json.Json {
