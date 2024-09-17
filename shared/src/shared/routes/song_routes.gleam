@@ -9,7 +9,7 @@ import glitr/query
 import glitr/route
 import shared/types/song
 
-pub fn search() -> route.Route(Nil, String, Nil, List(song.Song)) {
+pub fn search() -> route.Route(Nil, SearchQuery, Nil, List(song.Song)) {
   route.new()
   |> route.with_method(http.Get)
   |> route.with_path(path.static_path(["songs", "search"]))
@@ -22,12 +22,19 @@ pub fn search() -> route.Route(Nil, String, Nil, List(song.Song)) {
   ))
 }
 
-pub fn search_encoder(value: String) -> List(#(String, String)) {
-  [#("q", value)]
+pub fn search_encoder(query: SearchQuery) -> List(#(String, String)) {
+  [#("q", query.search), #("token", query.token)]
 }
 
-pub fn search_decoder(value: List(#(String, String))) -> Result(String, Nil) {
+pub fn search_decoder(
+  value: List(#(String, String)),
+) -> Result(SearchQuery, Nil) {
   use search <- result.try(list.key_find(value, "q"))
+  use token <- result.try(list.key_find(value, "token"))
 
-  Ok(search)
+  Ok(SearchQuery(search:, token:))
+}
+
+pub type SearchQuery {
+  SearchQuery(search: String, token: String)
 }

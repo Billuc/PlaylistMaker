@@ -1,9 +1,18 @@
 import gleam/dynamic
 import gleam/json
+import gleam/option
 import gleam/result
 
 pub type Song {
-  Song(title: String, artists: List(String), album: String, source: SongSource)
+  Song(
+    id: String,
+    title: String,
+    artists: List(String),
+    album: String,
+    album_cover: String,
+    source: SongSource,
+    preview_url: option.Option(String),
+  )
 }
 
 pub type SongSource {
@@ -13,10 +22,13 @@ pub type SongSource {
 
 pub fn song_encoder(song: Song) -> json.Json {
   json.object([
+    #("id", json.string(song.id)),
     #("title", json.string(song.title)),
     #("artists", song.artists |> json.array(json.string)),
     #("album", json.string(song.album)),
+    #("album_cover", json.string(song.album_cover)),
     #("source", song_source_encoder(song.source)),
+    #("preview_url", json.nullable(song.preview_url, json.string)),
   ])
 }
 
@@ -24,12 +36,15 @@ pub fn song_decoder(
   v: dynamic.Dynamic,
 ) -> Result(Song, List(dynamic.DecodeError)) {
   v
-  |> dynamic.decode4(
+  |> dynamic.decode7(
     Song,
+    dynamic.field("id", dynamic.string),
     dynamic.field("title", dynamic.string),
     dynamic.field("artists", dynamic.list(dynamic.string)),
     dynamic.field("album", dynamic.string),
+    dynamic.field("album_cover", dynamic.string),
     dynamic.field("source", song_source_decoder),
+    dynamic.field("preview_url", dynamic.optional(dynamic.string)),
   )
 }
 

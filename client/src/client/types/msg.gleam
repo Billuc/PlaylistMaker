@@ -1,3 +1,10 @@
+import lustre_http
+import shared/types/song
+
 pub type Msg {
-  ServerSentToken(token: String)
+  SearchSongs(search: String)
+  ServerSentSongs(results: List(song.Song))
+  ServerError(error: lustre_http.HttpError)
+  ClientError(message: String)
+  PlayPreview(preview_url: String)
 }

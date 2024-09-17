@@ -85,7 +85,9 @@ pub fn callback(
           ),
           #("grant_type", "authorization_code"),
         ]
-        |> list.map(fn(kv) { url_encode(kv.0) <> "=" <> url_encode(kv.1) })
+        |> list.map(fn(kv) {
+          uri.percent_encode(kv.0) <> "=" <> uri.percent_encode(kv.1)
+        })
         |> string.join("&"),
       )
       |> request.set_header("content-type", "application/x-www-form-urlencoded")
@@ -116,43 +118,10 @@ pub fn callback_redirect(req: wisp.Request, res: wisp.Response) -> wisp.Response
       wisp.redirect(
         req
         |> request.set_path("")
-        |> request.set_query([#("q", string_builder.to_string(token))])
+        |> request.set_query([#("token", string_builder.to_string(token))])
         |> request.to_uri
         |> uri.to_string,
       )
     _ -> res
   }
-}
-
-pub fn url_encode(input: String) -> String {
-  input
-  |> string.replace(" ", "%20")
-  |> string.replace("!", "%21")
-  // |> string.replace("\"", "%22")
-  |> string.replace("#", "%23")
-  |> string.replace("$", "%24")
-  |> string.replace("%", "%25")
-  |> string.replace("&", "%26")
-  |> string.replace("'", "%27")
-  |> string.replace("(", "%28")
-  |> string.replace(")", "%29")
-  |> string.replace("*", "%2A")
-  |> string.replace("+", "%2B")
-  |> string.replace(",", "%2C")
-  // |> string.replace("-", "%2D") 
-  // |> string.replace(".", "%2E")
-  |> string.replace("/", "%2F")
-  |> string.replace(":", "%3A")
-  |> string.replace(";", "%3B")
-  // |> string.replace("<", "%3C")
-  |> string.replace("=", "%3D")
-  // |> string.replace(">", "%3E")
-  |> string.replace("?", "%3F")
-  |> string.replace("@", "%40")
-  |> string.replace("[", "%5B")
-  // |> string.replace("\\", "%5C")
-  |> string.replace("]", "%5D")
-  // |> string.replace("^", "%5E")
-  // |> string.replace("_", "%5F")
-  // |> string.replace("`", "%60")
 }
