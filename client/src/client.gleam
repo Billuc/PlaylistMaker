@@ -1,6 +1,8 @@
 import client/components/home
 import client/components/layout
+import client/components/playlist_bar
 import client/components/search
+import client/services/playlist_service
 import client/services/song_service
 import client/types/model.{type Model, Model}
 import client/types/msg
@@ -12,6 +14,8 @@ import lustre
 import lustre/effect.{type Effect}
 import lustre/element.{type Element}
 import plinth/browser/audio
+import plinth/browser/document
+import plinth/browser/element as el
 import plinth/browser/window
 import plinth/javascript/console
 
@@ -33,10 +37,7 @@ fn init(_) -> #(Model, Effect(msg.Msg)) {
     |> result.then(fn(q) { q |> list.key_find("token") })
     |> result.unwrap("")
 
-  #(
-    Model(token, "", False, []),
-    effect.from(fn(_dispatch) { console.log(token) }),
-  )
+  #(Model(token, "", False, [], []), playlist_service.get_all())
 }
 
 // ------------------ UPDATE ---------------------
@@ -51,11 +52,23 @@ fn update(model: Model, msg: msg.Msg) -> #(Model, Effect(msg.Msg)) {
       Model(..model, searching: False, results: songs),
       effect.none(),
     )
+    msg.ServerSentPlaylists(playlists) -> #(
+      Model(..model, playlists: playlists |> list.map(fn(p) { #(p.id, p) })),
+      effect.none(),
+    )
     msg.PlayPreview(url) -> #(
       model,
       effect.from(fn(_dispatch) {
         audio.new(url) |> audio.play
         Nil
+      }),
+    )
+    msg.OpenDialog(id) -> #(
+      model,
+      effect.from(fn(_) {
+        document.get_element_by_id(id)
+        |> result.map(el.set_attribute(_, "open", "True"))
+        |> result.unwrap(Nil)
       }),
     )
     msg.ClientError(err) -> #(
@@ -73,9 +86,11 @@ fn update(model: Model, msg: msg.Msg) -> #(Model, Effect(msg.Msg)) {
 
 fn view(model: Model) -> Element(msg.Msg) {
   let children = case model {
-    Model(token, _, _, _) if token == "" -> home.home()
-    Model(_, _, searching, songs) -> search.search(searching, songs)
+    Model(token, _, _, _, _) if token == "" -> home.home()
+    Model(_, _, searching, songs, _) -> search.search(searching, songs)
   }
 
-  layout.layout(children)
+  let left_children = playlist_bar.view(model.playlists)
+
+  layout.layout(children, left_children)
 }

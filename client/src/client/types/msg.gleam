@@ -1,4 +1,5 @@
 import lustre_http
+import shared/types/playlist
 import shared/types/song
 
 pub type Msg {
@@ -7,4 +8,6 @@ pub type Msg {
   ServerError(error: lustre_http.HttpError)
   ClientError(message: String)
   PlayPreview(preview_url: String)
+  ServerSentPlaylists(playlists: List(playlist.Playlist))
+  OpenDialog(id: String)
 }

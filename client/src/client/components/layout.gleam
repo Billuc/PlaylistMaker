@@ -1,15 +1,31 @@
+import client/types/msg
 import lustre/attribute
 import lustre/element.{type Element}
 import lustre/element/html
 
-pub fn layout(children: List(Element(msg))) -> Element(msg) {
+pub fn layout(
+  children: List(Element(msg.Msg)),
+  left_children: List(Element(msg.Msg)),
+) -> Element(msg.Msg) {
   html.div(
-    [attribute.class("bg-zinc-800 min-w-screen min-h-screen text-pink-100")],
     [
+      attribute.class(
+        "bg-zinc-800 min-w-screen min-h-screen text-pink-100 p-4 flex flex-nowrap items-stretch",
+      ),
+    ],
+    [
+      html.aside(
+        [
+          attribute.class(
+            "w-1/8 md:w-1/6 lg:w-1/4 max-w-lg bg-zinc-900 rounded-lg",
+          ),
+        ],
+        left_children,
+      ),
       html.div(
         [
           attribute.class(
-            "w-11/12 md:w-3/4 lg:w-1/2 max-w-3xl mx-auto flex flex-col items-center py-8",
+            "w-3/4 md:w-2/3 lg:w-1/2 max-w-3xl flex-1 flex flex-col items-center py-8",
           ),
         ],
         [

@@ -22,7 +22,7 @@ packages = [
   { name = "gleeunit", version = "1.2.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gleeunit", source = "hex", outer_checksum = "F7A7228925D3EE7D0813C922E062BFD6D7E9310F0BEE585D3A42F3307E3CFD13" },
   { name = "glisten", version = "5.0.0", build_tools = ["gleam"], requirements = ["gleam_erlang", "gleam_otp", "gleam_stdlib", "logging", "telemetry"], otp_app = "glisten", source = "hex", outer_checksum = "48EF7F6D1DCA877C2F49AF35CC33946C7129EEB05A114758A2CC569C708BFAF8" },
   { name = "glitr", version = "0.1.6", build_tools = ["gleam"], requirements = ["gleam_http", "gleam_json", "gleam_stdlib"], otp_app = "glitr", source = "hex", outer_checksum = "907C7358A1F4148DE76EA64AD73451D624C57F57356DBF393C9F73DC12C03BD4" },
-  { name = "glitr_wisp", version = "0.1.6", build_tools = ["gleam"], requirements = ["gleam_json", "gleam_stdlib", "glitr", "wisp"], otp_app = "glitr_wisp", source = "hex", outer_checksum = "3490903C039CE868AEA58897F6FCC80F7B26F0D492B1CF5DB1BA472649A89EF3" },
+  { name = "glitr_wisp", version = "0.1.7", build_tools = ["gleam"], requirements = ["gleam_json", "gleam_stdlib", "glitr", "wisp"], otp_app = "glitr_wisp", source = "hex", outer_checksum = "C7E3C695FF83D9080B19A51ACB71745F30957C9456DC2FED186486A5E9F97437" },
   { name = "gluid", version = "1.0.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gluid", source = "hex", outer_checksum = "9C0D64DC9A345B7DCC76A2EFDC1F3479E3C6A08A1FB81156E9CCED959F8DEB78" },
   { name = "gramps", version = "2.0.3", build_tools = ["gleam"], requirements = ["gleam_crypto", "gleam_erlang", "gleam_http", "gleam_stdlib"], otp_app = "gramps", source = "hex", outer_checksum = "3CCAA6E081225180D95C79679D383BBF51C8D1FDC1B84DA1DA444F628C373793" },
   { name = "hpack_erl", version = "0.3.0", build_tools = ["rebar3"], requirements = [], otp_app = "hpack", source = "hex", outer_checksum = "D6137D7079169D8C485C6962DFE261AF5B9EF60FBC557344511C1E65E3D95FB0" },
@@ -54,7 +54,7 @@ gleam_pgo = { version = ">= 0.14.0 and < 1.0.0" }
 gleam_stdlib = { version = ">= 0.34.0 and < 2.0.0" }
 gleeunit = { version = ">= 1.0.0 and < 2.0.0" }
 glitr = { version = ">= 0.1.6 and < 1.0.0" }
-glitr_wisp = { version = ">= 0.1.6 and < 1.0.0" }
+glitr_wisp = { version = ">= 0.1.7 and < 1.0.0" }
 gluid = { version = ">= 1.0.0 and < 2.0.0" }
 mist = { version = ">= 2.0.0 and < 3.0.0" }
 pprint = { version = ">= 1.0.3 and < 2.0.0" }
