@@ -3,6 +3,7 @@ import glitr/error
 import glitr/route
 import glitr_lustre
 import lustre/effect
+import plinth/browser/element
 import plinth/javascript/console
 
 pub fn send_and_handle_errors(
@@ -32,3 +33,9 @@ pub fn unwrap_service_route(
     }
   }
 }
+
+@external(javascript, "./modal_dialog_ffi.mjs", "showModal")
+pub fn show_modal(element: element.Element) -> Nil
+
+@external(javascript, "./modal_dialog_ffi.mjs", "closeModal")
+pub fn close_modal(element: element.Element) -> Nil

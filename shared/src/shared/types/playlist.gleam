@@ -1,4 +1,5 @@
 import gleam/dynamic
+import gleam/io
 import gleam/json
 import shared/types/song
 
@@ -32,8 +33,8 @@ pub fn db_decoder(
   value
   |> dynamic.decode3(
     Playlist,
-    dynamic.field("id", dynamic.string),
-    dynamic.field("name", dynamic.string),
+    dynamic.element(0, dynamic.string),
+    dynamic.element(1, dynamic.string),
     fn(_) { Ok([]) },
   )
 }

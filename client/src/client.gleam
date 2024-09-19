@@ -6,6 +6,7 @@ import client/services/playlist_service
 import client/services/song_service
 import client/types/model.{type Model, Model}
 import client/types/msg
+import gleam/dict
 import gleam/list
 import gleam/option
 import gleam/result
@@ -15,9 +16,9 @@ import lustre/effect.{type Effect}
 import lustre/element.{type Element}
 import plinth/browser/audio
 import plinth/browser/document
-import plinth/browser/element as el
 import plinth/browser/window
 import plinth/javascript/console
+import utils
 
 // ------------------ MAIN -------------------
 
@@ -37,7 +38,7 @@ fn init(_) -> #(Model, Effect(msg.Msg)) {
     |> result.then(fn(q) { q |> list.key_find("token") })
     |> result.unwrap("")
 
-  #(Model(token, "", False, [], []), playlist_service.get_all())
+  #(Model(token, "", False, [], dict.new()), playlist_service.get_all())
 }
 
 // ------------------ UPDATE ---------------------
@@ -53,7 +54,10 @@ fn update(model: Model, msg: msg.Msg) -> #(Model, Effect(msg.Msg)) {
       effect.none(),
     )
     msg.ServerSentPlaylists(playlists) -> #(
-      Model(..model, playlists: playlists |> list.map(fn(p) { #(p.id, p) })),
+      Model(
+        ..model,
+        playlists: dict.from_list(playlists |> list.map(fn(p) { #(p.id, p) })),
+      ),
       effect.none(),
     )
     msg.PlayPreview(url) -> #(
@@ -67,7 +71,28 @@ fn update(model: Model, msg: msg.Msg) -> #(Model, Effect(msg.Msg)) {
       model,
       effect.from(fn(_) {
         document.get_element_by_id(id)
-        |> result.map(el.set_attribute(_, "open", "True"))
+        |> result.map(utils.show_modal)
+        |> result.unwrap(Nil)
+      }),
+    )
+    msg.CreatePlaylist(name) -> #(model, playlist_service.create(name))
+    msg.ServerCreatedPlaylist(p) -> #(
+      Model(..model, playlists: model.playlists |> dict.insert(p.id, p)),
+      effect.from(fn(dispatch) { dispatch(msg.CloseDialog("create-playlist")) }),
+    )
+    msg.ServerUpdatedPlaylist(p) | msg.ServerSentPlaylist(p) -> #(
+      Model(..model, playlists: model.playlists |> dict.insert(p.id, p)),
+      effect.none(),
+    )
+    msg.ServerDeletedPlaylist(id) -> #(
+      Model(..model, playlists: model.playlists |> dict.drop([id])),
+      effect.none(),
+    )
+    msg.CloseDialog(id) -> #(
+      model,
+      effect.from(fn(_) {
+        document.get_element_by_id(id)
+        |> result.map(utils.close_modal)
         |> result.unwrap(Nil)
       }),
     )
@@ -79,6 +104,7 @@ fn update(model: Model, msg: msg.Msg) -> #(Model, Effect(msg.Msg)) {
       model,
       effect.from(fn(_dispatch) { console.error(err) }),
     )
+    // _ -> #(model, effect.none())
   }
 }
 
@@ -90,7 +116,7 @@ fn view(model: Model) -> Element(msg.Msg) {
     Model(_, _, searching, songs, _) -> search.search(searching, songs)
   }
 
-  let left_children = playlist_bar.view(model.playlists)
+  let left_children = playlist_bar.view(model.playlists |> dict.to_list)
 
   layout.layout(children, left_children)
 }

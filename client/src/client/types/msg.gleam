@@ -10,4 +10,10 @@ pub type Msg {
   PlayPreview(preview_url: String)
   ServerSentPlaylists(playlists: List(playlist.Playlist))
   OpenDialog(id: String)
+  CloseDialog(id: String)
+  CreatePlaylist(name: String)
+  ServerSentPlaylist(playlist: playlist.Playlist)
+  ServerCreatedPlaylist(playlist: playlist.Playlist)
+  ServerUpdatedPlaylist(playlist: playlist.Playlist)
+  ServerDeletedPlaylist(id: String)
 }

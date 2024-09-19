@@ -28,7 +28,7 @@ pub fn get(
   id: String,
 ) -> Result(playlist.Playlist, errors.AppError) {
   s.new()
-  |> s.all()
+  |> s.selects([s.col("id"), s.col("name")])
   |> s.from_table(db_name)
   |> s.where(w.col("id") |> w.eq(w.string(id)))
   |> s.to_query()

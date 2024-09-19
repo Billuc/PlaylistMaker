@@ -1,3 +1,4 @@
+import gleam/dict
 import shared/types/playlist
 import shared/types/song
 
@@ -7,6 +8,6 @@ pub type Model {
     last_search: String,
     searching: Bool,
     results: List(song.Song),
-    playlists: List(#(String, playlist.Playlist)),
+    playlists: dict.Dict(String, playlist.Playlist),
   )
 }
