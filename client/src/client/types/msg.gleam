@@ -1,3 +1,4 @@
+import client/types/route
 import lustre_http
 import shared/types/playlist
 import shared/types/song
@@ -16,4 +17,5 @@ pub type Msg {
   ServerCreatedPlaylist(playlist: playlist.Playlist)
   ServerUpdatedPlaylist(playlist: playlist.Playlist)
   ServerDeletedPlaylist(id: String)
+  OnRouteChange(route: route.Route)
 }

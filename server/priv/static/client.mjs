@@ -735,6 +735,9 @@ function from_string(string4) {
 function to_string3(builder) {
   return identity(builder);
 }
+function split2(iodata, pattern) {
+  return split(iodata, pattern);
+}
 
 // build/dev/javascript/gleam_stdlib/gleam/string.mjs
 function length3(string4) {
@@ -789,6 +792,16 @@ function drop_left(string4, num_graphemes) {
     return string4;
   } else {
     return slice(string4, num_graphemes, length3(string4) - num_graphemes);
+  }
+}
+function split3(x, substring) {
+  if (substring === "") {
+    return graphemes(x);
+  } else {
+    let _pipe = x;
+    let _pipe$1 = from_string(_pipe);
+    let _pipe$2 = split2(_pipe$1, substring);
+    return map2(_pipe$2, to_string3);
   }
 }
 
@@ -1808,6 +1821,9 @@ function pop_grapheme(string4) {
 function lowercase(string4) {
   return string4.toLowerCase();
 }
+function split(xs, pattern) {
+  return List.fromArray(xs.split(pattern));
+}
 function join(xs, separator) {
   const iterator = xs[Symbol.iterator]();
   let result = iterator.next().value || "";
@@ -2255,6 +2271,44 @@ function parse_query2(query) {
 function percent_encode2(value2) {
   return percent_encode(value2);
 }
+function do_remove_dot_segments(loop$input, loop$accumulator) {
+  while (true) {
+    let input2 = loop$input;
+    let accumulator = loop$accumulator;
+    if (input2.hasLength(0)) {
+      return reverse(accumulator);
+    } else {
+      let segment = input2.head;
+      let rest2 = input2.tail;
+      let accumulator$1 = (() => {
+        if (segment === "") {
+          let accumulator$12 = accumulator;
+          return accumulator$12;
+        } else if (segment === ".") {
+          let accumulator$12 = accumulator;
+          return accumulator$12;
+        } else if (segment === ".." && accumulator.hasLength(0)) {
+          return toList([]);
+        } else if (segment === ".." && accumulator.atLeastLength(1)) {
+          let accumulator$12 = accumulator.tail;
+          return accumulator$12;
+        } else {
+          let segment$1 = segment;
+          let accumulator$12 = accumulator;
+          return prepend(segment$1, accumulator$12);
+        }
+      })();
+      loop$input = rest2;
+      loop$accumulator = accumulator$1;
+    }
+  }
+}
+function remove_dot_segments(input2) {
+  return do_remove_dot_segments(input2, toList([]));
+}
+function path_segments(path) {
+  return remove_dot_segments(split3(path, "/"));
+}
 function to_string4(uri) {
   let parts = (() => {
     let $ = uri.fragment;
@@ -2527,6 +2581,18 @@ function from(effect) {
 }
 function none() {
   return new Effect(toList([]));
+}
+function batch(effects) {
+  return new Effect(
+    fold(
+      effects,
+      toList([]),
+      (b, _use1) => {
+        let a2 = _use1.all;
+        return append(b, a2);
+      }
+    )
+  );
 }
 
 // build/dev/javascript/lustre/lustre/internals/vdom.mjs
@@ -3086,7 +3152,6 @@ function diffKeyedChild(prevChild, child, el2, stack, incomingKeyedChildren, key
     el2.removeChild(prevChild);
     prevChild = nextChild;
   }
-  console.log(keyedChildren, child);
   if (keyedChildren.size === 0) {
     stack.unshift({ prev: prevChild, next: child, parent: el2 });
     prevChild = prevChild?.nextSibling;
@@ -3149,13 +3214,13 @@ var LustreClientApplication = class _LustreClientApplication {
    *
    * @returns {Gleam.Ok<(action: Lustre.Action<Lustre.Client, Msg>>) => void>}
    */
-  static start({ init: init3, update: update3, view: view4 }, selector, flags) {
+  static start({ init: init4, update: update3, view: view4 }, selector, flags) {
     if (!is_browser())
       return new Error(new NotABrowser());
     const root = selector instanceof HTMLElement ? selector : document.querySelector(selector);
     if (!root)
       return new Error(new ElementNotFound(selector));
-    const app = new _LustreClientApplication(root, init3(flags), update3, view4);
+    const app = new _LustreClientApplication(root, init4(flags), update3, view4);
     return new Ok((action) => app.send(action));
   }
   /**
@@ -3166,9 +3231,9 @@ var LustreClientApplication = class _LustreClientApplication {
    *
    * @returns {LustreClientApplication}
    */
-  constructor(root, [init3, effects], update3, view4) {
+  constructor(root, [init4, effects], update3, view4) {
     this.root = root;
-    this.#model = init3;
+    this.#model = init4;
     this.#update = update3;
     this.#view = view4;
     this.#tickScheduled = window.requestAnimationFrame(
@@ -3288,9 +3353,9 @@ var LustreClientApplication = class _LustreClientApplication {
 };
 var start = LustreClientApplication.start;
 var LustreServerApplication = class _LustreServerApplication {
-  static start({ init: init3, update: update3, view: view4, on_attribute_change }, flags) {
+  static start({ init: init4, update: update3, view: view4, on_attribute_change }, flags) {
     const app = new _LustreServerApplication(
-      init3(flags),
+      init4(flags),
       update3,
       view4,
       on_attribute_change
@@ -3405,9 +3470,9 @@ var is_browser = () => globalThis.window && window.document;
 
 // build/dev/javascript/lustre/lustre.mjs
 var App = class extends CustomType {
-  constructor(init3, update3, view4, on_attribute_change) {
+  constructor(init4, update3, view4, on_attribute_change) {
     super();
-    this.init = init3;
+    this.init = init4;
     this.update = update3;
     this.view = view4;
     this.on_attribute_change = on_attribute_change;
@@ -3421,8 +3486,8 @@ var ElementNotFound = class extends CustomType {
 };
 var NotABrowser = class extends CustomType {
 };
-function application(init3, update3, view4) {
-  return new App(init3, update3, view4, new None());
+function application(init4, update3, view4) {
+  return new App(init4, update3, view4, new None());
 }
 function start2(app, selector, flags) {
   return guard(
@@ -3430,6 +3495,122 @@ function start2(app, selector, flags) {
     new Error(new NotABrowser()),
     () => {
       return start(app, selector, flags);
+    }
+  );
+}
+
+// build/dev/javascript/modem/modem.ffi.mjs
+var defaults = {
+  handle_external_links: false,
+  handle_internal_links: true
+};
+var initial_location = window?.location?.href;
+var do_init = (dispatch, options = defaults) => {
+  document.addEventListener("click", (event2) => {
+    const a2 = find_anchor(event2.target);
+    if (!a2)
+      return;
+    try {
+      const url = new URL(a2.href);
+      const uri = uri_from_url(url);
+      const is_external = url.host !== window.location.host;
+      if (!options.handle_external_links && is_external)
+        return;
+      if (!options.handle_internal_links && !is_external)
+        return;
+      event2.preventDefault();
+      if (!is_external) {
+        window.history.pushState({}, "", a2.href);
+        window.requestAnimationFrame(() => {
+          if (url.hash) {
+            document.getElementById(url.hash.slice(1))?.scrollIntoView();
+          }
+        });
+      }
+      return dispatch(uri);
+    } catch {
+      return;
+    }
+  });
+  window.addEventListener("popstate", (e) => {
+    e.preventDefault();
+    const url = new URL(window.location.href);
+    const uri = uri_from_url(url);
+    window.requestAnimationFrame(() => {
+      if (url.hash) {
+        document.getElementById(url.hash.slice(1))?.scrollIntoView();
+      }
+    });
+    dispatch(uri);
+  });
+  window.addEventListener("modem-push", ({ detail }) => {
+    dispatch(detail);
+  });
+  window.addEventListener("modem-replace", ({ detail }) => {
+    dispatch(detail);
+  });
+};
+var do_load = (uri) => {
+  window.location = to_string4(uri);
+};
+var find_anchor = (el2) => {
+  if (!el2 || el2.tagName === "BODY") {
+    return null;
+  } else if (el2.tagName === "A") {
+    return el2;
+  } else {
+    return find_anchor(el2.parentElement);
+  }
+};
+var uri_from_url = (url) => {
+  return new Uri(
+    /* scheme   */
+    url.protocol ? new Some(url.protocol.slice(0, -1)) : new None(),
+    /* userinfo */
+    new None(),
+    /* host     */
+    url.hostname ? new Some(url.hostname) : new None(),
+    /* port     */
+    url.port ? new Some(Number(url.port)) : new None(),
+    /* path     */
+    url.pathname,
+    /* query    */
+    url.search ? new Some(url.search.slice(1)) : new None(),
+    /* fragment */
+    url.hash ? new Some(url.hash.slice(1)) : new None()
+  );
+};
+
+// build/dev/javascript/modem/modem.mjs
+function init2(handler) {
+  return from(
+    (dispatch) => {
+      return guard(
+        !is_browser(),
+        void 0,
+        () => {
+          return do_init(
+            (uri) => {
+              let _pipe = uri;
+              let _pipe$1 = handler(_pipe);
+              return dispatch(_pipe$1);
+            }
+          );
+        }
+      );
+    }
+  );
+}
+function load(uri) {
+  return from(
+    (_) => {
+      return guard(
+        !is_browser(),
+        void 0,
+        () => {
+          return do_load(uri);
+        }
+      );
     }
   );
 }
@@ -4140,6 +4321,25 @@ function upsert_playlist_decoder(value2) {
   )(_pipe);
 }
 
+// build/dev/javascript/client/client/types/route.mjs
+var Home = class extends CustomType {
+};
+var Login = class extends CustomType {
+};
+var Playlist2 = class extends CustomType {
+  constructor(id2) {
+    super();
+    this.id = id2;
+  }
+};
+var Search = class extends CustomType {
+  constructor(searching, results) {
+    super();
+    this.searching = searching;
+    this.results = results;
+  }
+};
+
 // build/dev/javascript/client/client/types/msg.mjs
 var SearchSongs = class extends CustomType {
   constructor(search4) {
@@ -4217,6 +4417,12 @@ var ServerDeletedPlaylist = class extends CustomType {
   constructor(id2) {
     super();
     this.id = id2;
+  }
+};
+var OnRouteChange = class extends CustomType {
+  constructor(route) {
+    super();
+    this.route = route;
   }
 };
 
@@ -4376,6 +4582,17 @@ function view() {
 }
 
 // build/dev/javascript/client/client/components/playlist_bar.mjs
+function playlist_link(p) {
+  return a(
+    toList([
+      class$(
+        "text-center font-bold bg-zinc-800 hover:bg-zinc-700/50 rounded-md py-2 px-4"
+      ),
+      href("playlists/" + p.id)
+    ]),
+    toList([text2(p.name)])
+  );
+}
 function view2(playlists) {
   return toList([
     div(
@@ -4391,7 +4608,7 @@ function view2(playlists) {
           map2(
             playlists,
             (p) => {
-              let child = li(toList([]), toList([text2(p[1].name)]));
+              let child = li(toList([]), toList([playlist_link(p[1])]));
               return [p[0], child];
             }
           )
@@ -4542,7 +4759,7 @@ function album_cover(song) {
         div(
           toList([
             class$(
-              "absolute w-full h-full top-0 left-0 group-hover:opacity-100 bg-zinc-100/50 p-2 opacity-0 transition-opacity duration-300"
+              "absolute w-full h-full top-0 left-0 group-hover:opacity-100 bg-zinc-100/50 p-2 opacity-0 transition-opacity duration-300 pointer-events-none"
             )
           ]),
           toList([
@@ -5391,18 +5608,31 @@ function search3(q, token) {
 
 // build/dev/javascript/client/client/types/model.mjs
 var Model2 = class extends CustomType {
-  constructor(token, last_search, searching, results, playlists) {
+  constructor(route, token, playlists) {
     super();
+    this.route = route;
     this.token = token;
-    this.last_search = last_search;
-    this.searching = searching;
-    this.results = results;
     this.playlists = playlists;
   }
 };
 
+// build/dev/javascript/client/router.mjs
+function on_url_change(uri) {
+  let $ = path_segments(uri.path);
+  if ($.hasLength(0)) {
+    return new OnRouteChange(new Login());
+  } else if ($.hasLength(1) && $.head === "search") {
+    return new OnRouteChange(new Search(false, toList([])));
+  } else if ($.hasLength(2) && $.head === "playlists") {
+    let id2 = $.tail.head;
+    return new OnRouteChange(new Playlist2(id2));
+  } else {
+    return new OnRouteChange(new Login());
+  }
+}
+
 // build/dev/javascript/client/client.mjs
-function init2(_) {
+function init3(_) {
   let token = (() => {
     let _pipe = parse2(location());
     let _pipe$1 = then$(
@@ -5426,21 +5656,23 @@ function init2(_) {
     return unwrap2(_pipe$2, "");
   })();
   return [
-    new Model2(token, "", false, toList([]), new$()),
-    get_all2()
+    new Model2(new Home(), token, new$()),
+    batch(
+      toList([init2(on_url_change), get_all2()])
+    )
   ];
 }
 function update2(model, msg) {
   if (msg instanceof SearchSongs) {
     let q = msg.search;
     return [
-      model.withFields({ last_search: q, searching: true }),
+      model.withFields({ route: new Search(true, toList([])) }),
       search3(q, model.token)
     ];
   } else if (msg instanceof ServerSentSongs) {
     let songs = msg.results;
     return [
-      model.withFields({ searching: false, results: songs }),
+      model.withFields({ route: new Search(false, songs) }),
       none()
     ];
   } else if (msg instanceof ServerSentPlaylists) {
@@ -5550,22 +5782,47 @@ function update2(model, msg) {
     return [model, from((_) => {
       return error(err);
     })];
-  } else {
+  } else if (msg instanceof ServerError) {
     let err = msg.error;
     return [model, from((_) => {
       return error(err);
     })];
+  } else if (msg instanceof OnRouteChange && msg.route instanceof Login) {
+    return [
+      model,
+      (() => {
+        let _pipe = parse2("login");
+        let _pipe$1 = map3(
+          _pipe,
+          (_capture) => {
+            return load(_capture);
+          }
+        );
+        return unwrap2(_pipe$1, none());
+      })()
+    ];
+  } else {
+    let route = msg.route;
+    return [model.withFields({ route }), none()];
   }
 }
 function view3(model) {
   let children2 = (() => {
-    if (model instanceof Model2 && model.token === "") {
-      let token = model.token;
+    let $ = model.token;
+    let $1 = model.route;
+    if ($ === "" && $1 instanceof Home) {
       return home();
-    } else {
-      let searching = model.searching;
-      let songs = model.results;
+    } else if ($1 instanceof Home) {
+      return search(false, toList([]));
+    } else if ($1 instanceof Login) {
+      return home();
+    } else if ($1 instanceof Search) {
+      let searching = $1.searching;
+      let songs = $1.results;
       return search(searching, songs);
+    } else {
+      let id2 = $1.id;
+      return home();
     }
   })();
   let left_children = view2(
@@ -5577,13 +5834,13 @@ function view3(model) {
   return layout(children2, left_children);
 }
 function main() {
-  let app = application(init2, update2, view3);
+  let app = application(init3, update2, view3);
   let $ = start2(app, "#app", void 0);
   if (!$.isOk()) {
     throw makeError(
       "assignment_no_match",
       "client",
-      27,
+      30,
       "main",
       "Assignment pattern did not match",
       { value: $ }

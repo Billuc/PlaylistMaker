@@ -17,13 +17,14 @@ target = "javascript"
 gleam_stdlib = ">= 0.34.0 and < 2.0.0"
 shared = { path = "../shared" }
 decipher = ">= 1.2.0 and < 2.0.0"
-lustre = ">= 4.4.3 and < 5.0.0"
+lustre = ">= 4.4.4 and < 5.0.0"
 lustre_http = ">= 0.5.2 and < 1.0.0"
 gleam_json = ">= 1.0.1 and < 2.0.0"
 gleam_http = ">= 3.7.0 and < 4.0.0"
 glitr_lustre = ">= 0.1.6 and < 1.0.0"
 glitr = ">= 0.1.6 and < 1.0.0"
 plinth = ">= 0.4.12 and < 1.0.0"
+modem = ">= 2.0.1 and < 3.0.0"
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"

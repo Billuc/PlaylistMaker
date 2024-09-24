@@ -6,6 +6,7 @@ import client/services/playlist_service
 import client/services/song_service
 import client/types/model.{type Model, Model}
 import client/types/msg
+import client/types/route
 import gleam/dict
 import gleam/list
 import gleam/option
@@ -14,10 +15,12 @@ import gleam/uri
 import lustre
 import lustre/effect.{type Effect}
 import lustre/element.{type Element}
+import modem
 import plinth/browser/audio
 import plinth/browser/document
 import plinth/browser/window
 import plinth/javascript/console
+import router
 import utils
 
 // ------------------ MAIN -------------------
@@ -38,7 +41,10 @@ fn init(_) -> #(Model, Effect(msg.Msg)) {
     |> result.then(fn(q) { q |> list.key_find("token") })
     |> result.unwrap("")
 
-  #(Model(token, "", False, [], dict.new()), playlist_service.get_all())
+  #(
+    Model(route.Home, token, dict.new()),
+    effect.batch([modem.init(router.on_url_change), playlist_service.get_all()]),
+  )
 }
 
 // ------------------ UPDATE ---------------------
@@ -46,11 +52,11 @@ fn init(_) -> #(Model, Effect(msg.Msg)) {
 fn update(model: Model, msg: msg.Msg) -> #(Model, Effect(msg.Msg)) {
   case msg {
     msg.SearchSongs(q) -> #(
-      Model(..model, last_search: q, searching: True),
+      Model(..model, route: route.Search(True, [])),
       song_service.search(q, model.token),
     )
     msg.ServerSentSongs(songs) -> #(
-      Model(..model, searching: False, results: songs),
+      Model(..model, route: route.Search(False, songs)),
       effect.none(),
     )
     msg.ServerSentPlaylists(playlists) -> #(
@@ -104,16 +110,26 @@ fn update(model: Model, msg: msg.Msg) -> #(Model, Effect(msg.Msg)) {
       model,
       effect.from(fn(_dispatch) { console.error(err) }),
     )
-    // _ -> #(model, effect.none())
+    msg.OnRouteChange(route.Login) -> #(
+      model,
+      uri.parse("login")
+        |> result.map(modem.load(_))
+        |> result.unwrap(effect.none()),
+    )
+    msg.OnRouteChange(route) -> #(Model(..model, route:), effect.none())
+    // msg -> #(model, effect.from(fn(_) { console.log(msg) }))
   }
 }
 
 // ------------------------ VIEW -------------------------
 
 fn view(model: Model) -> Element(msg.Msg) {
-  let children = case model {
-    Model(token, _, _, _, _) if token == "" -> home.home()
-    Model(_, _, searching, songs, _) -> search.search(searching, songs)
+  let children = case model.token, model.route {
+    "", route.Home -> home.home()
+    _, route.Home -> search.search(False, [])
+    _, route.Login -> home.home()
+    _, route.Search(searching, songs) -> search.search(searching, songs)
+    _, route.Playlist(id) -> home.home()
   }
 
   let left_children = playlist_bar.view(model.playlists |> dict.to_list)

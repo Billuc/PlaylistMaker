@@ -16,11 +16,9 @@ pub fn view(
         html.ul([attribute.class("flex flex-col items-stretch")], _),
         {
           use p <- list.map(playlists)
-          let child = html.li([], [html.text({ p.1 }.name)])
+          let child = html.li([], [playlist_link(p.1)])
 
           #(p.0, child)
-          // playlists
-          //   |> list.map(fn(p) { #(p.0, html.li([], [html.text({ p.1 }.name)])) }),
         },
       ),
       html.button(
@@ -35,4 +33,16 @@ pub fn view(
     ]),
     create_playlist.view(),
   ]
+}
+
+fn playlist_link(p: playlist.Playlist) -> element.Element(msg.Msg) {
+  html.a(
+    [
+      attribute.class(
+        "text-center font-bold bg-zinc-800 hover:bg-zinc-700/50 rounded-md py-2 px-4",
+      ),
+      attribute.href("playlists/" <> p.id),
+    ],
+    [html.text(p.name)],
+  )
 }
