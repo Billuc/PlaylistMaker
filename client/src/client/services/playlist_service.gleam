@@ -1,3 +1,4 @@
+import client/events/playlist_events
 import client/services/factory
 import client/types/msg
 import glitr_lustre
@@ -11,7 +12,9 @@ pub fn get_all() {
   factory.factory()
   |> glitr_lustre.for_route(route)
   |> glitr_lustre.with_path(Nil)
-  |> utils.send_and_handle_errors(msg.ServerSentPlaylists)
+  |> utils.send_and_handle_errors(fn(d) {
+    msg.PlaylistEvent(playlist_events.ServerSentPlaylists(d))
+  })
 }
 
 pub fn get(id: String) {
@@ -20,7 +23,9 @@ pub fn get(id: String) {
   factory.factory()
   |> glitr_lustre.for_route(route)
   |> glitr_lustre.with_path(id)
-  |> utils.send_and_handle_errors(msg.ServerSentPlaylist)
+  |> utils.send_and_handle_errors(fn(d) {
+    msg.PlaylistEvent(playlist_events.ServerSentPlaylist(d))
+  })
 }
 
 pub fn create(name: String) {
@@ -30,7 +35,9 @@ pub fn create(name: String) {
   |> glitr_lustre.for_route(route)
   |> glitr_lustre.with_path(Nil)
   |> glitr_lustre.with_body(playlist.UpsertPlaylist(name))
-  |> utils.send_and_handle_errors(msg.ServerCreatedPlaylist)
+  |> utils.send_and_handle_errors(fn(d) {
+    msg.PlaylistEvent(playlist_events.ServerCreatedPlaylist(d))
+  })
 }
 
 pub fn update(id: String, name: String) {
@@ -40,7 +47,9 @@ pub fn update(id: String, name: String) {
   |> glitr_lustre.for_route(route)
   |> glitr_lustre.with_path(id)
   |> glitr_lustre.with_body(playlist.UpsertPlaylist(name))
-  |> utils.send_and_handle_errors(msg.ServerUpdatedPlaylist)
+  |> utils.send_and_handle_errors(fn(d) {
+    msg.PlaylistEvent(playlist_events.ServerUpdatedPlaylist(d))
+  })
 }
 
 pub fn delete(id: String) {
@@ -49,5 +58,7 @@ pub fn delete(id: String) {
   factory.factory()
   |> glitr_lustre.for_route(route)
   |> glitr_lustre.with_path(id)
-  |> utils.send_and_handle_errors(msg.ServerDeletedPlaylist)
+  |> utils.send_and_handle_errors(fn(d) {
+    msg.PlaylistEvent(playlist_events.ServerDeletedPlaylist(d))
+  })
 }

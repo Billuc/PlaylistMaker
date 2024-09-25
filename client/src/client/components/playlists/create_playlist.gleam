@@ -1,3 +1,4 @@
+import client/events/playlist_events
 import client/types/msg
 import gleam/dynamic
 import lustre/attribute
@@ -57,7 +58,7 @@ fn on_create(_ev: dynamic.Dynamic) {
 
       case value {
         Error(_) -> Ok(msg.ClientError("Couldn't get value of element"))
-        Ok(name) -> Ok(msg.CreatePlaylist(name))
+        Ok(name) -> Ok(msg.PlaylistEvent(playlist_events.CreatePlaylist(name)))
       }
     }
   }

@@ -1,4 +1,5 @@
 import client/components/spinner
+import client/events/song_events
 import client/types/msg
 import decipher
 import gleam/dynamic
@@ -42,7 +43,7 @@ pub fn search(
 fn on_click(ev: dynamic.Dynamic) -> Result(msg.Msg, List(dynamic.DecodeError)) {
   ev
   |> decipher.at(["target", "previousElementSibling", "value"], dynamic.string)
-  |> result.map(msg.SearchSongs)
+  |> result.map(fn(s) { msg.SongEvent(song_events.SearchSongs(s)) })
 }
 
 fn result_list(results: List(song.Song)) -> element.Element(msg.Msg) {
@@ -86,7 +87,9 @@ fn album_cover(song: song.Song) -> element.Element(msg.Msg) {
         html.img([
           attribute.src(song.album_cover),
           attribute.class("w-16 h-16 rounded-sm"),
-          event.on("click", fn(_) { Ok(msg.PlayPreview(url)) }),
+          event.on("click", fn(_) {
+            Ok(msg.SongEvent(song_events.PlayPreview(url)))
+          }),
         ]),
         html.div(
           [

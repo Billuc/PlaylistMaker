@@ -4,8 +4,9 @@ import client/components/not_found
 import client/components/playlist_bar
 import client/components/playlists/playlist_page
 import client/components/search
+import client/events/playlist_event_handler
+import client/events/song_event_handler
 import client/services/playlist_service
-import client/services/song_service
 import client/types/model.{type Model, Model}
 import client/types/msg
 import client/types/route
@@ -18,7 +19,6 @@ import lustre
 import lustre/effect.{type Effect}
 import lustre/element.{type Element}
 import modem
-import plinth/browser/audio
 import plinth/browser/document
 import plinth/browser/window
 import plinth/javascript/console
@@ -57,28 +57,8 @@ fn init(_) -> #(Model, Effect(msg.Msg)) {
 
 fn update(model: Model, msg: msg.Msg) -> #(Model, Effect(msg.Msg)) {
   case msg {
-    msg.SearchSongs(q) -> #(
-      Model(..model, route: route.Search(True, [])),
-      song_service.search(q, model.token),
-    )
-    msg.ServerSentSongs(songs) -> #(
-      Model(..model, route: route.Search(False, songs)),
-      effect.none(),
-    )
-    msg.ServerSentPlaylists(playlists) -> #(
-      Model(
-        ..model,
-        playlists: dict.from_list(playlists |> list.map(fn(p) { #(p.id, p) })),
-      ),
-      effect.none(),
-    )
-    msg.PlayPreview(url) -> #(
-      model,
-      effect.from(fn(_dispatch) {
-        audio.new(url) |> audio.play
-        Nil
-      }),
-    )
+    msg.SongEvent(ev) -> song_event_handler.on_song_event(model, ev)
+    msg.PlaylistEvent(ev) -> playlist_event_handler.on_playlist_event(model, ev)
     msg.OpenDialog(id) -> #(
       model,
       effect.from(fn(_) {
@@ -86,19 +66,6 @@ fn update(model: Model, msg: msg.Msg) -> #(Model, Effect(msg.Msg)) {
         |> result.map(utils.show_modal)
         |> result.unwrap(Nil)
       }),
-    )
-    msg.CreatePlaylist(name) -> #(model, playlist_service.create(name))
-    msg.ServerCreatedPlaylist(p) -> #(
-      Model(..model, playlists: model.playlists |> dict.insert(p.id, p)),
-      effect.from(fn(dispatch) { dispatch(msg.CloseDialog("create-playlist")) }),
-    )
-    msg.ServerUpdatedPlaylist(p) | msg.ServerSentPlaylist(p) -> #(
-      Model(..model, playlists: model.playlists |> dict.insert(p.id, p)),
-      effect.none(),
-    )
-    msg.ServerDeletedPlaylist(id) -> #(
-      Model(..model, playlists: model.playlists |> dict.drop([id])),
-      effect.none(),
     )
     msg.CloseDialog(id) -> #(
       model,

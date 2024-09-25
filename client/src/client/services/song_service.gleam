@@ -1,3 +1,4 @@
+import client/events/song_events
 import client/services/factory
 import client/types/msg
 import glitr_lustre
@@ -12,7 +13,7 @@ pub fn search(q: String, token: String) {
   |> glitr_lustre.send(
     fn(res) {
       case res {
-        Ok(songs) -> msg.ServerSentSongs(songs)
+        Ok(songs) -> msg.SongEvent(song_events.ServerSentSongs(songs))
         Error(err) -> msg.ServerError(err)
       }
     },
