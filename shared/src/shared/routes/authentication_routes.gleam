@@ -17,7 +17,7 @@ pub fn login() -> route.Route(Nil, Nil, Nil, Nil) {
 pub fn callback() -> route.Route(Nil, CallbackQuery, Nil, String) {
   route.new()
   |> route.with_method(http.Get)
-  |> route.with_path(path.static_path(["callback"]))
+  |> route.with_path(path.static_path(["api", "callback"]))
   |> route.with_query(
     query.complex_query(query.QueryConverter(callback_encoder, callback_decoder)),
   )

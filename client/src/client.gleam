@@ -1,6 +1,8 @@
 import client/components/home
 import client/components/layout
+import client/components/not_found
 import client/components/playlist_bar
+import client/components/playlists/playlist_page
 import client/components/search
 import client/services/playlist_service
 import client/services/song_service
@@ -35,15 +37,19 @@ pub fn main() {
 // ----------------- INIT --------------------
 
 fn init(_) -> #(Model, Effect(msg.Msg)) {
+  let assert Ok(uri) = uri.parse(window.location())
   let token =
-    uri.parse(window.location())
-    |> result.then(fn(uri) { uri.parse_query(uri.query |> option.unwrap("")) })
+    uri
+    |> fn(uri: uri.Uri) { uri.parse_query(uri.query |> option.unwrap("")) }
     |> result.then(fn(q) { q |> list.key_find("token") })
     |> result.unwrap("")
 
   #(
-    Model(route.Home, token, dict.new()),
-    effect.batch([modem.init(router.on_url_change), playlist_service.get_all()]),
+    Model(uri |> router.map_route, token, dict.new()),
+    effect.batch([
+      modem.init(fn(uri) { uri |> router.map_route |> msg.OnRouteChange }),
+      playlist_service.get_all(),
+    ]),
   )
 }
 
@@ -127,9 +133,14 @@ fn view(model: Model) -> Element(msg.Msg) {
   let children = case model.token, model.route {
     "", route.Home -> home.home()
     _, route.Home -> search.search(False, [])
-    _, route.Login -> home.home()
     _, route.Search(searching, songs) -> search.search(searching, songs)
-    _, route.Playlist(id) -> home.home()
+    _, route.Playlist(id) -> {
+      model.playlists
+      |> dict.get(id)
+      |> result.map(playlist_page.view)
+      |> result.unwrap(not_found.view())
+    }
+    _, _ -> not_found.view()
   }
 
   let left_children = playlist_bar.view(model.playlists |> dict.to_list)

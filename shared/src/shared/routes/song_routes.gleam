@@ -12,7 +12,7 @@ import shared/types/song
 pub fn search() -> route.Route(Nil, SearchQuery, Nil, List(song.Song)) {
   route.new()
   |> route.with_method(http.Get)
-  |> route.with_path(path.static_path(["songs", "search"]))
+  |> route.with_path(path.static_path(["api", "songs", "search"]))
   |> route.with_query(
     query.complex_query(query.QueryConverter(search_encoder, search_decoder)),
   )

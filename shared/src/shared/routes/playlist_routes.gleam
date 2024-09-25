@@ -8,7 +8,7 @@ pub fn playlist_service() -> service.RouteService(
   playlist.UpsertPlaylist,
 ) {
   service.new()
-  |> service.with_root_path(["playlists"])
+  |> service.with_root_path(["api", "playlists"])
   |> service.with_base_type(
     playlist.playlist_encoder,
     playlist.playlist_decoder,

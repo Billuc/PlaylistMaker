@@ -1,4 +1,5 @@
-import gleam/bool
+import glitr/path
+import glitr/route
 import glitr_wisp
 import server/services/authentication_service
 import server/services/playlist_service
@@ -16,10 +17,8 @@ pub fn handle_request(req: Request, ctx: web.Context) -> Response {
   let static_dir = priv <> "/static"
   use <- wisp.serve_static(req, under: "/", from: static_dir)
 
-  use <- bool.guard(
-    req.path == "/",
-    wisp.ok() |> wisp.set_body(wisp.File(static_dir <> "/index.html")),
-  )
+  let index_response =
+    wisp.ok() |> wisp.set_body(wisp.File(static_dir <> "/index.html"))
 
   glitr_wisp.for(req)
   |> glitr_wisp.try(song_routes.search(), song_service.search(ctx, _))
@@ -34,6 +33,7 @@ pub fn handle_request(req: Request, ctx: web.Context) -> Response {
     authentication_service.callback_redirect(req, _),
   )
   |> try_playlist_routes(ctx)
+  |> try_non_api_routes(index_response)
   |> glitr_wisp.unwrap
 }
 
@@ -61,5 +61,32 @@ fn try_playlist_routes(
   |> glitr_wisp.try_service_route(
     playlist_routes.delete(),
     playlist_service.delete(ctx, _),
+  )
+}
+
+fn try_non_api_routes(
+  router: Result(glitr_wisp.Router, wisp.Response),
+  index_resp: wisp.Response,
+) -> Result(glitr_wisp.Router, wisp.Response) {
+  router
+  |> glitr_wisp.try_map(
+    route.new() |> route.with_path(path.static_path([])),
+    fn(_) { Ok(Nil) },
+    fn(_) { index_resp },
+  )
+  |> glitr_wisp.try_map(
+    route.new()
+      |> route.with_path(
+        path.complex_path(
+          path.PathConverter(fn(_) { [] }, fn(segs) {
+            case segs {
+              [first, ..] if first != "api" -> Ok(Nil)
+              _ -> Error(Nil)
+            }
+          }),
+        ),
+      ),
+    fn(_) { Ok(Nil) },
+    fn(_) { index_resp },
   )
 }

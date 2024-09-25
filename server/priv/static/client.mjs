@@ -129,12 +129,12 @@ function byteArrayToInt(byteArray, start3, end, isBigEndian, isSigned) {
   return value2;
 }
 function byteArrayToFloat(byteArray, start3, end, isBigEndian) {
-  const view4 = new DataView(byteArray.buffer);
+  const view6 = new DataView(byteArray.buffer);
   const byteSize = end - start3;
   if (byteSize === 8) {
-    return view4.getFloat64(start3, !isBigEndian);
+    return view6.getFloat64(start3, !isBigEndian);
   } else if (byteSize === 4) {
-    return view4.getFloat32(start3, !isBigEndian);
+    return view6.getFloat32(start3, !isBigEndian);
   } else {
     const msg = `Sized floats must be 32-bit or 64-bit on JavaScript, got size of ${byteSize * 8} bits`;
     throw new globalThis.Error(msg);
@@ -2031,6 +2031,9 @@ function try_get_field(value2, field2, or_else) {
 function new$() {
   return new_map();
 }
+function get(from2, get3) {
+  return map_get(from2, get3);
+}
 function insert(dict2, key2, value2) {
   return map_insert(key2, value2, dict2);
 }
@@ -3214,13 +3217,13 @@ var LustreClientApplication = class _LustreClientApplication {
    *
    * @returns {Gleam.Ok<(action: Lustre.Action<Lustre.Client, Msg>>) => void>}
    */
-  static start({ init: init4, update: update3, view: view4 }, selector, flags) {
+  static start({ init: init4, update: update3, view: view6 }, selector, flags) {
     if (!is_browser())
       return new Error(new NotABrowser());
     const root = selector instanceof HTMLElement ? selector : document.querySelector(selector);
     if (!root)
       return new Error(new ElementNotFound(selector));
-    const app = new _LustreClientApplication(root, init4(flags), update3, view4);
+    const app = new _LustreClientApplication(root, init4(flags), update3, view6);
     return new Ok((action) => app.send(action));
   }
   /**
@@ -3231,11 +3234,11 @@ var LustreClientApplication = class _LustreClientApplication {
    *
    * @returns {LustreClientApplication}
    */
-  constructor(root, [init4, effects], update3, view4) {
+  constructor(root, [init4, effects], update3, view6) {
     this.root = root;
     this.#model = init4;
     this.#update = update3;
-    this.#view = view4;
+    this.#view = view6;
     this.#tickScheduled = window.requestAnimationFrame(
       () => this.#tick(effects.all.toArray(), true)
     );
@@ -3353,20 +3356,20 @@ var LustreClientApplication = class _LustreClientApplication {
 };
 var start = LustreClientApplication.start;
 var LustreServerApplication = class _LustreServerApplication {
-  static start({ init: init4, update: update3, view: view4, on_attribute_change }, flags) {
+  static start({ init: init4, update: update3, view: view6, on_attribute_change }, flags) {
     const app = new _LustreServerApplication(
       init4(flags),
       update3,
-      view4,
+      view6,
       on_attribute_change
     );
     return new Ok((action) => app.send(action));
   }
-  constructor([model, effects], update3, view4, on_attribute_change) {
+  constructor([model, effects], update3, view6, on_attribute_change) {
     this.#model = model;
     this.#update = update3;
-    this.#view = view4;
-    this.#html = view4(model);
+    this.#view = view6;
+    this.#html = view6(model);
     this.#onAttributeChange = on_attribute_change;
     this.#renderers = /* @__PURE__ */ new Map();
     this.#handlers = handlers(this.#html);
@@ -3470,11 +3473,11 @@ var is_browser = () => globalThis.window && window.document;
 
 // build/dev/javascript/lustre/lustre.mjs
 var App = class extends CustomType {
-  constructor(init4, update3, view4, on_attribute_change) {
+  constructor(init4, update3, view6, on_attribute_change) {
     super();
     this.init = init4;
     this.update = update3;
-    this.view = view4;
+    this.view = view6;
     this.on_attribute_change = on_attribute_change;
   }
 };
@@ -3486,8 +3489,8 @@ var ElementNotFound = class extends CustomType {
 };
 var NotABrowser = class extends CustomType {
 };
-function application(init4, update3, view4) {
-  return new App(init4, update3, view4, new None());
+function application(init4, update3, view6) {
+  return new App(init4, update3, view6, new None());
 }
 function start2(app, selector, flags) {
   return guard(
@@ -4494,6 +4497,18 @@ function layout(children2, left_children) {
   );
 }
 
+// build/dev/javascript/client/client/components/not_found.mjs
+function view() {
+  return toList([
+    h3(
+      toList([class$("text-lg my-20 text-center")]),
+      toList([
+        text2("The content you were looking for couldn't be found...")
+      ])
+    )
+  ]);
+}
+
 // build/dev/javascript/lustre/lustre/event.mjs
 function on2(name, handler) {
   return on(name, handler);
@@ -4520,7 +4535,7 @@ function on_create(_) {
     }
   }
 }
-function view() {
+function view2() {
   return dialog(
     toList([
       id("create-playlist"),
@@ -4588,19 +4603,19 @@ function playlist_link(p) {
       class$(
         "text-center font-bold bg-zinc-800 hover:bg-zinc-700/50 rounded-md py-2 px-4"
       ),
-      href("playlists/" + p.id)
+      href("/playlists/" + p.id)
     ]),
     toList([text2(p.name)])
   );
 }
-function view2(playlists) {
+function view3(playlists) {
   return toList([
     div(
       toList([class$("p-2 flex flex-col gap-2 items-stretch")]),
       toList([
         keyed(
           (_capture) => {
-            return ul(
+            return div(
               toList([class$("flex flex-col items-stretch")]),
               _capture
             );
@@ -4608,7 +4623,7 @@ function view2(playlists) {
           map2(
             playlists,
             (p) => {
-              let child = li(toList([]), toList([playlist_link(p[1])]));
+              let child = playlist_link(p[1]);
               return [p[0], child];
             }
           )
@@ -4629,7 +4644,35 @@ function view2(playlists) {
         )
       ])
     ),
-    view()
+    view2()
+  ]);
+}
+
+// build/dev/javascript/client/client/components/playlists/playlist_page.mjs
+function edit_button(p) {
+  return button(
+    toList([
+      class$("py-2 px-4 bg-cyan-600 hover:bg-cyan-500/50 rounded-md")
+    ]),
+    toList([text2("Edit")])
+  );
+}
+function delete_button(p) {
+  return button(
+    toList([class$("py-2 px-4 bg-red-600 hover:bg-red-500/50 rounded-md")]),
+    toList([text2("Delete")])
+  );
+}
+function view4(p) {
+  return toList([
+    h3(
+      toList([class$("text-lg mb-4 text-center")]),
+      toList([text2(p.name)])
+    ),
+    div(
+      toList([class$("flex gap-4")]),
+      toList([edit_button(p), delete_button(p)])
+    )
   ]);
 }
 
@@ -5414,7 +5457,7 @@ function get_all_route(service) {
 // build/dev/javascript/shared/shared/routes/playlist_routes.mjs
 function playlist_service() {
   let _pipe = new$7();
-  let _pipe$1 = with_root_path(_pipe, toList(["playlists"]));
+  let _pipe$1 = with_root_path(_pipe, toList(["api", "playlists"]));
   let _pipe$2 = with_base_type(
     _pipe$1,
     playlist_encoder,
@@ -5557,7 +5600,7 @@ function search2() {
   let _pipe$1 = with_method(_pipe, new Get());
   let _pipe$2 = with_path(
     _pipe$1,
-    static_path(toList(["songs", "search"]))
+    static_path(toList(["api", "songs", "search"]))
   );
   let _pipe$3 = with_query(
     _pipe$2,
@@ -5617,35 +5660,44 @@ var Model2 = class extends CustomType {
 };
 
 // build/dev/javascript/client/router.mjs
-function on_url_change(uri) {
+function map_route(uri) {
   let $ = path_segments(uri.path);
   if ($.hasLength(0)) {
-    return new OnRouteChange(new Login());
+    return new Home();
   } else if ($.hasLength(1) && $.head === "search") {
-    return new OnRouteChange(new Search(false, toList([])));
+    return new Search(false, toList([]));
   } else if ($.hasLength(2) && $.head === "playlists") {
     let id2 = $.tail.head;
-    return new OnRouteChange(new Playlist2(id2));
+    return new Playlist2(id2);
   } else {
-    return new OnRouteChange(new Login());
+    return new Login();
   }
 }
 
 // build/dev/javascript/client/client.mjs
 function init3(_) {
-  let token = (() => {
-    let _pipe = parse2(location());
-    let _pipe$1 = then$(
-      _pipe,
-      (uri) => {
-        return parse_query2(
-          (() => {
-            let _pipe$12 = uri.query;
-            return unwrap(_pipe$12, "");
-          })()
-        );
-      }
+  let $ = parse2(location());
+  if (!$.isOk()) {
+    throw makeError(
+      "assignment_no_match",
+      "client",
+      40,
+      "init",
+      "Assignment pattern did not match",
+      { value: $ }
     );
+  }
+  let uri = $[0];
+  let token = (() => {
+    let _pipe = uri;
+    let _pipe$1 = ((uri2) => {
+      return parse_query2(
+        (() => {
+          let _pipe$12 = uri2.query;
+          return unwrap(_pipe$12, "");
+        })()
+      );
+    })(_pipe);
     let _pipe$2 = then$(
       _pipe$1,
       (q) => {
@@ -5656,9 +5708,25 @@ function init3(_) {
     return unwrap2(_pipe$2, "");
   })();
   return [
-    new Model2(new Home(), token, new$()),
+    new Model2(
+      (() => {
+        let _pipe = uri;
+        return map_route(_pipe);
+      })(),
+      token,
+      new$()
+    ),
     batch(
-      toList([init2(on_url_change), get_all2()])
+      toList([
+        init2(
+          (uri2) => {
+            let _pipe = uri2;
+            let _pipe$1 = map_route(_pipe);
+            return new OnRouteChange(_pipe$1);
+          }
+        ),
+        get_all2()
+      ])
     )
   ];
 }
@@ -5806,7 +5874,7 @@ function update2(model, msg) {
     return [model.withFields({ route }), none()];
   }
 }
-function view3(model) {
+function view5(model) {
   let children2 = (() => {
     let $ = model.token;
     let $1 = model.route;
@@ -5814,18 +5882,21 @@ function view3(model) {
       return home();
     } else if ($1 instanceof Home) {
       return search(false, toList([]));
-    } else if ($1 instanceof Login) {
-      return home();
     } else if ($1 instanceof Search) {
       let searching = $1.searching;
       let songs = $1.results;
       return search(searching, songs);
-    } else {
+    } else if ($1 instanceof Playlist2) {
       let id2 = $1.id;
-      return home();
+      let _pipe = model.playlists;
+      let _pipe$1 = get(_pipe, id2);
+      let _pipe$2 = map3(_pipe$1, view4);
+      return unwrap2(_pipe$2, view());
+    } else {
+      return view();
     }
   })();
-  let left_children = view2(
+  let left_children = view3(
     (() => {
       let _pipe = model.playlists;
       return map_to_list(_pipe);
@@ -5834,13 +5905,13 @@ function view3(model) {
   return layout(children2, left_children);
 }
 function main() {
-  let app = application(init3, update2, view3);
+  let app = application(init3, update2, view5);
   let $ = start2(app, "#app", void 0);
   if (!$.isOk()) {
     throw makeError(
       "assignment_no_match",
       "client",
-      30,
+      32,
       "main",
       "Assignment pattern did not match",
       { value: $ }

@@ -13,10 +13,10 @@ pub fn view(
   [
     html.div([attribute.class("p-2 flex flex-col gap-2 items-stretch")], [
       element.keyed(
-        html.ul([attribute.class("flex flex-col items-stretch")], _),
+        html.div([attribute.class("flex flex-col items-stretch")], _),
         {
           use p <- list.map(playlists)
-          let child = html.li([], [playlist_link(p.1)])
+          let child = playlist_link(p.1)
 
           #(p.0, child)
         },
@@ -41,7 +41,7 @@ fn playlist_link(p: playlist.Playlist) -> element.Element(msg.Msg) {
       attribute.class(
         "text-center font-bold bg-zinc-800 hover:bg-zinc-700/50 rounded-md py-2 px-4",
       ),
-      attribute.href("playlists/" <> p.id),
+      attribute.href("/playlists/" <> p.id),
     ],
     [html.text(p.name)],
   )
