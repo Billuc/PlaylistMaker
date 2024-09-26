@@ -129,12 +129,12 @@ function byteArrayToInt(byteArray, start3, end, isBigEndian, isSigned) {
   return value3;
 }
 function byteArrayToFloat(byteArray, start3, end, isBigEndian) {
-  const view7 = new DataView(byteArray.buffer);
+  const view9 = new DataView(byteArray.buffer);
   const byteSize = end - start3;
   if (byteSize === 8) {
-    return view7.getFloat64(start3, !isBigEndian);
+    return view9.getFloat64(start3, !isBigEndian);
   } else if (byteSize === 4) {
-    return view7.getFloat32(start3, !isBigEndian);
+    return view9.getFloat32(start3, !isBigEndian);
   } else {
     const msg = `Sized floats must be 32-bit or 64-bit on JavaScript, got size of ${byteSize * 8} bits`;
     throw new globalThis.Error(msg);
@@ -3220,13 +3220,13 @@ var LustreClientApplication = class _LustreClientApplication {
    *
    * @returns {Gleam.Ok<(action: Lustre.Action<Lustre.Client, Msg>>) => void>}
    */
-  static start({ init: init4, update: update4, view: view7 }, selector, flags) {
+  static start({ init: init4, update: update4, view: view9 }, selector, flags) {
     if (!is_browser())
       return new Error(new NotABrowser());
     const root = selector instanceof HTMLElement ? selector : document.querySelector(selector);
     if (!root)
       return new Error(new ElementNotFound(selector));
-    const app = new _LustreClientApplication(root, init4(flags), update4, view7);
+    const app = new _LustreClientApplication(root, init4(flags), update4, view9);
     return new Ok((action) => app.send(action));
   }
   /**
@@ -3237,11 +3237,11 @@ var LustreClientApplication = class _LustreClientApplication {
    *
    * @returns {LustreClientApplication}
    */
-  constructor(root, [init4, effects], update4, view7) {
+  constructor(root, [init4, effects], update4, view9) {
     this.root = root;
     this.#model = init4;
     this.#update = update4;
-    this.#view = view7;
+    this.#view = view9;
     this.#tickScheduled = window.requestAnimationFrame(
       () => this.#tick(effects.all.toArray(), true)
     );
@@ -3359,20 +3359,20 @@ var LustreClientApplication = class _LustreClientApplication {
 };
 var start = LustreClientApplication.start;
 var LustreServerApplication = class _LustreServerApplication {
-  static start({ init: init4, update: update4, view: view7, on_attribute_change }, flags) {
+  static start({ init: init4, update: update4, view: view9, on_attribute_change }, flags) {
     const app = new _LustreServerApplication(
       init4(flags),
       update4,
-      view7,
+      view9,
       on_attribute_change
     );
     return new Ok((action) => app.send(action));
   }
-  constructor([model, effects], update4, view7, on_attribute_change) {
+  constructor([model, effects], update4, view9, on_attribute_change) {
     this.#model = model;
     this.#update = update4;
-    this.#view = view7;
-    this.#html = view7(model);
+    this.#view = view9;
+    this.#html = view9(model);
     this.#onAttributeChange = on_attribute_change;
     this.#renderers = /* @__PURE__ */ new Map();
     this.#handlers = handlers(this.#html);
@@ -3476,11 +3476,11 @@ var is_browser = () => globalThis.window && window.document;
 
 // build/dev/javascript/lustre/lustre.mjs
 var App = class extends CustomType {
-  constructor(init4, update4, view7, on_attribute_change) {
+  constructor(init4, update4, view9, on_attribute_change) {
     super();
     this.init = init4;
     this.update = update4;
-    this.view = view7;
+    this.view = view9;
     this.on_attribute_change = on_attribute_change;
   }
 };
@@ -3492,8 +3492,8 @@ var ElementNotFound = class extends CustomType {
 };
 var NotABrowser = class extends CustomType {
 };
-function application(init4, update4, view7) {
-  return new App(init4, update4, view7, new None());
+function application(init4, update4, view9) {
+  return new App(init4, update4, view9, new None());
 }
 function start2(app, selector, flags) {
   return guard(
@@ -4690,7 +4690,7 @@ function view3(playlists) {
         button(
           toList([
             class$(
-              "text-center font-bold border border-zinc-100 bg-zinc-900 hover:bg-zinc-800/50 rounded-md py-2 px-4"
+              "text-center font-bold bg-zinc-800 hover:bg-zinc-700/50 rounded-md py-2 px-4"
             ),
             on2(
               "click",
@@ -4771,9 +4771,7 @@ function view4(p) {
                   on2(
                     "click",
                     (_) => {
-                      return new Ok(
-                        new OnRouteChange(new Playlist2(p.id))
-                      );
+                      return new Ok(new CloseDialog("update-playlist"));
                     }
                   )
                 ]),
@@ -4799,6 +4797,116 @@ function view4(p) {
   );
 }
 
+// build/dev/javascript/client/client/components/songs/song_row.mjs
+function album_cover(song) {
+  let $ = song.preview_url;
+  if ($ instanceof Some) {
+    let url = $[0];
+    return div(
+      toList([class$("group relative")]),
+      toList([
+        img(
+          toList([
+            src(song.album_cover),
+            class$("w-16 h-16 rounded-sm"),
+            on2(
+              "click",
+              (_) => {
+                return new Ok(
+                  new SongEvent(new PlayPreview(url))
+                );
+              }
+            )
+          ])
+        ),
+        div(
+          toList([
+            class$(
+              "absolute w-full h-full top-0 left-0 group-hover:opacity-100 bg-zinc-100/50 p-2 opacity-0 transition-opacity duration-300 pointer-events-none"
+            )
+          ]),
+          toList([
+            img(
+              toList([
+                src(
+                  "https://www.svgrepo.com/download/524827/play-circle.svg"
+                )
+              ])
+            )
+          ])
+        )
+      ])
+    );
+  } else {
+    return div(
+      toList([]),
+      toList([
+        img(
+          toList([
+            src(song.album_cover),
+            class$("w-16 h-16 rounded-sm")
+          ])
+        )
+      ])
+    );
+  }
+}
+function view5(song) {
+  return div(
+    toList([
+      class$(
+        "flex items-center gap-4 py-4 px-8 bg-zinc-700/50 hover:bg-zinc-700/80"
+      )
+    ]),
+    toList([
+      album_cover(song),
+      div(
+        toList([class$("flex flex-col flex-1")]),
+        toList([
+          span(
+            toList([class$("font-semibold")]),
+            toList([text2(song.title)])
+          ),
+          span(
+            toList([class$("text-sm text-zinc-100/70")]),
+            toList([
+              text2(
+                (() => {
+                  let _pipe = song.artists;
+                  return join2(_pipe, " - ");
+                })()
+              )
+            ])
+          ),
+          span(
+            toList([class$("text-sm text-zinc-100/70")]),
+            toList([text2(song.album)])
+          )
+        ])
+      )
+    ])
+  );
+}
+
+// build/dev/javascript/client/client/components/songs/song_list.mjs
+function view6(results) {
+  return keyed(
+    (_capture) => {
+      return ul(
+        toList([class$("rounded-lg overflow-clip mt-8 w-full")]),
+        _capture
+      );
+    },
+    map2(
+      results,
+      (song) => {
+        let child = li(toList([]), toList([view5(song)]));
+        return [song.id, child];
+      }
+    )
+  );
+}
+
 // build/dev/javascript/client/client/components/playlists/playlist_page.mjs
 function edit_button() {
   return button(
@@ -4820,16 +4928,17 @@ function delete_button(p) {
     toList([text2("Delete")])
   );
 }
-function view5(p) {
+function view7(p) {
   return toList([
     h3(
       toList([class$("text-lg mb-4 text-center")]),
       toList([text2(p.name)])
     ),
     div(
-      toList([class$("flex gap-4")]),
+      toList([class$("flex gap-4 mb-4")]),
       toList([edit_button(), delete_button(p)])
     ),
+    view6(p.songs),
     view4(p)
   ]);
 }
@@ -4941,112 +5050,6 @@ function on_click2(ev) {
     }
   );
 }
-function album_cover(song) {
-  let $ = song.preview_url;
-  if ($ instanceof Some) {
-    let url = $[0];
-    return div(
-      toList([class$("group relative")]),
-      toList([
-        img(
-          toList([
-            src(song.album_cover),
-            class$("w-16 h-16 rounded-sm"),
-            on2(
-              "click",
-              (_) => {
-                return new Ok(
-                  new SongEvent(new PlayPreview(url))
-                );
-              }
-            )
-          ])
-        ),
-        div(
-          toList([
-            class$(
-              "absolute w-full h-full top-0 left-0 group-hover:opacity-100 bg-zinc-100/50 p-2 opacity-0 transition-opacity duration-300 pointer-events-none"
-            )
-          ]),
-          toList([
-            img(
-              toList([
-                src(
-                  "https://www.svgrepo.com/download/524827/play-circle.svg"
-                )
-              ])
-            )
-          ])
-        )
-      ])
-    );
-  } else {
-    return div(
-      toList([]),
-      toList([
-        img(
-          toList([
-            src(song.album_cover),
-            class$("w-16 h-16 rounded-sm")
-          ])
-        )
-      ])
-    );
-  }
-}
-function song_row(song) {
-  return div(
-    toList([
-      class$(
-        "flex items-center gap-4 py-4 px-8 bg-zinc-700/50 hover:bg-zinc-700/80"
-      )
-    ]),
-    toList([
-      album_cover(song),
-      div(
-        toList([class$("flex flex-col flex-1")]),
-        toList([
-          span(
-            toList([class$("font-semibold")]),
-            toList([text2(song.title)])
-          ),
-          span(
-            toList([class$("text-sm text-zinc-100/70")]),
-            toList([
-              text2(
-                (() => {
-                  let _pipe = song.artists;
-                  return join2(_pipe, " - ");
-                })()
-              )
-            ])
-          ),
-          span(
-            toList([class$("text-sm text-zinc-100/70")]),
-            toList([text2(song.album)])
-          )
-        ])
-      )
-    ])
-  );
-}
-function result_list(results) {
-  return keyed(
-    (_capture) => {
-      return ul(
-        toList([class$("rounded-lg overflow-clip mt-8 w-full")]),
-        _capture
-      );
-    },
-    map2(
-      results,
-      (song) => {
-        let child = li(toList([]), toList([song_row(song)]));
-        return [song.id, child];
-      }
-    )
-  );
-}
 function search(searching, results) {
   return toList([
     div(
@@ -5073,7 +5076,7 @@ function search(searching, results) {
       if (searching) {
         return spinner();
       } else {
-        return result_list(results);
+        return view6(results);
       }
     })()
   ]);
@@ -6198,7 +6201,7 @@ function update3(model, msg) {
     return [model.withFields({ route }), none()];
   }
 }
-function view6(model) {
+function view8(model) {
   let children2 = (() => {
     let $ = model.token;
     let $1 = model.route;
@@ -6214,7 +6217,7 @@ function view6(model) {
       let id2 = $1.id;
       let _pipe = model.playlists;
       let _pipe$1 = get(_pipe, id2);
-      let _pipe$2 = map3(_pipe$1, view5);
+      let _pipe$2 = map3(_pipe$1, view7);
       return unwrap2(_pipe$2, view());
     } else {
       return view();
@@ -6229,7 +6232,7 @@ function view6(model) {
   return layout(children2, left_children);
 }
 function main() {
-  let app = application(init3, update3, view6);
+  let app = application(init3, update3, view8);
   let $ = start2(app, "#app", void 0);
   if (!$.isOk()) {
     throw makeError(

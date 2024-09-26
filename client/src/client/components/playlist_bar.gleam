@@ -24,7 +24,7 @@ pub fn view(
       html.button(
         [
           attribute.class(
-            "text-center font-bold border border-zinc-100 bg-zinc-900 hover:bg-zinc-800/50 rounded-md py-2 px-4",
+            "text-center font-bold bg-zinc-800 hover:bg-zinc-700/50 rounded-md py-2 px-4",
           ),
           event.on("click", fn(_) { Ok(msg.OpenDialog("create-playlist")) }),
         ],
