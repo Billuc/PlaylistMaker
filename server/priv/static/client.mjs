@@ -109,32 +109,32 @@ var BitArray = class _BitArray {
   }
 };
 function byteArrayToInt(byteArray, start3, end, isBigEndian, isSigned) {
-  let value2 = 0;
+  let value3 = 0;
   if (isBigEndian) {
     for (let i = start3; i < end; i++) {
-      value2 = value2 * 256 + byteArray[i];
+      value3 = value3 * 256 + byteArray[i];
     }
   } else {
     for (let i = end - 1; i >= start3; i--) {
-      value2 = value2 * 256 + byteArray[i];
+      value3 = value3 * 256 + byteArray[i];
     }
   }
   if (isSigned) {
     const byteSize = end - start3;
     const highBit = 2 ** (byteSize * 8 - 1);
-    if (value2 >= highBit) {
-      value2 -= highBit * 2;
+    if (value3 >= highBit) {
+      value3 -= highBit * 2;
     }
   }
-  return value2;
+  return value3;
 }
 function byteArrayToFloat(byteArray, start3, end, isBigEndian) {
-  const view6 = new DataView(byteArray.buffer);
+  const view7 = new DataView(byteArray.buffer);
   const byteSize = end - start3;
   if (byteSize === 8) {
-    return view6.getFloat64(start3, !isBigEndian);
+    return view7.getFloat64(start3, !isBigEndian);
   } else if (byteSize === 4) {
-    return view6.getFloat32(start3, !isBigEndian);
+    return view7.getFloat32(start3, !isBigEndian);
   } else {
     const msg = `Sized floats must be 32-bit or 64-bit on JavaScript, got size of ${byteSize * 8} bits`;
     throw new globalThis.Error(msg);
@@ -147,9 +147,9 @@ var Result = class _Result extends CustomType {
   }
 };
 var Ok = class extends Result {
-  constructor(value2) {
+  constructor(value3) {
     super();
-    this[0] = value2;
+    this[0] = value3;
   }
   // @internal
   isOk() {
@@ -642,27 +642,27 @@ function key_find(keyword_list, desired_key) {
     keyword_list,
     (keyword) => {
       let key2 = keyword[0];
-      let value2 = keyword[1];
+      let value3 = keyword[1];
       let $ = isEqual(key2, desired_key);
       if ($) {
-        return new Ok(value2);
+        return new Ok(value3);
       } else {
         return new Error(void 0);
       }
     }
   );
 }
-function key_set(list3, key2, value2) {
+function key_set(list3, key2, value3) {
   if (list3.hasLength(0)) {
-    return toList([[key2, value2]]);
+    return toList([[key2, value3]]);
   } else if (list3.atLeastLength(1) && isEqual(list3.head[0], key2)) {
     let k = list3.head[0];
     let rest$1 = list3.tail;
-    return prepend([key2, value2], rest$1);
+    return prepend([key2, value3], rest$1);
   } else {
     let first$1 = list3.head;
     let rest$1 = list3.tail;
-    return prepend(first$1, key_set(rest$1, key2, value2));
+    return prepend(first$1, key_set(rest$1, key2, value3));
   }
 }
 
@@ -814,8 +814,8 @@ var DecodeError = class extends CustomType {
     this.path = path;
   }
 };
-function dynamic(value2) {
-  return new Ok(value2);
+function dynamic(value3) {
+  return new Ok(value3);
 }
 function classify(data) {
   return classify_dynamic(data);
@@ -823,12 +823,12 @@ function classify(data) {
 function int(data) {
   return decode_int(data);
 }
-function shallow_list(value2) {
-  return decode_list(value2);
+function shallow_list(value3) {
+  return decode_list(value3);
 }
 function optional(decode9) {
-  return (value2) => {
-    return decode_option(value2, decode9);
+  return (value3) => {
+    return decode_option(value3, decode9);
   };
 }
 function at_least_decode_tuple_error(size2, data) {
@@ -880,8 +880,8 @@ function all_errors(result) {
   }
 }
 function decode1(constructor, t1) {
-  return (value2) => {
-    let $ = t1(value2);
+  return (value3) => {
+    let $ = t1(value3);
     if ($.isOk()) {
       let a2 = $[0];
       return new Ok(constructor(a2));
@@ -940,10 +940,10 @@ function string2(data) {
   return decode_string(data);
 }
 function field(name, inner_type) {
-  return (value2) => {
+  return (value3) => {
     let missing_field_error = new DecodeError("field", "nothing", toList([]));
     return try$(
-      decode_field(value2, name),
+      decode_field(value3, name),
       (maybe_inner) => {
         let _pipe = maybe_inner;
         let _pipe$1 = to_result(_pipe, toList([missing_field_error]));
@@ -1001,10 +1001,10 @@ function element(index4, inner_type) {
   };
 }
 function decode3(constructor, t1, t2, t3) {
-  return (value2) => {
-    let $ = t1(value2);
-    let $1 = t2(value2);
-    let $2 = t3(value2);
+  return (value3) => {
+    let $ = t1(value3);
+    let $1 = t2(value3);
+    let $2 = t3(value3);
     if ($.isOk() && $1.isOk() && $2.isOk()) {
       let a2 = $[0];
       let b = $1[0];
@@ -1766,9 +1766,9 @@ var NOT_FOUND = {};
 function identity(x) {
   return x;
 }
-function parse_int(value2) {
-  if (/^[-+]?(\d+)$/.test(value2)) {
-    return new Ok(parseInt(value2));
+function parse_int(value3) {
+  if (/^[-+]?(\d+)$/.test(value3)) {
+    return new Ok(parseInt(value3));
   } else {
     return new Error(Nil);
   }
@@ -1909,14 +1909,14 @@ function map_remove(key2, map6) {
   return map6.delete(key2);
 }
 function map_get(map6, key2) {
-  const value2 = map6.get(key2, NOT_FOUND);
-  if (value2 === NOT_FOUND) {
+  const value3 = map6.get(key2, NOT_FOUND);
+  if (value3 === NOT_FOUND) {
     return new Error(Nil);
   }
-  return new Ok(value2);
+  return new Ok(value3);
 }
-function map_insert(key2, value2, map6) {
-  return map6.set(key2, value2);
+function map_insert(key2, value3, map6) {
+  return map6.set(key2, value3);
 }
 function unsafe_percent_decode_query(string4) {
   return decodeURIComponent((string4 || "").replace("+", " "));
@@ -1928,11 +1928,11 @@ function parse_query(query) {
   try {
     const pairs = [];
     for (const section of query.split("&")) {
-      const [key2, value2] = section.split("=");
+      const [key2, value3] = section.split("=");
       if (!key2)
         continue;
       const decodedKey = unsafe_percent_decode_query(key2);
-      const decodedValue = unsafe_percent_decode_query(value2);
+      const decodedValue = unsafe_percent_decode_query(value3);
       pairs.push([decodedKey, decodedValue]);
     }
     return new Ok(List.fromArray(pairs));
@@ -2006,22 +2006,22 @@ function decode_option(data, decoder) {
     return result;
   }
 }
-function decode_field(value2, name) {
-  const not_a_map_error = () => decoder_error("Dict", value2);
-  if (value2 instanceof Dict || value2 instanceof WeakMap || value2 instanceof Map) {
-    const entry = map_get(value2, name);
+function decode_field(value3, name) {
+  const not_a_map_error = () => decoder_error("Dict", value3);
+  if (value3 instanceof Dict || value3 instanceof WeakMap || value3 instanceof Map) {
+    const entry = map_get(value3, name);
     return new Ok(entry.isOk() ? new Some(entry[0]) : new None());
-  } else if (value2 === null) {
+  } else if (value3 === null) {
     return not_a_map_error();
-  } else if (Object.getPrototypeOf(value2) == Object.prototype) {
-    return try_get_field(value2, name, () => new Ok(new None()));
+  } else if (Object.getPrototypeOf(value3) == Object.prototype) {
+    return try_get_field(value3, name, () => new Ok(new None()));
   } else {
-    return try_get_field(value2, name, not_a_map_error);
+    return try_get_field(value3, name, not_a_map_error);
   }
 }
-function try_get_field(value2, field2, or_else) {
+function try_get_field(value3, field2, or_else) {
   try {
-    return field2 in value2 ? new Ok(new Some(value2[field2])) : or_else();
+    return field2 in value3 ? new Ok(new Some(value3[field2])) : or_else();
   } catch {
     return or_else();
   }
@@ -2034,8 +2034,8 @@ function new$() {
 function get(from2, get3) {
   return map_get(from2, get3);
 }
-function insert(dict2, key2, value2) {
-  return map_insert(key2, value2, dict2);
+function insert(dict2, key2, value3) {
+  return map_insert(key2, value3, dict2);
 }
 function fold_list_of_pair(loop$list, loop$initial) {
   while (true) {
@@ -2271,8 +2271,8 @@ function parse2(uri_string) {
 function parse_query2(query) {
   return parse_query(query);
 }
-function percent_encode2(value2) {
-  return percent_encode(value2);
+function percent_encode2(value3) {
+  return percent_encode(value3);
 }
 function do_remove_dot_segments(loop$input, loop$accumulator) {
   while (true) {
@@ -2543,8 +2543,8 @@ function null$() {
 }
 function nullable(input2, inner_type) {
   if (input2 instanceof Some) {
-    let value2 = input2[0];
-    return inner_type(value2);
+    let value3 = input2[0];
+    return inner_type(value3);
   } else {
     return null$();
   }
@@ -2706,8 +2706,8 @@ function handlers(element3) {
 }
 
 // build/dev/javascript/lustre/lustre/attribute.mjs
-function attribute(name, value2) {
-  return new Attribute(name, identity(value2), false);
+function attribute(name, value3) {
+  return new Attribute(name, identity(value3), false);
 }
 function on(name, handler) {
   return new Event("on" + name, handler);
@@ -2717,6 +2717,9 @@ function class$(name) {
 }
 function id(name) {
   return attribute("id", name);
+}
+function value(val) {
+  return attribute("value", val);
 }
 function placeholder(text3) {
   return attribute("placeholder", text3);
@@ -2995,15 +2998,15 @@ function createElementNode({ prev, next, dispatch, stack }) {
   }
   for (const attr of next.attrs) {
     const name = attr[0];
-    const value2 = attr[1];
+    const value3 = attr[1];
     if (attr.as_property) {
-      if (el2[name] !== value2)
-        el2[name] = value2;
+      if (el2[name] !== value3)
+        el2[name] = value3;
       if (canMorph)
         prevAttributes.delete(name);
     } else if (name.startsWith("on")) {
       const eventName = name.slice(2);
-      const callback = dispatch(value2, eventName === "input");
+      const callback = dispatch(value3, eventName === "input");
       if (!handlersForEl.has(eventName)) {
         el2.addEventListener(eventName, lustreGenericEventHandler);
       }
@@ -3017,18 +3020,18 @@ function createElementNode({ prev, next, dispatch, stack }) {
         el2.addEventListener(eventName, lustreGenericEventHandler);
       }
       handlersForEl.set(eventName, callback);
-      el2.setAttribute(name, value2);
+      el2.setAttribute(name, value3);
     } else if (name === "class") {
-      className = className === null ? value2 : className + " " + value2;
+      className = className === null ? value3 : className + " " + value3;
     } else if (name === "style") {
-      style = style === null ? value2 : style + value2;
+      style = style === null ? value3 : style + value3;
     } else if (name === "dangerous-unescaped-html") {
-      innerHTML = value2;
+      innerHTML = value3;
     } else {
-      if (el2.getAttribute(name) !== value2)
-        el2.setAttribute(name, value2);
+      if (el2.getAttribute(name) !== value3)
+        el2.setAttribute(name, value3);
       if (name === "value" || name === "selected")
-        el2[name] = value2;
+        el2[name] = value3;
       if (canMorph)
         prevAttributes.delete(name);
     }
@@ -3217,13 +3220,13 @@ var LustreClientApplication = class _LustreClientApplication {
    *
    * @returns {Gleam.Ok<(action: Lustre.Action<Lustre.Client, Msg>>) => void>}
    */
-  static start({ init: init4, update: update3, view: view6 }, selector, flags) {
+  static start({ init: init4, update: update4, view: view7 }, selector, flags) {
     if (!is_browser())
       return new Error(new NotABrowser());
     const root = selector instanceof HTMLElement ? selector : document.querySelector(selector);
     if (!root)
       return new Error(new ElementNotFound(selector));
-    const app = new _LustreClientApplication(root, init4(flags), update3, view6);
+    const app = new _LustreClientApplication(root, init4(flags), update4, view7);
     return new Ok((action) => app.send(action));
   }
   /**
@@ -3234,11 +3237,11 @@ var LustreClientApplication = class _LustreClientApplication {
    *
    * @returns {LustreClientApplication}
    */
-  constructor(root, [init4, effects], update3, view6) {
+  constructor(root, [init4, effects], update4, view7) {
     this.root = root;
     this.#model = init4;
-    this.#update = update3;
-    this.#view = view6;
+    this.#update = update4;
+    this.#view = view7;
     this.#tickScheduled = window.requestAnimationFrame(
       () => this.#tick(effects.all.toArray(), true)
     );
@@ -3356,20 +3359,20 @@ var LustreClientApplication = class _LustreClientApplication {
 };
 var start = LustreClientApplication.start;
 var LustreServerApplication = class _LustreServerApplication {
-  static start({ init: init4, update: update3, view: view6, on_attribute_change }, flags) {
+  static start({ init: init4, update: update4, view: view7, on_attribute_change }, flags) {
     const app = new _LustreServerApplication(
       init4(flags),
-      update3,
-      view6,
+      update4,
+      view7,
       on_attribute_change
     );
     return new Ok((action) => app.send(action));
   }
-  constructor([model, effects], update3, view6, on_attribute_change) {
+  constructor([model, effects], update4, view7, on_attribute_change) {
     this.#model = model;
-    this.#update = update3;
-    this.#view = view6;
-    this.#html = view6(model);
+    this.#update = update4;
+    this.#view = view7;
+    this.#html = view7(model);
     this.#onAttributeChange = on_attribute_change;
     this.#renderers = /* @__PURE__ */ new Map();
     this.#handlers = handlers(this.#html);
@@ -3473,11 +3476,11 @@ var is_browser = () => globalThis.window && window.document;
 
 // build/dev/javascript/lustre/lustre.mjs
 var App = class extends CustomType {
-  constructor(init4, update3, view6, on_attribute_change) {
+  constructor(init4, update4, view7, on_attribute_change) {
     super();
     this.init = init4;
-    this.update = update3;
-    this.view = view6;
+    this.update = update4;
+    this.view = view7;
     this.on_attribute_change = on_attribute_change;
   }
 };
@@ -3489,8 +3492,8 @@ var ElementNotFound = class extends CustomType {
 };
 var NotABrowser = class extends CustomType {
 };
-function application(init4, update3, view6) {
-  return new App(init4, update3, view6, new None());
+function application(init4, update4, view7) {
+  return new App(init4, update4, view7, new None());
 }
 function start2(app, selector, flags) {
   return guard(
@@ -3552,6 +3555,15 @@ var do_init = (dispatch, options = defaults) => {
   window.addEventListener("modem-replace", ({ detail }) => {
     dispatch(detail);
   });
+};
+var do_push = (uri) => {
+  window.history.pushState({}, "", to_string4(uri));
+  window.requestAnimationFrame(() => {
+    if (uri.fragment[0]) {
+      document.getElementById(uri.fragment[0])?.scrollIntoView();
+    }
+  });
+  window.dispatchEvent(new CustomEvent("modem-push", { detail: uri }));
 };
 var do_load = (uri) => {
   window.location = to_string4(uri);
@@ -3617,32 +3629,65 @@ function load(uri) {
     }
   );
 }
+var relative = /* @__PURE__ */ new Uri(
+  /* @__PURE__ */ new None(),
+  /* @__PURE__ */ new None(),
+  /* @__PURE__ */ new None(),
+  /* @__PURE__ */ new None(),
+  "",
+  /* @__PURE__ */ new None(),
+  /* @__PURE__ */ new None()
+);
+function push(path, query, fragment) {
+  return from(
+    (_) => {
+      return guard(
+        !is_browser(),
+        void 0,
+        () => {
+          return do_push(
+            relative.withFields({ path, query, fragment })
+          );
+        }
+      );
+    }
+  );
+}
 
 // build/dev/javascript/gleam_javascript/gleam_javascript_ffi.mjs
 var PromiseLayer = class _PromiseLayer {
   constructor(promise) {
     this.promise = promise;
   }
-  static wrap(value2) {
-    return value2 instanceof Promise ? new _PromiseLayer(value2) : value2;
+  static wrap(value3) {
+    return value3 instanceof Promise ? new _PromiseLayer(value3) : value3;
   }
-  static unwrap(value2) {
-    return value2 instanceof _PromiseLayer ? value2.promise : value2;
+  static unwrap(value3) {
+    return value3 instanceof _PromiseLayer ? value3.promise : value3;
   }
 };
-function resolve(value2) {
-  return Promise.resolve(PromiseLayer.wrap(value2));
+function resolve(value3) {
+  return Promise.resolve(PromiseLayer.wrap(value3));
 }
 function then_await(promise, fn) {
-  return promise.then((value2) => fn(PromiseLayer.unwrap(value2)));
+  return promise.then((value3) => fn(PromiseLayer.unwrap(value3)));
 }
 function map_promise(promise, fn) {
   return promise.then(
-    (value2) => PromiseLayer.wrap(fn(PromiseLayer.unwrap(value2)))
+    (value3) => PromiseLayer.wrap(fn(PromiseLayer.unwrap(value3)))
   );
 }
 function rescue(promise, fn) {
   return promise.catch((error2) => fn(error2));
+}
+
+// build/dev/javascript/plinth/document_ffi.mjs
+function getElementById(id2) {
+  let found = document.getElementById(id2);
+  if (!found) {
+    return new Error();
+  }
+  return new Ok(found);
 }
 
 // build/dev/javascript/gleam_javascript/gleam/javascript/promise.mjs
@@ -3672,33 +3717,11 @@ function try_await(promise, callback) {
   );
 }
 
-// build/dev/javascript/plinth/audio_ffi.mjs
-function newAudio(url) {
-  return new Audio(url);
-}
-async function play(audio) {
-  try {
-    await audio.play();
-    return new Ok();
-  } catch (error2) {
-    return new Error(error2.toString());
-  }
-}
-
-// build/dev/javascript/plinth/document_ffi.mjs
-function getElementById(id2) {
-  let found = document.getElementById(id2);
-  if (!found) {
-    return new Error();
-  }
-  return new Ok(found);
-}
-
 // build/dev/javascript/plinth/element_ffi.mjs
-function value(element3) {
-  let value2 = element3.value;
-  if (value2 != void 0) {
-    return new Ok(value2);
+function value2(element3) {
+  let value3 = element3.value;
+  if (value3 != void 0) {
+    return new Ok(value3);
   }
   return new Error();
 }
@@ -3824,11 +3847,11 @@ async function import_(string4) {
 }
 
 // build/dev/javascript/plinth/console_ffi.mjs
-function warn(value2) {
-  console.warn(value2);
+function warn(value3) {
+  console.warn(value3);
 }
-function error(value2) {
-  console.error(value2);
+function error(value3) {
+  console.error(value3);
 }
 
 // build/dev/javascript/lustre/lustre/element/html.mjs
@@ -3955,8 +3978,8 @@ function to_uri(request) {
     new None()
   );
 }
-function set_header(request, key2, value2) {
-  let headers = key_set(request.headers, lowercase2(key2), value2);
+function set_header(request, key2, value3) {
+  let headers = key_set(request.headers, lowercase2(key2), value3);
   return request.withFields({ headers });
 }
 function set_body(req, body2) {
@@ -4300,8 +4323,8 @@ function playlist_encoder(playlist) {
     ])
   );
 }
-function playlist_decoder(value2) {
-  let _pipe = value2;
+function playlist_decoder(value3) {
+  let _pipe = value3;
   return decode3(
     (var0, var1, var2) => {
       return new Playlist(var0, var1, var2);
@@ -4314,8 +4337,8 @@ function playlist_decoder(value2) {
 function upsert_playlist_encoder(upsert2) {
   return object2(toList([["name", string3(upsert2.name)]]));
 }
-function upsert_playlist_decoder(value2) {
-  let _pipe = value2;
+function upsert_playlist_decoder(value3) {
+  let _pipe = value3;
   return decode1(
     (var0) => {
       return new UpsertPlaylist(var0);
@@ -4324,78 +4347,30 @@ function upsert_playlist_decoder(value2) {
   )(_pipe);
 }
 
-// build/dev/javascript/client/client/types/route.mjs
-var Home = class extends CustomType {
+// build/dev/javascript/client/client/events/playlist_events.mjs
+var CreatePlaylist = class extends CustomType {
+  constructor(name) {
+    super();
+    this.name = name;
+  }
 };
-var Login = class extends CustomType {
+var UpdatePlaylist = class extends CustomType {
+  constructor(id2, name) {
+    super();
+    this.id = id2;
+    this.name = name;
+  }
 };
-var Playlist2 = class extends CustomType {
+var DeletePlaylist = class extends CustomType {
   constructor(id2) {
     super();
     this.id = id2;
-  }
-};
-var Search = class extends CustomType {
-  constructor(searching, results) {
-    super();
-    this.searching = searching;
-    this.results = results;
-  }
-};
-
-// build/dev/javascript/client/client/types/msg.mjs
-var SearchSongs = class extends CustomType {
-  constructor(search4) {
-    super();
-    this.search = search4;
-  }
-};
-var ServerSentSongs = class extends CustomType {
-  constructor(results) {
-    super();
-    this.results = results;
-  }
-};
-var ServerError = class extends CustomType {
-  constructor(error2) {
-    super();
-    this.error = error2;
-  }
-};
-var ClientError = class extends CustomType {
-  constructor(message) {
-    super();
-    this.message = message;
-  }
-};
-var PlayPreview = class extends CustomType {
-  constructor(preview_url) {
-    super();
-    this.preview_url = preview_url;
   }
 };
 var ServerSentPlaylists = class extends CustomType {
   constructor(playlists) {
     super();
     this.playlists = playlists;
-  }
-};
-var OpenDialog = class extends CustomType {
-  constructor(id2) {
-    super();
-    this.id = id2;
-  }
-};
-var CloseDialog = class extends CustomType {
-  constructor(id2) {
-    super();
-    this.id = id2;
-  }
-};
-var CreatePlaylist = class extends CustomType {
-  constructor(name) {
-    super();
-    this.name = name;
   }
 };
 var ServerSentPlaylist = class extends CustomType {
@@ -4417,6 +4392,83 @@ var ServerUpdatedPlaylist = class extends CustomType {
   }
 };
 var ServerDeletedPlaylist = class extends CustomType {
+  constructor(id2) {
+    super();
+    this.id = id2;
+  }
+};
+
+// build/dev/javascript/client/client/events/song_events.mjs
+var SearchSongs = class extends CustomType {
+  constructor(search4) {
+    super();
+    this.search = search4;
+  }
+};
+var ServerSentSongs = class extends CustomType {
+  constructor(results) {
+    super();
+    this.results = results;
+  }
+};
+var PlayPreview = class extends CustomType {
+  constructor(preview_url) {
+    super();
+    this.preview_url = preview_url;
+  }
+};
+
+// build/dev/javascript/client/client/types/route.mjs
+var Home = class extends CustomType {
+};
+var Login = class extends CustomType {
+};
+var Playlist2 = class extends CustomType {
+  constructor(id2) {
+    super();
+    this.id = id2;
+  }
+};
+var Search = class extends CustomType {
+  constructor(searching, results) {
+    super();
+    this.searching = searching;
+    this.results = results;
+  }
+};
+
+// build/dev/javascript/client/client/types/msg.mjs
+var SongEvent = class extends CustomType {
+  constructor(ev) {
+    super();
+    this.ev = ev;
+  }
+};
+var PlaylistEvent = class extends CustomType {
+  constructor(ev) {
+    super();
+    this.ev = ev;
+  }
+};
+var ServerError = class extends CustomType {
+  constructor(error2) {
+    super();
+    this.error = error2;
+  }
+};
+var ClientError = class extends CustomType {
+  constructor(message) {
+    super();
+    this.message = message;
+  }
+};
+var OpenDialog = class extends CustomType {
+  constructor(id2) {
+    super();
+    this.id = id2;
+  }
+};
+var CloseDialog = class extends CustomType {
   constructor(id2) {
     super();
     this.id = id2;
@@ -4513,6 +4565,11 @@ function view() {
 function on2(name, handler) {
   return on(name, handler);
 }
+function on_click(msg) {
+  return on2("click", (_) => {
+    return new Ok(msg);
+  });
+}
 
 // build/dev/javascript/client/client/components/playlists/create_playlist.mjs
 function on_create(_) {
@@ -4523,15 +4580,17 @@ function on_create(_) {
     );
   } else {
     let el2 = element3[0];
-    let value2 = (() => {
+    let value3 = (() => {
       let _pipe = el2;
-      return value(_pipe);
+      return value2(_pipe);
     })();
-    if (!value2.isOk()) {
+    if (!value3.isOk()) {
       return new Ok(new ClientError("Couldn't get value of element"));
     } else {
-      let name = value2[0];
-      return new Ok(new CreatePlaylist(name));
+      let name = value3[0];
+      return new Ok(
+        new PlaylistEvent(new CreatePlaylist(name))
+      );
     }
   }
 }
@@ -4648,22 +4707,120 @@ function view3(playlists) {
   ]);
 }
 
+// build/dev/javascript/client/client/components/playlists/update_playlist.mjs
+function on_update(_, id2) {
+  let element3 = getElementById("update-playlist-name");
+  if (!element3.isOk()) {
+    return new Ok(
+      new ClientError("Couldn't find element with id update-playlist-name")
+    );
+  } else {
+    let el2 = element3[0];
+    let value3 = (() => {
+      let _pipe = el2;
+      return value2(_pipe);
+    })();
+    if (!value3.isOk()) {
+      return new Ok(new ClientError("Couldn't get value of element"));
+    } else {
+      let name = value3[0];
+      return new Ok(
+        new PlaylistEvent(new UpdatePlaylist(id2, name))
+      );
+    }
+  }
+}
+function view4(p) {
+  return dialog(
+    toList([
+      id("update-playlist"),
+      class$(
+        "p-4 rounded-lg backdrop:bg-zinc-900 backdrop:opacity-80"
+      )
+    ]),
+    toList([
+      h1(
+        toList([class$("text-2xl font-bold mb-4")]),
+        toList([text2("Update a playlist " + p.name)])
+      ),
+      div(
+        toList([class$("flex flex-col gap-4")]),
+        toList([
+          label(
+            toList([class$("flex gap-2 items-center")]),
+            toList([
+              span(toList([]), toList([text2("Playlist name")])),
+              input(
+                toList([
+                  id("update-playlist-name"),
+                  placeholder("Playlist name..."),
+                  class$(
+                    "p-2 rounded-md bg-zinc-100 focus:bg-zinc-200"
+                  ),
+                  value(p.name)
+                ])
+              )
+            ])
+          ),
+          div(
+            toList([class$("flex justify-end")]),
+            toList([
+              button(
+                toList([
+                  class$("p-2 bg-zinc-100"),
+                  on2(
+                    "click",
+                    (_) => {
+                      return new Ok(
+                        new OnRouteChange(new Playlist2(p.id))
+                      );
+                    }
+                  )
+                ]),
+                toList([text2("Close")])
+              ),
+              button(
+                toList([
+                  class$("p-2 bg-green-500 text-zinc-100"),
+                  on2(
+                    "click",
+                    (_capture) => {
+                      return on_update(_capture, p.id);
+                    }
+                  )
+                ]),
+                toList([text2("Save")])
+              )
+            ])
+          )
+        ])
+      )
+    ])
+  );
+}
+
 // build/dev/javascript/client/client/components/playlists/playlist_page.mjs
-function edit_button(p) {
+function edit_button() {
   return button(
     toList([
-      class$("py-2 px-4 bg-cyan-600 hover:bg-cyan-500/50 rounded-md")
+      class$("py-2 px-4 bg-cyan-600 hover:bg-cyan-500/50 rounded-md"),
+      on_click(new OpenDialog("update-playlist"))
     ]),
     toList([text2("Edit")])
   );
 }
 function delete_button(p) {
   return button(
-    toList([class$("py-2 px-4 bg-red-600 hover:bg-red-500/50 rounded-md")]),
+    toList([
+      class$("py-2 px-4 bg-red-600 hover:bg-red-500/50 rounded-md"),
+      on_click(
+        new PlaylistEvent(new DeletePlaylist(p.id))
+      )
+    ]),
     toList([text2("Delete")])
   );
 }
-function view4(p) {
+function view5(p) {
   return toList([
     h3(
       toList([class$("text-lg mb-4 text-center")]),
@@ -4671,8 +4828,9 @@ function view4(p) {
     ),
     div(
       toList([class$("flex gap-4")]),
-      toList([edit_button(p), delete_button(p)])
-    )
+      toList([edit_button(), delete_button(p)])
+    ),
+    view4(p)
   ]);
 }
 
@@ -4770,15 +4928,18 @@ function spinner() {
 }
 
 // build/dev/javascript/client/client/components/search.mjs
-function on_click(ev) {
+function on_click2(ev) {
   let _pipe = ev;
   let _pipe$1 = at(
     toList(["target", "previousElementSibling", "value"]),
     string2
   )(_pipe);
-  return map3(_pipe$1, (var0) => {
-    return new SearchSongs(var0);
-  });
+  return map3(
+    _pipe$1,
+    (s) => {
+      return new SongEvent(new SearchSongs(s));
+    }
+  );
 }
 function album_cover(song) {
   let $ = song.preview_url;
@@ -4794,7 +4955,9 @@ function album_cover(song) {
             on2(
               "click",
               (_) => {
-                return new Ok(new PlayPreview(url));
+                return new Ok(
+                  new SongEvent(new PlayPreview(url))
+                );
               }
             )
           ])
@@ -4900,7 +5063,7 @@ function search(searching, results) {
         button(
           toList([
             class$("bg-zinc-700 hover:bg-zinc-600 py-2 px-4"),
-            on2("click", on_click)
+            on2("click", on_click2)
           ]),
           toList([text2("Search")])
         )
@@ -4968,8 +5131,8 @@ function json_body(encoder, decoder) {
   return new RouteBody(
     new JsonBody(),
     new BodyConverter(
-      (value2) => {
-        let _pipe = value2;
+      (value3) => {
+        let _pipe = value3;
         let _pipe$1 = encoder(_pipe);
         return to_string_builder(_pipe$1);
       },
@@ -4985,12 +5148,12 @@ function json_body(encoder, decoder) {
     )
   );
 }
-function encode(body2, value2) {
-  let _pipe = value2;
+function encode(body2, value3) {
+  let _pipe = value3;
   return body2.converter.encoder(_pipe);
 }
-function decode8(body2, value2) {
-  let _pipe = value2;
+function decode8(body2, value3) {
+  let _pipe = value3;
   return body2.converter.decoder(_pipe);
 }
 function get_type(body2) {
@@ -4999,6 +5162,8 @@ function get_type(body2) {
 
 // build/dev/javascript/glitr/glitr/path.mjs
 var StaticPath = class extends CustomType {
+};
+var ComplexPath = class extends CustomType {
 };
 var PathConverter = class extends CustomType {
   constructor(encoder, decoder) {
@@ -5033,8 +5198,29 @@ function static_path(root) {
     )
   );
 }
-function encode2(path, value2) {
-  let _pipe = value2;
+function id_path(root) {
+  return new RoutePath(
+    new ComplexPath(),
+    new PathConverter(
+      (id2) => {
+        return append(root, toList([id2]));
+      },
+      (segs) => {
+        let reverse_root = reverse(root);
+        let $ = reverse(segs);
+        if ($.atLeastLength(1) && isEqual($.tail, reverse_root)) {
+          let id2 = $.head;
+          let rest2 = $.tail;
+          return new Ok(id2);
+        } else {
+          return new Error(void 0);
+        }
+      }
+    )
+  );
+}
+function encode2(path, value3) {
+  let _pipe = value3;
   return path.converter.encoder(_pipe);
 }
 function get_type2(path) {
@@ -5076,8 +5262,8 @@ function empty_query() {
 function complex_query(converter) {
   return new RouteQuery(new ComplexQuery(), converter);
 }
-function encode3(query, value2) {
-  let _pipe = value2;
+function encode3(query, value3) {
+  let _pipe = value3;
   return query.converter.encoder(_pipe);
 }
 function get_type3(query) {
@@ -5342,9 +5528,9 @@ function send3(rreq, as_msg, on_error) {
                     let _pipe$1 = body2;
                     let _pipe$2 = then$(
                       _pipe$1,
-                      (value2) => {
+                      (value3) => {
                         let _pipe$22 = rreq.route.res_body;
-                        let _pipe$3 = decode8(_pipe$22, value2);
+                        let _pipe$3 = decode8(_pipe$22, value3);
                         return map_error(_pipe$3, glitr_to_http_error);
                       }
                     );
@@ -5453,6 +5639,48 @@ function get_all_route(service) {
     return new Ok(_pipe$3);
   }
 }
+function update_route(service) {
+  let $ = service.upsert;
+  let $1 = service.base;
+  if ($ instanceof None) {
+    return new Error(
+      new RouteError(
+        "No upsert body type provided, make sure you called with_upsert_type"
+      )
+    );
+  } else if ($1 instanceof None) {
+    return new Error(
+      new RouteError(
+        "No base body type provided, make sure you called with_base_type"
+      )
+    );
+  } else {
+    let upsert2 = $[0];
+    let base = $1[0];
+    let _pipe = new$6();
+    let _pipe$1 = with_method(_pipe, new Post());
+    let _pipe$2 = with_path(_pipe$1, id_path(service.root_path));
+    let _pipe$3 = with_request_body(
+      _pipe$2,
+      json_body(upsert2[0], upsert2[1])
+    );
+    let _pipe$4 = with_response_body(
+      _pipe$3,
+      json_body(base[0], base[1])
+    );
+    return new Ok(_pipe$4);
+  }
+}
+function delete_route(service) {
+  let _pipe = new$6();
+  let _pipe$1 = with_method(_pipe, new Delete());
+  let _pipe$2 = with_path(_pipe$1, id_path(service.root_path));
+  let _pipe$3 = with_response_body(
+    _pipe$2,
+    json_body(string3, string2)
+  );
+  return new Ok(_pipe$3);
+}
 
 // build/dev/javascript/shared/shared/routes/playlist_routes.mjs
 function playlist_service() {
@@ -5476,6 +5704,14 @@ function get_all() {
 function create2() {
   let _pipe = playlist_service();
   return create_route(_pipe);
+}
+function update() {
+  let _pipe = playlist_service();
+  return update_route(_pipe);
+}
+function delete$2() {
+  let _pipe = playlist_service();
+  return delete_route(_pipe);
 }
 
 // build/dev/javascript/client/client/services/factory.mjs
@@ -5543,8 +5779,10 @@ function get_all2() {
       let _pipe$2 = with_path2(_pipe$1, void 0);
       return send_and_handle_errors(
         _pipe$2,
-        (var0) => {
-          return new ServerSentPlaylists(var0);
+        (d) => {
+          return new PlaylistEvent(
+            new ServerSentPlaylists(d)
+          );
         }
       );
     }
@@ -5563,12 +5801,163 @@ function create3(name) {
       );
       return send_and_handle_errors(
         _pipe$3,
-        (var0) => {
-          return new ServerCreatedPlaylist(var0);
+        (d) => {
+          return new PlaylistEvent(
+            new ServerCreatedPlaylist(d)
+          );
         }
       );
     }
   );
+}
+function update2(id2, name) {
+  return unwrap_service_route(
+    update(),
+    (route) => {
+      let _pipe = factory();
+      let _pipe$1 = for_route(_pipe, route);
+      let _pipe$2 = with_path2(_pipe$1, id2);
+      let _pipe$3 = with_body(
+        _pipe$2,
+        new UpsertPlaylist(name)
+      );
+      return send_and_handle_errors(
+        _pipe$3,
+        (d) => {
+          return new PlaylistEvent(
+            new ServerUpdatedPlaylist(d)
+          );
+        }
+      );
+    }
+  );
+}
+function delete$3(id2) {
+  return unwrap_service_route(
+    delete$2(),
+    (route) => {
+      let _pipe = factory();
+      let _pipe$1 = for_route(_pipe, route);
+      let _pipe$2 = with_path2(_pipe$1, id2);
+      return send_and_handle_errors(
+        _pipe$2,
+        (d) => {
+          return new PlaylistEvent(
+            new ServerDeletedPlaylist(d)
+          );
+        }
+      );
+    }
+  );
+}
+
+// build/dev/javascript/client/client/types/model.mjs
+var Model2 = class extends CustomType {
+  constructor(route, token, playlists) {
+    super();
+    this.route = route;
+    this.token = token;
+    this.playlists = playlists;
+  }
+};
+
+// build/dev/javascript/client/client/events/playlist_event_handler.mjs
+function on_playlist_event(model, event2) {
+  if (event2 instanceof CreatePlaylist) {
+    let name = event2.name;
+    return [model, create3(name)];
+  } else if (event2 instanceof UpdatePlaylist) {
+    let id2 = event2.id;
+    let name = event2.name;
+    return [model, update2(id2, name)];
+  } else if (event2 instanceof DeletePlaylist) {
+    let id2 = event2.id;
+    return [model, delete$3(id2)];
+  } else if (event2 instanceof ServerSentPlaylists) {
+    let playlists = event2.playlists;
+    return [
+      model.withFields({
+        playlists: from_list(
+          (() => {
+            let _pipe = playlists;
+            return map2(_pipe, (p) => {
+              return [p.id, p];
+            });
+          })()
+        )
+      }),
+      none()
+    ];
+  } else if (event2 instanceof ServerCreatedPlaylist) {
+    let p = event2.playlist;
+    return [
+      model.withFields({
+        playlists: (() => {
+          let _pipe = model.playlists;
+          return insert(_pipe, p.id, p);
+        })()
+      }),
+      from(
+        (dispatch) => {
+          return dispatch(new CloseDialog("create-playlist"));
+        }
+      )
+    ];
+  } else if (event2 instanceof ServerUpdatedPlaylist) {
+    let p = event2.playlist;
+    return [
+      model.withFields({
+        playlists: (() => {
+          let _pipe = model.playlists;
+          return insert(_pipe, p.id, p);
+        })()
+      }),
+      (() => {
+        let _pipe = parse2(location());
+        let _pipe$1 = map3(_pipe, load);
+        return unwrap2(_pipe$1, none());
+      })()
+    ];
+  } else if (event2 instanceof ServerSentPlaylist) {
+    let p = event2.playlist;
+    return [
+      model.withFields({
+        playlists: (() => {
+          let _pipe = model.playlists;
+          return insert(_pipe, p.id, p);
+        })()
+      }),
+      (() => {
+        let _pipe = parse2(location());
+        let _pipe$1 = map3(_pipe, load);
+        return unwrap2(_pipe$1, none());
+      })()
+    ];
+  } else {
+    let id2 = event2.id;
+    return [
+      model.withFields({
+        playlists: (() => {
+          let _pipe = model.playlists;
+          return drop2(_pipe, toList([id2]));
+        })()
+      }),
+      push("/", new None(), new None())
+    ];
+  }
+}
+
+// build/dev/javascript/plinth/audio_ffi.mjs
+function newAudio(url) {
+  return new Audio(url);
+}
+async function play(audio) {
+  try {
+    await audio.play();
+    return new Ok();
+  } catch (error2) {
+    return new Error(error2.toString());
+  }
 }
 
 // build/dev/javascript/shared/shared/routes/song_routes.mjs
@@ -5582,12 +5971,12 @@ var SearchQuery = class extends CustomType {
 function search_encoder(query) {
   return toList([["q", query.search], ["token", query.token]]);
 }
-function search_decoder(value2) {
+function search_decoder(value3) {
   return try$(
-    key_find(value2, "q"),
+    key_find(value3, "q"),
     (search4) => {
       return try$(
-        key_find(value2, "token"),
+        key_find(value3, "token"),
         (token) => {
           return new Ok(new SearchQuery(search4, token));
         }
@@ -5633,7 +6022,7 @@ function search3(q, token) {
     (res) => {
       if (res.isOk()) {
         let songs = res[0];
-        return new ServerSentSongs(songs);
+        return new SongEvent(new ServerSentSongs(songs));
       } else {
         let err = res[0];
         return new ServerError(err);
@@ -5649,15 +6038,34 @@ function search3(q, token) {
   );
 }
 
-// build/dev/javascript/client/client/types/model.mjs
-var Model2 = class extends CustomType {
-  constructor(route, token, playlists) {
-    super();
-    this.route = route;
-    this.token = token;
-    this.playlists = playlists;
+// build/dev/javascript/client/client/events/song_event_handler.mjs
+function on_song_event(model, event2) {
+  if (event2 instanceof SearchSongs) {
+    let q = event2.search;
+    return [
+      model.withFields({ route: new Search(true, toList([])) }),
+      search3(q, model.token)
+    ];
+  } else if (event2 instanceof ServerSentSongs) {
+    let songs = event2.results;
+    return [
+      model.withFields({ route: new Search(false, songs) }),
+      none()
+    ];
+  } else {
+    let url = event2.preview_url;
+    return [
+      model,
+      from(
+        (_) => {
+          let _pipe = newAudio(url);
+          play(_pipe);
+          return void 0;
+        }
+      )
+    ];
   }
-};
+}
 
 // build/dev/javascript/client/router.mjs
 function map_route(uri) {
@@ -5730,46 +6138,13 @@ function init3(_) {
     )
   ];
 }
-function update2(model, msg) {
-  if (msg instanceof SearchSongs) {
-    let q = msg.search;
-    return [
-      model.withFields({ route: new Search(true, toList([])) }),
-      search3(q, model.token)
-    ];
-  } else if (msg instanceof ServerSentSongs) {
-    let songs = msg.results;
-    return [
-      model.withFields({ route: new Search(false, songs) }),
-      none()
-    ];
-  } else if (msg instanceof ServerSentPlaylists) {
-    let playlists = msg.playlists;
-    return [
-      model.withFields({
-        playlists: from_list(
-          (() => {
-            let _pipe = playlists;
-            return map2(_pipe, (p) => {
-              return [p.id, p];
-            });
-          })()
-        )
-      }),
-      none()
-    ];
-  } else if (msg instanceof PlayPreview) {
-    let url = msg.preview_url;
-    return [
-      model,
-      from(
-        (_) => {
-          let _pipe = newAudio(url);
-          play(_pipe);
-          return void 0;
-        }
-      )
-    ];
+function update3(model, msg) {
+  if (msg instanceof SongEvent) {
+    let ev = msg.ev;
+    return on_song_event(model, ev);
+  } else if (msg instanceof PlaylistEvent) {
+    let ev = msg.ev;
+    return on_playlist_event(model, ev);
   } else if (msg instanceof OpenDialog) {
     let id2 = msg.id;
     return [
@@ -5781,57 +6156,6 @@ function update2(model, msg) {
           return unwrap2(_pipe$1, void 0);
         }
       )
-    ];
-  } else if (msg instanceof CreatePlaylist) {
-    let name = msg.name;
-    return [model, create3(name)];
-  } else if (msg instanceof ServerCreatedPlaylist) {
-    let p = msg.playlist;
-    return [
-      model.withFields({
-        playlists: (() => {
-          let _pipe = model.playlists;
-          return insert(_pipe, p.id, p);
-        })()
-      }),
-      from(
-        (dispatch) => {
-          return dispatch(new CloseDialog("create-playlist"));
-        }
-      )
-    ];
-  } else if (msg instanceof ServerUpdatedPlaylist) {
-    let p = msg.playlist;
-    return [
-      model.withFields({
-        playlists: (() => {
-          let _pipe = model.playlists;
-          return insert(_pipe, p.id, p);
-        })()
-      }),
-      none()
-    ];
-  } else if (msg instanceof ServerSentPlaylist) {
-    let p = msg.playlist;
-    return [
-      model.withFields({
-        playlists: (() => {
-          let _pipe = model.playlists;
-          return insert(_pipe, p.id, p);
-        })()
-      }),
-      none()
-    ];
-  } else if (msg instanceof ServerDeletedPlaylist) {
-    let id2 = msg.id;
-    return [
-      model.withFields({
-        playlists: (() => {
-          let _pipe = model.playlists;
-          return drop2(_pipe, toList([id2]));
-        })()
-      }),
-      none()
     ];
   } else if (msg instanceof CloseDialog) {
     let id2 = msg.id;
@@ -5874,7 +6198,7 @@ function update2(model, msg) {
     return [model.withFields({ route }), none()];
   }
 }
-function view5(model) {
+function view6(model) {
   let children2 = (() => {
     let $ = model.token;
     let $1 = model.route;
@@ -5890,7 +6214,7 @@ function view5(model) {
       let id2 = $1.id;
       let _pipe = model.playlists;
       let _pipe$1 = get(_pipe, id2);
-      let _pipe$2 = map3(_pipe$1, view4);
+      let _pipe$2 = map3(_pipe$1, view5);
       return unwrap2(_pipe$2, view());
     } else {
       return view();
@@ -5905,7 +6229,7 @@ function view5(model) {
   return layout(children2, left_children);
 }
 function main() {
-  let app = application(init3, update2, view5);
+  let app = application(init3, update3, view6);
   let $ = start2(app, "#app", void 0);
   if (!$.isOk()) {
     throw makeError(

@@ -4,7 +4,12 @@ import client/types/model
 import client/types/msg
 import gleam/dict
 import gleam/list
+import gleam/option
+import gleam/result
+import gleam/uri
 import lustre/effect
+import modem
+import plinth/browser/window
 
 pub fn on_playlist_event(
   model: model.Model,
@@ -34,11 +39,13 @@ pub fn on_playlist_event(
     playlist_events.ServerUpdatedPlaylist(p)
     | playlist_events.ServerSentPlaylist(p) -> #(
       model.Model(..model, playlists: model.playlists |> dict.insert(p.id, p)),
-      effect.none(),
+      uri.parse(window.location())
+        |> result.map(modem.load)
+        |> result.unwrap(effect.none()),
     )
     playlist_events.ServerDeletedPlaylist(id) -> #(
       model.Model(..model, playlists: model.playlists |> dict.drop([id])),
-      effect.none(),
+      modem.push("/", option.None, option.None),
     )
   }
 }
