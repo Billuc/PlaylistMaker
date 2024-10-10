@@ -1,9 +1,9 @@
-import gleam/dynamic
 import gleam/http
-import gleam/json
 import gleam/list
 import gleam/result
 import glitr/body
+import glitr/convert
+import glitr/convert/json as glitr_json
 import glitr/path
 import glitr/query
 import glitr/route
@@ -17,8 +17,8 @@ pub fn search() -> route.Route(Nil, SearchQuery, Nil, List(song.Song)) {
     query.complex_query(query.QueryConverter(search_encoder, search_decoder)),
   )
   |> route.with_response_body(body.json_body(
-    json.array(_, song.song_encoder),
-    dynamic.list(song.song_decoder),
+    glitr_json.json_encode(_, convert.list(song.song_converter())),
+    glitr_json.json_decode(convert.list(song.song_converter())),
   ))
 }
 

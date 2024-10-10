@@ -1,30 +1,27 @@
 import gleam/dynamic
-import gleam/io
-import gleam/json
+import glitr/convert
 import shared/types/song
 
 pub type Playlist {
   Playlist(id: String, name: String, songs: List(song.Song))
 }
 
-pub fn playlist_encoder(playlist: Playlist) -> json.Json {
-  json.object([
-    #("id", json.string(playlist.id)),
-    #("name", json.string(playlist.name)),
-    #("songs", json.array(playlist.songs, song.song_encoder)),
-  ])
-}
-
-pub fn playlist_decoder(
-  value: dynamic.Dynamic,
-) -> Result(Playlist, List(dynamic.DecodeError)) {
-  value
-  |> dynamic.decode3(
-    Playlist,
-    dynamic.field("id", dynamic.string),
-    dynamic.field("name", dynamic.string),
-    dynamic.field("songs", dynamic.list(song.song_decoder)),
+pub fn playlist_converter() -> convert.Converter(Playlist) {
+  convert.object({
+    use id <- convert.parameter
+    use name <- convert.parameter
+    use songs <- convert.parameter
+    use <- convert.constructor
+    Playlist(id:, name:, songs:)
+  })
+  |> convert.field("id", fn(v) { Ok(v.id) }, convert.string())
+  |> convert.field("name", fn(v) { Ok(v.name) }, convert.string())
+  |> convert.field(
+    "songs",
+    fn(v) { Ok(v.songs) },
+    convert.list(song.song_converter()),
   )
+  |> convert.to_converter
 }
 
 pub fn db_decoder(
@@ -43,13 +40,12 @@ pub type UpsertPlaylist {
   UpsertPlaylist(name: String)
 }
 
-pub fn upsert_playlist_encoder(upsert: UpsertPlaylist) -> json.Json {
-  json.object([#("name", json.string(upsert.name))])
-}
-
-pub fn upsert_playlist_decoder(
-  value: dynamic.Dynamic,
-) -> Result(UpsertPlaylist, List(dynamic.DecodeError)) {
-  value
-  |> dynamic.decode1(UpsertPlaylist, dynamic.field("name", dynamic.string))
+pub fn upsert_playlist_converter() -> convert.Converter(UpsertPlaylist) {
+  convert.object({
+    use name <- convert.parameter
+    use <- convert.constructor
+    UpsertPlaylist(name:)
+  })
+  |> convert.field("name", fn(v) { Ok(v.name) }, convert.string())
+  |> convert.to_converter
 }

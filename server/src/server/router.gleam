@@ -7,6 +7,7 @@ import server/services/song_service
 import server/web
 import shared/routes/authentication_routes
 import shared/routes/playlist_routes
+import shared/routes/playlist_song_routes
 import shared/routes/song_routes
 import wisp.{type Request, type Response}
 
@@ -62,6 +63,14 @@ fn try_playlist_routes(
     playlist_routes.delete(),
     playlist_service.delete(ctx, _),
   )
+}
+
+fn try_playlist_song_routes(
+  router: Result(glitr_wisp.Router, wisp.Response),
+  ctx: web.Context,
+) -> Result(glitr_wisp.Router, wisp.Response) {
+  todo
+  // router |> glitr_wisp.try(playlist_song_routes.get(), )
 }
 
 fn try_non_api_routes(

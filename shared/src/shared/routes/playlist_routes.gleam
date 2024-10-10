@@ -1,4 +1,3 @@
-import glitr/error
 import glitr/route
 import glitr/service
 import shared/types/playlist
@@ -9,47 +8,36 @@ pub fn playlist_service() -> service.RouteService(
 ) {
   service.new()
   |> service.with_root_path(["api", "playlists"])
-  |> service.with_base_type(
-    playlist.playlist_encoder,
-    playlist.playlist_decoder,
-  )
-  |> service.with_upsert_type(
-    playlist.upsert_playlist_encoder,
-    playlist.upsert_playlist_decoder,
-  )
+  |> service.with_base_converter(playlist.playlist_converter())
+  |> service.with_upsert_converter(playlist.upsert_playlist_converter())
 }
 
-pub fn get() -> Result(
-  route.Route(String, Nil, Nil, playlist.Playlist),
-  error.GlitrError,
-) {
+pub fn get() -> route.Route(String, Nil, Nil, playlist.Playlist) {
   playlist_service() |> service.get_route()
 }
 
-pub fn get_all() -> Result(
-  route.Route(Nil, Nil, Nil, List(playlist.Playlist)),
-  error.GlitrError,
-) {
+pub fn get_all() -> route.Route(Nil, Nil, Nil, List(playlist.Playlist)) {
   playlist_service() |> service.get_all_route()
 }
 
-pub fn create() -> Result(
-  route.Route(Nil, Nil, playlist.UpsertPlaylist, playlist.Playlist),
-  error.GlitrError,
+pub fn create() -> route.Route(
+  Nil,
+  Nil,
+  playlist.UpsertPlaylist,
+  playlist.Playlist,
 ) {
   playlist_service() |> service.create_route()
 }
 
-pub fn update() -> Result(
-  route.Route(String, Nil, playlist.UpsertPlaylist, playlist.Playlist),
-  error.GlitrError,
+pub fn update() -> route.Route(
+  String,
+  Nil,
+  playlist.UpsertPlaylist,
+  playlist.Playlist,
 ) {
   playlist_service() |> service.update_route()
 }
 
-pub fn delete() -> Result(
-  route.Route(String, Nil, Nil, String),
-  error.GlitrError,
-) {
+pub fn delete() -> route.Route(String, Nil, Nil, String) {
   playlist_service() |> service.delete_route()
 }

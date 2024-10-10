@@ -34,6 +34,7 @@ pub fn get_db(infos: DbInfos, f: fn(pgo.Connection) -> b) -> b {
   let db = pgo.connect(config)
 
   let assert Ok(_) = create_playlists_table(db)
+  let assert Ok(_) = create_playlist_songs_table(db)
 
   f(db)
 }
@@ -43,6 +44,30 @@ fn create_playlists_table(db: pgo.Connection) {
     "CREATE TABLE IF NOT EXISTS playlists(
   id VARCHAR(36) PRIMARY KEY,
   name VARCHAR(50) NOT NULL
+  )"
+
+  pgo.execute(sql, db, with: [], expecting: fn(res) {
+    res
+    |> dynamic.string()
+    |> result.then(fn(s) {
+      case s == "CREATE TABLE" {
+        True -> Ok(s)
+        False -> Error([dynamic.DecodeError("CREATE TABLE", s, [])])
+      }
+    })
+  })
+}
+
+fn create_playlist_songs_table(db: pgo.Connection) {
+  let sql =
+    "CREATE TABLE IF NOT EXISTS playlist_songs(
+  id VARCHAR(36) PRIMARY KEY,
+  playlist_id VARCHAR(36) PRIMARY KEY,
+  song_id VARCHAR(36) PRIMARY KEY,
+  title VARCHAR(50) NOT NULL,
+  artists VARCHAR(100) NOT NULL,
+  album VARCHAR(50) NOT NULL,
+  album_cover VARCHAR(100)
   )"
 
   pgo.execute(sql, db, with: [], expecting: fn(res) {
