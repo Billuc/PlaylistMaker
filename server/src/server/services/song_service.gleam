@@ -5,7 +5,7 @@ import gleam/json
 import gleam/list
 import gleam/result
 import glitr
-import glitr_wisp/errors
+import glitr/wisp/errors
 import pprint
 import server/web
 import shared/routes/song_routes

@@ -12,7 +12,7 @@ import gleam/string
 import gleam/string_builder
 import gleam/uri
 import glitr
-import glitr_wisp/errors
+import glitr/wisp/errors
 import pprint
 import server/web
 import shared/routes/authentication_routes

@@ -104,3 +104,19 @@ pub fn upsert_converter() -> convert.Converter(UpsertPlaylistSong) {
   )
   |> convert.to_converter
 }
+
+pub fn playlist_song_from_upsert(
+  id: String,
+  upsert: UpsertPlaylistSong,
+) -> PlaylistSong {
+  PlaylistSong(
+    id,
+    upsert.playlist_id,
+    upsert.song_id,
+    upsert.title,
+    upsert.artists,
+    upsert.album,
+    upsert.album_cover,
+    upsert.source,
+  )
+}

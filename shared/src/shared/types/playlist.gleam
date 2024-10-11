@@ -1,4 +1,3 @@
-import gleam/dynamic
 import glitr/convert
 import shared/types/song
 
@@ -24,16 +23,20 @@ pub fn playlist_converter() -> convert.Converter(Playlist) {
   |> convert.to_converter
 }
 
-pub fn db_decoder(
-  value: dynamic.Dynamic,
-) -> Result(Playlist, List(dynamic.DecodeError)) {
-  value
-  |> dynamic.decode3(
-    Playlist,
-    dynamic.element(0, dynamic.string),
-    dynamic.element(1, dynamic.string),
-    fn(_) { Ok([]) },
-  )
+pub type PlaylistDTO {
+  PlaylistDTO(id: String, name: String)
+}
+
+pub fn playlist_dto_converter() -> convert.Converter(PlaylistDTO) {
+  convert.object({
+    use id <- convert.parameter
+    use name <- convert.parameter
+    use <- convert.constructor
+    PlaylistDTO(id:, name:)
+  })
+  |> convert.field("id", fn(v) { Ok(v.id) }, convert.string())
+  |> convert.field("name", fn(v) { Ok(v.name) }, convert.string())
+  |> convert.to_converter
 }
 
 pub type UpsertPlaylist {

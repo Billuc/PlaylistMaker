@@ -1,8 +1,9 @@
 import glitr/path
 import glitr/route
-import glitr_wisp
+import glitr/wisp as glitr_wisp
 import server/services/authentication_service
 import server/services/playlist_service
+import server/services/playlist_song_service
 import server/services/song_service
 import server/web
 import shared/routes/authentication_routes
@@ -34,6 +35,7 @@ pub fn handle_request(req: Request, ctx: web.Context) -> Response {
     authentication_service.callback_redirect(req, _),
   )
   |> try_playlist_routes(ctx)
+  |> try_playlist_song_routes(ctx)
   |> try_non_api_routes(index_response)
   |> glitr_wisp.unwrap
 }
@@ -43,34 +45,38 @@ fn try_playlist_routes(
   ctx: web.Context,
 ) -> Result(glitr_wisp.Router, wisp.Response) {
   router
-  |> glitr_wisp.try_service_route(
-    playlist_routes.get_all(),
-    playlist_service.get_all(ctx, _),
-  )
-  |> glitr_wisp.try_service_route(playlist_routes.get(), playlist_service.get(
-    ctx,
-    _,
-  ))
-  |> glitr_wisp.try_service_route(
-    playlist_routes.create(),
-    playlist_service.create(ctx, _),
-  )
-  |> glitr_wisp.try_service_route(
-    playlist_routes.update(),
-    playlist_service.update(ctx, _),
-  )
-  |> glitr_wisp.try_service_route(
-    playlist_routes.delete(),
-    playlist_service.delete(ctx, _),
-  )
+  |> glitr_wisp.try(playlist_routes.get_all(), playlist_service.get_all(ctx, _))
+  |> glitr_wisp.try(playlist_routes.get(), playlist_service.get(ctx, _))
+  |> glitr_wisp.try(playlist_routes.create(), playlist_service.create(ctx, _))
+  |> glitr_wisp.try(playlist_routes.update(), playlist_service.update(ctx, _))
+  |> glitr_wisp.try(playlist_routes.delete(), playlist_service.delete(ctx, _))
 }
 
 fn try_playlist_song_routes(
   router: Result(glitr_wisp.Router, wisp.Response),
   ctx: web.Context,
 ) -> Result(glitr_wisp.Router, wisp.Response) {
-  todo
-  // router |> glitr_wisp.try(playlist_song_routes.get(), )
+  router
+  |> glitr_wisp.try(
+    playlist_song_routes.get_all(),
+    playlist_song_service.get_all(ctx, _),
+  )
+  |> glitr_wisp.try(playlist_song_routes.get(), playlist_song_service.get(
+    ctx,
+    _,
+  ))
+  |> glitr_wisp.try(playlist_song_routes.create(), playlist_song_service.create(
+    ctx,
+    _,
+  ))
+  |> glitr_wisp.try(playlist_song_routes.update(), playlist_song_service.update(
+    ctx,
+    _,
+  ))
+  |> glitr_wisp.try(playlist_song_routes.delete(), playlist_song_service.delete(
+    ctx,
+    _,
+  ))
 }
 
 fn try_non_api_routes(

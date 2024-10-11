@@ -1,6 +1,6 @@
 import gleam/result
 import glitr
-import glitr_wisp/errors
+import glitr/wisp/errors
 import server/repositories/playlist_repository
 import server/web
 import shared/types/playlist

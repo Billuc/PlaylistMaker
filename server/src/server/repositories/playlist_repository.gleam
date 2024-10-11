@@ -5,7 +5,8 @@ import cake/update as u
 import cake/where as w
 import gleam/list
 import gleam/result
-import glitr_wisp/errors
+import glitr/convert/cake as cc
+import glitr/wisp/errors
 import gluid
 import server/utils/db_utils
 import server/web
@@ -17,10 +18,19 @@ pub fn get_all(
   ctx: web.Context,
 ) -> Result(List(playlist.Playlist), errors.AppError) {
   s.new()
-  |> s.all()
+  |> cc.cake_select_fields(playlist.playlist_converter())
   |> s.from_table(db_name)
   |> s.to_query()
-  |> db_utils.exec_read_query(ctx.db, playlist.db_decoder)
+  |> db_utils.exec_read_query(
+    ctx.db,
+    cc.cake_decode(playlist.playlist_dto_converter()),
+  )
+  |> result.map(fn(dtos) {
+    dtos
+    |> list.map(fn(dto) {
+      playlist.Playlist(id: dto.id, name: dto.name, songs: [])
+    })
+  })
 }
 
 pub fn get(
@@ -28,14 +38,20 @@ pub fn get(
   id: String,
 ) -> Result(playlist.Playlist, errors.AppError) {
   s.new()
-  |> s.selects([s.col("id"), s.col("name")])
+  |> cc.cake_select_fields(playlist.playlist_converter())
   |> s.from_table(db_name)
   |> s.where(w.col("id") |> w.eq(w.string(id)))
   |> s.to_query()
-  |> db_utils.exec_read_query(ctx.db, playlist.db_decoder)
-  |> result.then(fn(res) {
-    res
+  |> db_utils.exec_read_query(
+    ctx.db,
+    cc.cake_decode(playlist.playlist_dto_converter()),
+  )
+  |> result.then(fn(dtos) {
+    dtos
     |> list.first
+    |> result.map(fn(dto) {
+      playlist.Playlist(id: dto.id, name: dto.name, songs: [])
+    })
     |> result.replace_error(errors.DBError(
       "Couldn't find playlist with id " <> id,
     ))
@@ -50,8 +66,9 @@ pub fn create(
 
   i.new()
   |> i.table(db_name)
-  |> i.columns(["id", "name"])
-  |> i.source_values([i.row([i.string(id), i.string(create.name)])])
+  |> cc.cake_insert(playlist.playlist_dto_converter(), [
+    playlist.PlaylistDTO(id, create.name),
+  ])
   |> i.to_query
   |> db_utils.exec_write_query(ctx.db, Ok)
   |> result.replace(id)
@@ -64,7 +81,10 @@ pub fn update(
 ) -> Result(String, errors.AppError) {
   u.new()
   |> u.table(db_name)
-  |> u.sets([u.set_string("name", update.name)])
+  |> cc.cake_update(
+    playlist.playlist_dto_converter(),
+    playlist.PlaylistDTO(id, update.name),
+  )
   |> u.where(w.col("id") |> w.eq(w.string(id)))
   |> u.to_query
   |> db_utils.exec_write_query(ctx.db, Ok)

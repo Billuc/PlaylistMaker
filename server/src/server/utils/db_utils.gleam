@@ -6,7 +6,7 @@ import gleam/int
 import gleam/list
 import gleam/pgo
 import gleam/result
-import glitr_wisp/errors
+import glitr/wisp/errors
 import pprint
 
 pub fn exec_read_query(

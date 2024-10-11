@@ -3,43 +3,28 @@ import cake/insert as i
 import cake/select as s
 import cake/update as u
 import cake/where as w
-import gleam/dynamic
 import gleam/list
 import gleam/result
-import glitr_wisp/errors
+import glitr/convert/cake as cc
+import glitr/wisp/errors
 import gluid
 import server/utils/db_utils
 import server/web
 import shared/types/playlist_song
-import shared/types/song
 
 const db_name = "playlist_songs"
-
-pub fn decoder(
-  value: dynamic.Dynamic,
-) -> Result(playlist_song.PlaylistSong, List(dynamic.DecodeError)) {
-  value
-  |> dynamic.decode8(
-    playlist_song.PlaylistSong,
-    dynamic.element(0, dynamic.string),
-    dynamic.element(1, dynamic.string),
-    dynamic.element(2, dynamic.string),
-    dynamic.element(3, dynamic.string),
-    dynamic.element(4, dynamic.list(dynamic.string)),
-    dynamic.element(5, dynamic.string),
-    dynamic.element(6, dynamic.string),
-    fn(_) { Ok(song.Spotify("")) },
-  )
-}
 
 pub fn get_all(
   ctx: web.Context,
 ) -> Result(List(playlist_song.PlaylistSong), errors.AppError) {
   s.new()
-  |> s.all()
+  |> cc.cake_select_fields(playlist_song.playlist_song_converter())
   |> s.from_table(db_name)
   |> s.to_query()
-  |> db_utils.exec_read_query(ctx.db, decoder)
+  |> db_utils.exec_read_query(
+    ctx.db,
+    cc.cake_decode(playlist_song.playlist_song_converter()),
+  )
 }
 
 pub fn get(
@@ -47,11 +32,14 @@ pub fn get(
   id: String,
 ) -> Result(playlist_song.PlaylistSong, errors.AppError) {
   s.new()
-  |> s.all()
+  |> cc.cake_select_fields(playlist_song.playlist_song_converter())
   |> s.from_table(db_name)
   |> s.where(w.col("id") |> w.eq(w.string(id)))
   |> s.to_query()
-  |> db_utils.exec_read_query(ctx.db, decoder)
+  |> db_utils.exec_read_query(
+    ctx.db,
+    cc.cake_decode(playlist_song.playlist_song_converter()),
+  )
   |> result.then(fn(res) {
     res
     |> list.first
@@ -69,8 +57,9 @@ pub fn create(
 
   i.new()
   |> i.table(db_name)
-  |> i.columns(["id", "name"])
-  |> i.source_values([i.row([i.string(id), i.string(create.name)])])
+  |> cc.cake_insert(playlist_song.playlist_song_converter(), [
+    playlist_song.playlist_song_from_upsert(id, create),
+  ])
   |> i.to_query
   |> db_utils.exec_write_query(ctx.db, Ok)
   |> result.replace(id)
@@ -83,7 +72,10 @@ pub fn update(
 ) -> Result(String, errors.AppError) {
   u.new()
   |> u.table(db_name)
-  |> u.sets([u.set_string("name", update.name)])
+  |> cc.cake_update(
+    playlist_song.playlist_song_converter(),
+    playlist_song.playlist_song_from_upsert(id, update),
+  )
   |> u.where(w.col("id") |> w.eq(w.string(id)))
   |> u.to_query
   |> db_utils.exec_write_query(ctx.db, Ok)
