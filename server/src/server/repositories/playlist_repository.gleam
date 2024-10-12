@@ -16,29 +16,23 @@ const db_name = "playlists"
 
 pub fn get_all(
   ctx: web.Context,
-) -> Result(List(playlist.Playlist), errors.AppError) {
+) -> Result(List(playlist.PlaylistDTO), errors.AppError) {
   s.new()
-  |> cc.cake_select_fields(playlist.playlist_converter())
+  |> cc.cake_select_fields(playlist.playlist_dto_converter())
   |> s.from_table(db_name)
   |> s.to_query()
   |> db_utils.exec_read_query(
     ctx.db,
     cc.cake_decode(playlist.playlist_dto_converter()),
   )
-  |> result.map(fn(dtos) {
-    dtos
-    |> list.map(fn(dto) {
-      playlist.Playlist(id: dto.id, name: dto.name, songs: [])
-    })
-  })
 }
 
 pub fn get(
   ctx: web.Context,
   id: String,
-) -> Result(playlist.Playlist, errors.AppError) {
+) -> Result(playlist.PlaylistDTO, errors.AppError) {
   s.new()
-  |> cc.cake_select_fields(playlist.playlist_converter())
+  |> cc.cake_select_fields(playlist.playlist_dto_converter())
   |> s.from_table(db_name)
   |> s.where(w.col("id") |> w.eq(w.string(id)))
   |> s.to_query()
@@ -49,9 +43,6 @@ pub fn get(
   |> result.then(fn(dtos) {
     dtos
     |> list.first
-    |> result.map(fn(dto) {
-      playlist.Playlist(id: dto.id, name: dto.name, songs: [])
-    })
     |> result.replace_error(errors.DBError(
       "Couldn't find playlist with id " <> id,
     ))

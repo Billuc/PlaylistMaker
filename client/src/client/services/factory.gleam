@@ -1,9 +1,9 @@
 import gleam/http
-import glitr_lustre
+import glitr/lustre as gl
 
-pub fn factory() -> glitr_lustre.RequestFactory {
-  glitr_lustre.create_factory()
-  |> glitr_lustre.with_scheme(http.Http)
-  |> glitr_lustre.with_host("localhost")
-  |> glitr_lustre.with_port(2345)
+pub fn factory() -> gl.RequestFactory {
+  gl.create_factory()
+  |> gl.with_scheme(http.Http)
+  |> gl.with_host("localhost")
+  |> gl.with_port(2345)
 }

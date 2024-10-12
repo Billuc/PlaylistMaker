@@ -39,6 +39,7 @@ var List = class {
     }
     return desired === 0;
   }
+  // @internal
   countLength() {
     let length5 = 0;
     for (let _ of this)
@@ -195,11 +196,11 @@ function isEqual(x, y) {
   }
   return true;
 }
-function getters(object3) {
-  if (object3 instanceof Map) {
+function getters(object4) {
+  if (object4 instanceof Map) {
     return [(x) => x.keys(), (x, y) => x.get(y)];
   } else {
-    let extra = object3 instanceof globalThis.Error ? ["message"] : [];
+    let extra = object4 instanceof globalThis.Error ? ["message"] : [];
     return [(x) => [...extra, ...Object.keys(x)], (x, y) => x[y]];
   }
 }
@@ -237,6 +238,7 @@ function makeError(variant, module, line, fn, message, extra) {
   error2.gleam_error = variant;
   error2.module = module;
   error2.line = line;
+  error2.function = fn;
   error2.fn = fn;
   for (let k in extra)
     error2[k] = extra[k];
@@ -310,8 +312,8 @@ var Options = class extends CustomType {
 function compile(pattern, options) {
   return compile_regex(pattern, options);
 }
-function scan(regex, string4) {
-  return regex_scan(regex, string4);
+function scan(regex, string5) {
+  return regex_scan(regex, string5);
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/int.mjs
@@ -323,8 +325,8 @@ function absolute_value(x) {
     return x * -1;
   }
 }
-function parse(string4) {
-  return parse_int(string4);
+function parse(string5) {
+  return parse_int(string5);
 }
 function to_string2(x) {
   return to_string(x);
@@ -339,10 +341,10 @@ function second(pair) {
 // build/dev/javascript/gleam_stdlib/gleam/list.mjs
 function count_length(loop$list, loop$count) {
   while (true) {
-    let list3 = loop$list;
+    let list4 = loop$list;
     let count = loop$count;
-    if (list3.atLeastLength(1)) {
-      let list$1 = list3.tail;
+    if (list4.atLeastLength(1)) {
+      let list$1 = list4.tail;
       loop$list = list$1;
       loop$count = count + 1;
     } else {
@@ -350,8 +352,8 @@ function count_length(loop$list, loop$count) {
     }
   }
 }
-function length(list3) {
-  return count_length(list3, 0);
+function length(list4) {
+  return count_length(list4, 0);
 }
 function do_reverse(loop$remaining, loop$accumulator) {
   while (true) {
@@ -370,44 +372,44 @@ function do_reverse(loop$remaining, loop$accumulator) {
 function reverse(xs) {
   return do_reverse(xs, toList([]));
 }
-function first(list3) {
-  if (list3.hasLength(0)) {
+function first(list4) {
+  if (list4.hasLength(0)) {
     return new Error(void 0);
   } else {
-    let x = list3.head;
+    let x = list4.head;
     return new Ok(x);
   }
 }
 function do_map(loop$list, loop$fun, loop$acc) {
   while (true) {
-    let list3 = loop$list;
+    let list4 = loop$list;
     let fun = loop$fun;
     let acc = loop$acc;
-    if (list3.hasLength(0)) {
+    if (list4.hasLength(0)) {
       return reverse(acc);
     } else {
-      let x = list3.head;
-      let xs = list3.tail;
+      let x = list4.head;
+      let xs = list4.tail;
       loop$list = xs;
       loop$fun = fun;
       loop$acc = prepend(fun(x), acc);
     }
   }
 }
-function map2(list3, fun) {
-  return do_map(list3, fun, toList([]));
+function map2(list4, fun) {
+  return do_map(list4, fun, toList([]));
 }
 function do_index_map(loop$list, loop$fun, loop$index, loop$acc) {
   while (true) {
-    let list3 = loop$list;
+    let list4 = loop$list;
     let fun = loop$fun;
     let index4 = loop$index;
     let acc = loop$acc;
-    if (list3.hasLength(0)) {
+    if (list4.hasLength(0)) {
       return reverse(acc);
     } else {
-      let x = list3.head;
-      let xs = list3.tail;
+      let x = list4.head;
+      let xs = list4.tail;
       let acc$1 = prepend(fun(x, index4), acc);
       loop$list = xs;
       loop$fun = fun;
@@ -416,19 +418,19 @@ function do_index_map(loop$list, loop$fun, loop$index, loop$acc) {
     }
   }
 }
-function index_map(list3, fun) {
-  return do_index_map(list3, fun, 0, toList([]));
+function index_map(list4, fun) {
+  return do_index_map(list4, fun, 0, toList([]));
 }
 function do_try_map(loop$list, loop$fun, loop$acc) {
   while (true) {
-    let list3 = loop$list;
+    let list4 = loop$list;
     let fun = loop$fun;
     let acc = loop$acc;
-    if (list3.hasLength(0)) {
+    if (list4.hasLength(0)) {
       return new Ok(reverse(acc));
     } else {
-      let x = list3.head;
-      let xs = list3.tail;
+      let x = list4.head;
+      let xs = list4.tail;
       let $ = fun(x);
       if ($.isOk()) {
         let y = $[0];
@@ -442,21 +444,21 @@ function do_try_map(loop$list, loop$fun, loop$acc) {
     }
   }
 }
-function try_map(list3, fun) {
-  return do_try_map(list3, fun, toList([]));
+function try_map(list4, fun) {
+  return do_try_map(list4, fun, toList([]));
 }
 function drop(loop$list, loop$n) {
   while (true) {
-    let list3 = loop$list;
+    let list4 = loop$list;
     let n = loop$n;
     let $ = n <= 0;
     if ($) {
-      return list3;
+      return list4;
     } else {
-      if (list3.hasLength(0)) {
+      if (list4.hasLength(0)) {
         return toList([]);
       } else {
-        let xs = list3.tail;
+        let xs = list4.tail;
         loop$list = xs;
         loop$n = n - 1;
       }
@@ -465,18 +467,18 @@ function drop(loop$list, loop$n) {
 }
 function do_take(loop$list, loop$n, loop$acc) {
   while (true) {
-    let list3 = loop$list;
+    let list4 = loop$list;
     let n = loop$n;
     let acc = loop$acc;
     let $ = n <= 0;
     if ($) {
       return reverse(acc);
     } else {
-      if (list3.hasLength(0)) {
+      if (list4.hasLength(0)) {
         return reverse(acc);
       } else {
-        let x = list3.head;
-        let xs = list3.tail;
+        let x = list4.head;
+        let xs = list4.tail;
         loop$list = xs;
         loop$n = n - 1;
         loop$acc = prepend(x, acc);
@@ -484,8 +486,8 @@ function do_take(loop$list, loop$n, loop$acc) {
     }
   }
 }
-function take(list3, n) {
-  return do_take(list3, n, toList([]));
+function take(list4, n) {
+  return do_take(list4, n, toList([]));
 }
 function do_append(loop$first, loop$second) {
   while (true) {
@@ -504,47 +506,16 @@ function do_append(loop$first, loop$second) {
 function append(first4, second2) {
   return do_append(reverse(first4), second2);
 }
-function reverse_and_prepend(loop$prefix, loop$suffix) {
-  while (true) {
-    let prefix = loop$prefix;
-    let suffix = loop$suffix;
-    if (prefix.hasLength(0)) {
-      return suffix;
-    } else {
-      let first$1 = prefix.head;
-      let rest$1 = prefix.tail;
-      loop$prefix = rest$1;
-      loop$suffix = prepend(first$1, suffix);
-    }
-  }
-}
-function do_concat(loop$lists, loop$acc) {
-  while (true) {
-    let lists = loop$lists;
-    let acc = loop$acc;
-    if (lists.hasLength(0)) {
-      return reverse(acc);
-    } else {
-      let list3 = lists.head;
-      let further_lists = lists.tail;
-      loop$lists = further_lists;
-      loop$acc = reverse_and_prepend(list3, acc);
-    }
-  }
-}
-function concat(lists) {
-  return do_concat(lists, toList([]));
-}
 function fold(loop$list, loop$initial, loop$fun) {
   while (true) {
-    let list3 = loop$list;
+    let list4 = loop$list;
     let initial = loop$initial;
     let fun = loop$fun;
-    if (list3.hasLength(0)) {
+    if (list4.hasLength(0)) {
       return initial;
     } else {
-      let x = list3.head;
-      let rest$1 = list3.tail;
+      let x = list4.head;
+      let rest$1 = list4.tail;
       loop$list = rest$1;
       loop$initial = fun(initial, x);
       loop$fun = fun;
@@ -594,28 +565,28 @@ function find_map(loop$haystack, loop$fun) {
 }
 function do_intersperse(loop$list, loop$separator, loop$acc) {
   while (true) {
-    let list3 = loop$list;
+    let list4 = loop$list;
     let separator = loop$separator;
     let acc = loop$acc;
-    if (list3.hasLength(0)) {
+    if (list4.hasLength(0)) {
       return reverse(acc);
     } else {
-      let x = list3.head;
-      let rest$1 = list3.tail;
+      let x = list4.head;
+      let rest$1 = list4.tail;
       loop$list = rest$1;
       loop$separator = separator;
       loop$acc = prepend(x, prepend(separator, acc));
     }
   }
 }
-function intersperse(list3, elem) {
-  if (list3.hasLength(0)) {
-    return list3;
-  } else if (list3.hasLength(1)) {
-    return list3;
+function intersperse(list4, elem) {
+  if (list4.hasLength(0)) {
+    return list4;
+  } else if (list4.hasLength(1)) {
+    return list4;
   } else {
-    let x = list3.head;
-    let rest$1 = list3.tail;
+    let x = list4.head;
+    let rest$1 = list4.tail;
     return do_intersperse(rest$1, elem, toList([x]));
   }
 }
@@ -652,16 +623,16 @@ function key_find(keyword_list, desired_key) {
     }
   );
 }
-function key_set(list3, key2, value3) {
-  if (list3.hasLength(0)) {
+function key_set(list4, key2, value3) {
+  if (list4.hasLength(0)) {
     return toList([[key2, value3]]);
-  } else if (list3.atLeastLength(1) && isEqual(list3.head[0], key2)) {
-    let k = list3.head[0];
-    let rest$1 = list3.tail;
+  } else if (list4.atLeastLength(1) && isEqual(list4.head[0], key2)) {
+    let k = list4.head[0];
+    let rest$1 = list4.tail;
     return prepend([key2, value3], rest$1);
   } else {
-    let first$1 = list3.head;
-    let rest$1 = list3.tail;
+    let first$1 = list4.head;
+    let rest$1 = list4.tail;
     return prepend(first$1, key_set(rest$1, key2, value3));
   }
 }
@@ -721,16 +692,16 @@ function replace_error(result, error2) {
 
 // build/dev/javascript/gleam_stdlib/gleam/string_builder.mjs
 function new$2() {
-  return concat2(toList([]));
+  return concat(toList([]));
 }
 function from_strings(strings) {
-  return concat2(strings);
+  return concat(strings);
 }
-function concat3(builders) {
-  return concat2(builders);
+function concat2(builders) {
+  return concat(builders);
 }
-function from_string(string4) {
-  return identity(string4);
+function from_string(string5) {
+  return identity(string5);
 }
 function to_string3(builder) {
   return identity(builder);
@@ -740,16 +711,16 @@ function split2(iodata, pattern) {
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/string.mjs
-function length3(string4) {
-  return string_length(string4);
+function length3(string5) {
+  return string_length(string5);
 }
-function lowercase2(string4) {
-  return lowercase(string4);
+function lowercase2(string5) {
+  return lowercase(string5);
 }
-function starts_with2(string4, prefix) {
-  return starts_with(string4, prefix);
+function starts_with2(string5, prefix) {
+  return starts_with(string5, prefix);
 }
-function concat4(strings) {
+function concat3(strings) {
   let _pipe = strings;
   let _pipe$1 = from_strings(_pipe);
   return to_string3(_pipe$1);
@@ -757,41 +728,41 @@ function concat4(strings) {
 function join2(strings, separator) {
   return join(strings, separator);
 }
-function pop_grapheme2(string4) {
-  return pop_grapheme(string4);
+function pop_grapheme2(string5) {
+  return pop_grapheme(string5);
 }
-function do_slice(string4, idx, len) {
-  let _pipe = string4;
+function do_slice(string5, idx, len) {
+  let _pipe = string5;
   let _pipe$1 = graphemes(_pipe);
   let _pipe$2 = drop(_pipe$1, idx);
   let _pipe$3 = take(_pipe$2, len);
-  return concat4(_pipe$3);
+  return concat3(_pipe$3);
 }
-function slice(string4, idx, len) {
+function slice(string5, idx, len) {
   let $ = len < 0;
   if ($) {
     return "";
   } else {
     let $1 = idx < 0;
     if ($1) {
-      let translated_idx = length3(string4) + idx;
+      let translated_idx = length3(string5) + idx;
       let $2 = translated_idx < 0;
       if ($2) {
         return "";
       } else {
-        return do_slice(string4, translated_idx, len);
+        return do_slice(string5, translated_idx, len);
       }
     } else {
-      return do_slice(string4, idx, len);
+      return do_slice(string5, idx, len);
     }
   }
 }
-function drop_left(string4, num_graphemes) {
+function drop_left(string5, num_graphemes) {
   let $ = num_graphemes < 0;
   if ($) {
-    return string4;
+    return string5;
   } else {
-    return slice(string4, num_graphemes, length3(string4) - num_graphemes);
+    return slice(string5, num_graphemes, length3(string5) - num_graphemes);
   }
 }
 function split3(x, substring) {
@@ -823,12 +794,18 @@ function classify(data) {
 function int(data) {
   return decode_int(data);
 }
+function float(data) {
+  return decode_float(data);
+}
+function bool(data) {
+  return decode_bool(data);
+}
 function shallow_list(value3) {
   return decode_list(value3);
 }
-function optional(decode9) {
+function optional(decode8) {
   return (value3) => {
-    return decode_option(value3, decode9);
+    return decode_option(value3, decode8);
   };
 }
 function at_least_decode_tuple_error(size2, data) {
@@ -871,26 +848,6 @@ function any(decoders) {
     }
   };
 }
-function all_errors(result) {
-  if (result.isOk()) {
-    return toList([]);
-  } else {
-    let errors = result[0];
-    return errors;
-  }
-}
-function decode1(constructor, t1) {
-  return (value3) => {
-    let $ = t1(value3);
-    if ($.isOk()) {
-      let a2 = $[0];
-      return new Ok(constructor(a2));
-    } else {
-      let a2 = $;
-      return new Error(all_errors(a2));
-    }
-  };
-}
 function push_path(error2, name) {
   let name$1 = identity(name);
   let decoder = any(
@@ -915,8 +872,8 @@ function list(decoder_type) {
   return (dynamic2) => {
     return try$(
       shallow_list(dynamic2),
-      (list3) => {
-        let _pipe = list3;
+      (list4) => {
+        let _pipe = list4;
         let _pipe$1 = try_map(_pipe, decoder_type);
         return map_errors(
           _pipe$1,
@@ -998,68 +955,6 @@ function element(index4, inner_type) {
         );
       }
     );
-  };
-}
-function decode3(constructor, t1, t2, t3) {
-  return (value3) => {
-    let $ = t1(value3);
-    let $1 = t2(value3);
-    let $2 = t3(value3);
-    if ($.isOk() && $1.isOk() && $2.isOk()) {
-      let a2 = $[0];
-      let b = $1[0];
-      let c = $2[0];
-      return new Ok(constructor(a2, b, c));
-    } else {
-      let a2 = $;
-      let b = $1;
-      let c = $2;
-      return new Error(
-        concat(toList([all_errors(a2), all_errors(b), all_errors(c)]))
-      );
-    }
-  };
-}
-function decode7(constructor, t1, t2, t3, t4, t5, t6, t7) {
-  return (x) => {
-    let $ = t1(x);
-    let $1 = t2(x);
-    let $2 = t3(x);
-    let $3 = t4(x);
-    let $4 = t5(x);
-    let $5 = t6(x);
-    let $6 = t7(x);
-    if ($.isOk() && $1.isOk() && $2.isOk() && $3.isOk() && $4.isOk() && $5.isOk() && $6.isOk()) {
-      let a2 = $[0];
-      let b = $1[0];
-      let c = $2[0];
-      let d = $3[0];
-      let e = $4[0];
-      let f = $5[0];
-      let g = $6[0];
-      return new Ok(constructor(a2, b, c, d, e, f, g));
-    } else {
-      let a2 = $;
-      let b = $1;
-      let c = $2;
-      let d = $3;
-      let e = $4;
-      let f = $5;
-      let g = $6;
-      return new Error(
-        concat(
-          toList([
-            all_errors(a2),
-            all_errors(b),
-            all_errors(c),
-            all_errors(d),
-            all_errors(e),
-            all_errors(f),
-            all_errors(g)
-          ])
-        )
-      );
-    }
   };
 }
 
@@ -1776,11 +1671,11 @@ function parse_int(value3) {
 function to_string(term) {
   return term.toString();
 }
-function string_length(string4) {
-  if (string4 === "") {
+function string_length(string5) {
+  if (string5 === "") {
     return 0;
   }
-  const iterator = graphemes_iterator(string4);
+  const iterator = graphemes_iterator(string5);
   if (iterator) {
     let i = 0;
     for (const _ of iterator) {
@@ -1788,38 +1683,38 @@ function string_length(string4) {
     }
     return i;
   } else {
-    return string4.match(/./gsu).length;
+    return string5.match(/./gsu).length;
   }
 }
-function graphemes(string4) {
-  const iterator = graphemes_iterator(string4);
+function graphemes(string5) {
+  const iterator = graphemes_iterator(string5);
   if (iterator) {
     return List.fromArray(Array.from(iterator).map((item) => item.segment));
   } else {
-    return List.fromArray(string4.match(/./gsu));
+    return List.fromArray(string5.match(/./gsu));
   }
 }
-function graphemes_iterator(string4) {
+function graphemes_iterator(string5) {
   if (globalThis.Intl && Intl.Segmenter) {
-    return new Intl.Segmenter().segment(string4)[Symbol.iterator]();
+    return new Intl.Segmenter().segment(string5)[Symbol.iterator]();
   }
 }
-function pop_grapheme(string4) {
+function pop_grapheme(string5) {
   let first4;
-  const iterator = graphemes_iterator(string4);
+  const iterator = graphemes_iterator(string5);
   if (iterator) {
     first4 = iterator.next().value?.segment;
   } else {
-    first4 = string4.match(/./su)?.[0];
+    first4 = string5.match(/./su)?.[0];
   }
   if (first4) {
-    return new Ok([first4, string4.slice(first4.length)]);
+    return new Ok([first4, string5.slice(first4.length)]);
   } else {
     return new Error(Nil);
   }
 }
-function lowercase(string4) {
-  return string4.toLowerCase();
+function lowercase(string5) {
+  return string5.toLowerCase();
 }
 function split(xs, pattern) {
   return List.fromArray(xs.split(pattern));
@@ -1834,7 +1729,7 @@ function join(xs, separator) {
   }
   return result;
 }
-function concat2(xs) {
+function concat(xs) {
   let result = "";
   for (const x of xs) {
     result = result + x;
@@ -1882,8 +1777,8 @@ function compile_regex(pattern, options) {
     return new Error(new CompileError(error2.message, number));
   }
 }
-function regex_scan(regex, string4) {
-  const matches = Array.from(string4.matchAll(regex)).map((match) => {
+function regex_scan(regex, string5) {
+  const matches = Array.from(string5.matchAll(regex)).map((match) => {
     const content = match[0];
     const submatches = [];
     for (let n = match.length - 1; n > 0; n--) {
@@ -1918,11 +1813,11 @@ function map_get(map6, key2) {
 function map_insert(key2, value3, map6) {
   return map6.set(key2, value3);
 }
-function unsafe_percent_decode_query(string4) {
-  return decodeURIComponent((string4 || "").replace("+", " "));
+function unsafe_percent_decode_query(string5) {
+  return decodeURIComponent((string5 || "").replace("+", " "));
 }
-function percent_encode(string4) {
-  return encodeURIComponent(string4).replace("%2B", "+");
+function percent_encode(string5) {
+  return encodeURIComponent(string5).replace("%2B", "+");
 }
 function parse_query(query) {
   try {
@@ -1982,6 +1877,12 @@ function decode_string(data) {
 function decode_int(data) {
   return Number.isInteger(data) ? new Ok(data) : decoder_error("Int", data);
 }
+function decode_float(data) {
+  return typeof data === "number" ? new Ok(data) : decoder_error("Float", data);
+}
+function decode_bool(data) {
+  return typeof data === "boolean" ? new Ok(data) : decoder_error("Bool", data);
+}
 function decode_tuple(data) {
   return Array.isArray(data) ? new Ok(data) : decoder_error("Tuple", data);
 }
@@ -2019,9 +1920,9 @@ function decode_field(value3, name) {
     return try_get_field(value3, name, not_a_map_error);
   }
 }
-function try_get_field(value3, field2, or_else) {
+function try_get_field(value3, field3, or_else) {
   try {
-    return field2 in value3 ? new Ok(new Some(value3[field2])) : or_else();
+    return field3 in value3 ? new Ok(new Some(value3[field3])) : or_else();
   } catch {
     return or_else();
   }
@@ -2039,20 +1940,20 @@ function insert(dict2, key2, value3) {
 }
 function fold_list_of_pair(loop$list, loop$initial) {
   while (true) {
-    let list3 = loop$list;
+    let list4 = loop$list;
     let initial = loop$initial;
-    if (list3.hasLength(0)) {
+    if (list4.hasLength(0)) {
       return initial;
     } else {
-      let x = list3.head;
-      let rest2 = list3.tail;
+      let x = list4.head;
+      let rest2 = list4.tail;
       loop$list = rest2;
       loop$initial = insert(initial, x[0], x[1]);
     }
   }
 }
-function from_list(list3) {
-  return fold_list_of_pair(list3, new$());
+function from_list(list4) {
+  return fold_list_of_pair(list4, new$());
 }
 function reverse_and_concat(loop$remaining, loop$accumulator) {
   while (true) {
@@ -2070,13 +1971,13 @@ function reverse_and_concat(loop$remaining, loop$accumulator) {
 }
 function do_keys_acc(loop$list, loop$acc) {
   while (true) {
-    let list3 = loop$list;
+    let list4 = loop$list;
     let acc = loop$acc;
-    if (list3.hasLength(0)) {
+    if (list4.hasLength(0)) {
       return reverse_and_concat(acc, toList([]));
     } else {
-      let x = list3.head;
-      let xs = list3.tail;
+      let x = list4.head;
+      let xs = list4.tail;
       loop$list = xs;
       loop$acc = prepend(x[0], acc);
     }
@@ -2120,14 +2021,14 @@ var Uri = class extends CustomType {
     this.fragment = fragment;
   }
 };
-function regex_submatches(pattern, string4) {
+function regex_submatches(pattern, string5) {
   let _pipe = pattern;
   let _pipe$1 = compile(_pipe, new Options(true, false));
   let _pipe$2 = nil_error(_pipe$1);
   let _pipe$3 = map3(
     _pipe$2,
     (_capture) => {
-      return scan(_capture, string4);
+      return scan(_capture, string5);
     }
   );
   let _pipe$4 = try$(_pipe$3, first);
@@ -2161,24 +2062,24 @@ function noneify_empty_string(x) {
 }
 function extra_required(loop$list, loop$remaining) {
   while (true) {
-    let list3 = loop$list;
+    let list4 = loop$list;
     let remaining = loop$remaining;
     if (remaining === 0) {
       return 0;
-    } else if (list3.hasLength(0)) {
+    } else if (list4.hasLength(0)) {
       return remaining;
     } else {
-      let xs = list3.tail;
+      let xs = list4.tail;
       loop$list = xs;
       loop$remaining = remaining - 1;
     }
   }
 }
-function pad_list(list3, size2) {
-  let _pipe = list3;
+function pad_list(list4, size2) {
+  let _pipe = list4;
   return append(
     _pipe,
-    repeat(new None(), extra_required(list3, size2))
+    repeat(new None(), extra_required(list4, size2))
   );
 }
 function split_authority(authority) {
@@ -2384,7 +2285,7 @@ function to_string4(uri) {
       return parts$4;
     }
   })();
-  return concat4(parts$5);
+  return concat3(parts$5);
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/bool.mjs
@@ -2406,18 +2307,18 @@ function object(entries) {
 function identity2(x) {
   return x;
 }
-function array(list3) {
-  return list3.toArray();
+function array(list4) {
+  return list4.toArray();
 }
 function do_null() {
   return null;
 }
-function decode(string4) {
+function decode(string5) {
   try {
-    const result = JSON.parse(string4);
+    const result = JSON.parse(string5);
     return new Ok(result);
   } catch (err) {
-    return new Error(getJsonDecodeError(err, string4));
+    return new Error(getJsonDecodeError(err, string5));
   }
 }
 function getJsonDecodeError(stdErr, json) {
@@ -2482,12 +2383,12 @@ function jsCoreUnexpectedByteError(err) {
 function toHex(char) {
   return "0x" + char.charCodeAt(0).toString(16).toUpperCase();
 }
-function getPositionFromMultiline(line, column, string4) {
+function getPositionFromMultiline(line, column, string5) {
   if (line === 1)
     return column - 1;
   let currentLn = 1;
   let position = 0;
-  string4.split("").find((char, idx) => {
+  string5.split("").find((char, idx) => {
     if (char === "\n")
       currentLn += 1;
     if (currentLn === line) {
@@ -2536,6 +2437,15 @@ function to_string_builder(json) {
   return json_to_string(json);
 }
 function string3(input2) {
+  return identity2(input2);
+}
+function bool2(input2) {
+  return identity2(input2);
+}
+function int2(input2) {
+  return identity2(input2);
+}
+function float2(input2) {
   return identity2(input2);
 }
 function null$() {
@@ -2605,7 +2515,7 @@ var Text = class extends CustomType {
     this.content = content;
   }
 };
-var Element = class extends CustomType {
+var Element2 = class extends CustomType {
   constructor(key2, namespace, tag, attrs, children2, self_closing, void$) {
     super();
     this.key = key2;
@@ -2638,7 +2548,7 @@ var Attribute = class extends CustomType {
     this.as_property = as_property;
   }
 };
-var Event = class extends CustomType {
+var Event2 = class extends CustomType {
   constructor(x0, x1) {
     super();
     this[0] = x0;
@@ -2677,7 +2587,7 @@ function do_handlers(loop$element, loop$handlers, loop$key) {
       loop$element = subtree();
       loop$handlers = handlers2;
       loop$key = key2;
-    } else if (element3 instanceof Element) {
+    } else if (element3 instanceof Element2) {
       let attrs = element3.attrs;
       let children2 = element3.children;
       let handlers$1 = fold(
@@ -2710,7 +2620,7 @@ function attribute(name, value3) {
   return new Attribute(name, identity(value3), false);
 }
 function on(name, handler) {
-  return new Event("on" + name, handler);
+  return new Event2("on" + name, handler);
 }
 function class$(name) {
   return attribute("class", name);
@@ -2734,46 +2644,46 @@ function src(uri) {
 // build/dev/javascript/lustre/lustre/element.mjs
 function element2(tag, attrs, children2) {
   if (tag === "area") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "base") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "br") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "col") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "embed") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "hr") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "img") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "input") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "link") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "meta") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "param") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "source") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "track") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "wbr") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else {
-    return new Element("", "", tag, attrs, children2, false, false);
+    return new Element2("", "", tag, attrs, children2, false, false);
   }
 }
-function do_keyed(el2, key2) {
-  if (el2 instanceof Element) {
-    let namespace = el2.namespace;
-    let tag = el2.tag;
-    let attrs = el2.attrs;
-    let children2 = el2.children;
-    let self_closing = el2.self_closing;
-    let void$ = el2.void;
-    return new Element(
+function do_keyed(el, key2) {
+  if (el instanceof Element2) {
+    let namespace = el.namespace;
+    let tag = el.tag;
+    let attrs = el.attrs;
+    let children2 = el.children;
+    let self_closing = el.self_closing;
+    let void$ = el.void;
+    return new Element2(
       key2,
       namespace,
       tag,
@@ -2782,18 +2692,18 @@ function do_keyed(el2, key2) {
       self_closing,
       void$
     );
-  } else if (el2 instanceof Map2) {
-    let subtree = el2.subtree;
+  } else if (el instanceof Map2) {
+    let subtree = el.subtree;
     return new Map2(() => {
       return do_keyed(subtree(), key2);
     });
-  } else if (el2 instanceof Fragment) {
-    let elements2 = el2.elements;
+  } else if (el instanceof Fragment) {
+    let elements2 = el.elements;
     let _pipe = elements2;
     let _pipe$1 = index_map(
       _pipe,
       (element3, idx) => {
-        if (element3 instanceof Element) {
+        if (element3 instanceof Element2) {
           let el_key = element3.key;
           let new_key = (() => {
             if (el_key === "") {
@@ -2810,11 +2720,11 @@ function do_keyed(el2, key2) {
     );
     return new Fragment(_pipe$1, key2);
   } else {
-    return el2;
+    return el;
   }
 }
-function keyed(el2, children2) {
-  return el2(
+function keyed(el, children2) {
+  return el(
     map2(
       children2,
       (_use0) => {
@@ -2901,7 +2811,7 @@ var Emit2 = class extends CustomType {
     this[1] = x1;
   }
 };
-var Event2 = class extends CustomType {
+var Event3 = class extends CustomType {
   constructor(x0, x1) {
     super();
     this[0] = x0;
@@ -2977,14 +2887,14 @@ function morph(prev, next, dispatch) {
 function createElementNode({ prev, next, dispatch, stack }) {
   const namespace = next.namespace || "http://www.w3.org/1999/xhtml";
   const canMorph = prev && prev.nodeType === Node.ELEMENT_NODE && prev.localName === next.tag && prev.namespaceURI === (next.namespace || "http://www.w3.org/1999/xhtml");
-  const el2 = canMorph ? prev : namespace ? document.createElementNS(namespace, next.tag) : document.createElement(next.tag);
+  const el = canMorph ? prev : namespace ? document.createElementNS(namespace, next.tag) : document.createElement(next.tag);
   let handlersForEl;
-  if (!registeredHandlers.has(el2)) {
+  if (!registeredHandlers.has(el)) {
     const emptyHandlers = /* @__PURE__ */ new Map();
-    registeredHandlers.set(el2, emptyHandlers);
+    registeredHandlers.set(el, emptyHandlers);
     handlersForEl = emptyHandlers;
   } else {
-    handlersForEl = registeredHandlers.get(el2);
+    handlersForEl = registeredHandlers.get(el);
   }
   const prevHandlers = canMorph ? new Set(handlersForEl.keys()) : null;
   const prevAttributes = canMorph ? new Set(Array.from(prev.attributes, (a2) => a2.name)) : null;
@@ -2994,21 +2904,22 @@ function createElementNode({ prev, next, dispatch, stack }) {
   if (canMorph && next.tag === "textarea") {
     const innertText = next.children[Symbol.iterator]().next().value?.content;
     if (innertText !== void 0)
-      el2.value = innertText;
+      el.value = innertText;
   }
+  const delegated = [];
   for (const attr of next.attrs) {
     const name = attr[0];
     const value3 = attr[1];
     if (attr.as_property) {
-      if (el2[name] !== value3)
-        el2[name] = value3;
+      if (el[name] !== value3)
+        el[name] = value3;
       if (canMorph)
         prevAttributes.delete(name);
     } else if (name.startsWith("on")) {
       const eventName = name.slice(2);
       const callback = dispatch(value3, eventName === "input");
       if (!handlersForEl.has(eventName)) {
-        el2.addEventListener(eventName, lustreGenericEventHandler);
+        el.addEventListener(eventName, lustreGenericEventHandler);
       }
       handlersForEl.set(eventName, callback);
       if (canMorph)
@@ -3017,10 +2928,13 @@ function createElementNode({ prev, next, dispatch, stack }) {
       const eventName = name.slice(15);
       const callback = dispatch(lustreServerEventHandler);
       if (!handlersForEl.has(eventName)) {
-        el2.addEventListener(eventName, lustreGenericEventHandler);
+        el.addEventListener(eventName, lustreGenericEventHandler);
       }
       handlersForEl.set(eventName, callback);
-      el2.setAttribute(name, value3);
+      el.setAttribute(name, value3);
+    } else if (name.startsWith("delegate:data-") || name.startsWith("delegate:aria-")) {
+      el.setAttribute(name, value3);
+      delegated.push([name.slice(10), value3]);
     } else if (name === "class") {
       className = className === null ? value3 : className + " " + value3;
     } else if (name === "style") {
@@ -3028,40 +2942,51 @@ function createElementNode({ prev, next, dispatch, stack }) {
     } else if (name === "dangerous-unescaped-html") {
       innerHTML = value3;
     } else {
-      if (el2.getAttribute(name) !== value3)
-        el2.setAttribute(name, value3);
+      if (el.getAttribute(name) !== value3)
+        el.setAttribute(name, value3);
       if (name === "value" || name === "selected")
-        el2[name] = value3;
+        el[name] = value3;
       if (canMorph)
         prevAttributes.delete(name);
     }
   }
   if (className !== null) {
-    el2.setAttribute("class", className);
+    el.setAttribute("class", className);
     if (canMorph)
       prevAttributes.delete("class");
   }
   if (style !== null) {
-    el2.setAttribute("style", style);
+    el.setAttribute("style", style);
     if (canMorph)
       prevAttributes.delete("style");
   }
   if (canMorph) {
     for (const attr of prevAttributes) {
-      el2.removeAttribute(attr);
+      el.removeAttribute(attr);
     }
     for (const eventName of prevHandlers) {
       handlersForEl.delete(eventName);
-      el2.removeEventListener(eventName, lustreGenericEventHandler);
+      el.removeEventListener(eventName, lustreGenericEventHandler);
     }
   }
-  if (next.key !== void 0 && next.key !== "") {
-    el2.setAttribute("data-lustre-key", next.key);
-  } else if (innerHTML !== null) {
-    el2.innerHTML = innerHTML;
-    return el2;
+  if (next.tag === "slot") {
+    window.queueMicrotask(() => {
+      for (const child of el.assignedElements()) {
+        for (const [name, value3] of delegated) {
+          if (!child.hasAttribute(name)) {
+            child.setAttribute(name, value3);
+          }
+        }
+      }
+    });
   }
-  let prevChild = el2.firstChild;
+  if (next.key !== void 0 && next.key !== "") {
+    el.setAttribute("data-lustre-key", next.key);
+  } else if (innerHTML !== null) {
+    el.innerHTML = innerHTML;
+    return el;
+  }
+  let prevChild = el.firstChild;
   let seenKeys = null;
   let keyedChildren = null;
   let incomingKeyedChildren = null;
@@ -3076,7 +3001,7 @@ function createElementNode({ prev, next, dispatch, stack }) {
       prevChild = diffKeyedChild(
         prevChild,
         child,
-        el2,
+        el,
         stack,
         incomingKeyedChildren,
         keyedChildren,
@@ -3085,16 +3010,16 @@ function createElementNode({ prev, next, dispatch, stack }) {
     }
   } else {
     for (const child of children(next)) {
-      stack.unshift({ prev: prevChild, next: child, parent: el2 });
+      stack.unshift({ prev: prevChild, next: child, parent: el });
       prevChild = prevChild?.nextSibling;
     }
   }
   while (prevChild) {
     const next2 = prevChild.nextSibling;
-    el2.removeChild(prevChild);
+    el.removeChild(prevChild);
     prevChild = next2;
   }
-  return el2;
+  return el;
 }
 var registeredHandlers = /* @__PURE__ */ new WeakMap();
 function lustreGenericEventHandler(event2) {
@@ -3111,10 +3036,10 @@ function lustreGenericEventHandler(event2) {
   handlersForEventTarget.get(event2.type)(event2);
 }
 function lustreServerEventHandler(event2) {
-  const el2 = event2.currentTarget;
-  const tag = el2.getAttribute(`data-lustre-on-${event2.type}`);
-  const data = JSON.parse(el2.getAttribute("data-lustre-data") || "{}");
-  const include = JSON.parse(el2.getAttribute("data-lustre-include") || "[]");
+  const el = event2.currentTarget;
+  const tag = el.getAttribute(`data-lustre-on-${event2.type}`);
+  const data = JSON.parse(el.getAttribute("data-lustre-data") || "{}");
+  const include = JSON.parse(el.getAttribute("data-lustre-include") || "[]");
   switch (event2.type) {
     case "input":
     case "change":
@@ -3141,10 +3066,10 @@ function lustreServerEventHandler(event2) {
     )
   };
 }
-function getKeyedChildren(el2) {
+function getKeyedChildren(el) {
   const keyedChildren = /* @__PURE__ */ new Map();
-  if (el2) {
-    for (const child of children(el2)) {
+  if (el) {
+    for (const child of children(el)) {
       const key2 = child?.key || child?.getAttribute?.("data-lustre-key");
       if (key2)
         keyedChildren.set(key2, child);
@@ -3152,41 +3077,41 @@ function getKeyedChildren(el2) {
   }
   return keyedChildren;
 }
-function diffKeyedChild(prevChild, child, el2, stack, incomingKeyedChildren, keyedChildren, seenKeys) {
+function diffKeyedChild(prevChild, child, el, stack, incomingKeyedChildren, keyedChildren, seenKeys) {
   while (prevChild && !incomingKeyedChildren.has(prevChild.getAttribute("data-lustre-key"))) {
     const nextChild = prevChild.nextSibling;
-    el2.removeChild(prevChild);
+    el.removeChild(prevChild);
     prevChild = nextChild;
   }
   if (keyedChildren.size === 0) {
-    stack.unshift({ prev: prevChild, next: child, parent: el2 });
+    stack.unshift({ prev: prevChild, next: child, parent: el });
     prevChild = prevChild?.nextSibling;
     return prevChild;
   }
   if (seenKeys.has(child.key)) {
     console.warn(`Duplicate key found in Lustre vnode: ${child.key}`);
-    stack.unshift({ prev: null, next: child, parent: el2 });
+    stack.unshift({ prev: null, next: child, parent: el });
     return prevChild;
   }
   seenKeys.add(child.key);
   const keyedChild = keyedChildren.get(child.key);
   if (!keyedChild && !prevChild) {
-    stack.unshift({ prev: null, next: child, parent: el2 });
+    stack.unshift({ prev: null, next: child, parent: el });
     return prevChild;
   }
   if (!keyedChild && prevChild !== null) {
     const placeholder2 = document.createTextNode("");
-    el2.insertBefore(placeholder2, prevChild);
-    stack.unshift({ prev: placeholder2, next: child, parent: el2 });
+    el.insertBefore(placeholder2, prevChild);
+    stack.unshift({ prev: placeholder2, next: child, parent: el });
     return prevChild;
   }
   if (!keyedChild || keyedChild === prevChild) {
-    stack.unshift({ prev: prevChild, next: child, parent: el2 });
+    stack.unshift({ prev: prevChild, next: child, parent: el });
     prevChild = prevChild?.nextSibling;
     return prevChild;
   }
-  el2.insertBefore(keyedChild, prevChild);
-  stack.unshift({ prev: keyedChild, next: child, parent: el2 });
+  el.insertBefore(keyedChild, prevChild);
+  stack.unshift({ prev: keyedChild, next: child, parent: el });
   return prevChild;
 }
 function* children(element3) {
@@ -3402,7 +3327,7 @@ var LustreServerApplication = class _LustreServerApplication {
       for (const [_, renderer] of this.#renderers) {
         renderer(event2);
       }
-    } else if (action instanceof Event2) {
+    } else if (action instanceof Event3) {
       const handler = this.#handlers.get(action[0]);
       if (!handler)
         return;
@@ -3568,13 +3493,13 @@ var do_push = (uri) => {
 var do_load = (uri) => {
   window.location = to_string4(uri);
 };
-var find_anchor = (el2) => {
-  if (!el2 || el2.tagName === "BODY") {
+var find_anchor = (el) => {
+  if (!el || el.tagName === "BODY") {
     return null;
-  } else if (el2.tagName === "A") {
-    return el2;
+  } else if (el.tagName === "A") {
+    return el;
   } else {
-    return find_anchor(el2.parentElement);
+    return find_anchor(el.parentElement);
   }
 };
 var uri_from_url = (url) => {
@@ -3733,6 +3658,14 @@ function self() {
 function alert(message) {
   window.alert(message);
 }
+function prompt(message, defaultValue) {
+  let text3 = window.prompt(message, defaultValue);
+  if (text3 !== null) {
+    return new Ok(text3);
+  } else {
+    return new Error();
+  }
+}
 function addEventListener3(type, listener) {
   return window.addEventListener(type, listener);
 }
@@ -3755,6 +3688,12 @@ function locationOf(w) {
 }
 function setLocation(w, url) {
   w.location.href = url;
+}
+function origin() {
+  return window.location.origin;
+}
+function pathname() {
+  return window.location.pathname;
 }
 function reload() {
   return window.location.reload();
@@ -3838,18 +3777,15 @@ function eval_(string) {
     return new Error(error2.toString());
   }
 }
-async function import_(string4) {
+async function import_(string5) {
   try {
-    return new Ok(await import(string4));
+    return new Ok(await import(string5));
   } catch (error2) {
     return new Error(error2.toString());
   }
 }
 
 // build/dev/javascript/plinth/console_ffi.mjs
-function warn(value3) {
-  console.warn(value3);
-}
 function error(value3) {
   console.error(value3);
 }
@@ -4002,7 +3938,7 @@ function set_query(req, query) {
     let _pipe = query;
     let _pipe$1 = map2(_pipe, pair);
     let _pipe$2 = intersperse(_pipe$1, from_string("&"));
-    let _pipe$3 = concat3(_pipe$2);
+    let _pipe$3 = concat2(_pipe$2);
     let _pipe$4 = to_string3(_pipe$3);
     return new Some(_pipe$4);
   })();
@@ -4197,6 +4133,457 @@ function expect_text(to_msg) {
   );
 }
 
+// build/dev/javascript/glitr_convert/glitr/convert.mjs
+var String2 = class extends CustomType {
+};
+var Bool = class extends CustomType {
+};
+var Float = class extends CustomType {
+};
+var Int = class extends CustomType {
+};
+var List2 = class extends CustomType {
+  constructor(of) {
+    super();
+    this.of = of;
+  }
+};
+var Dict2 = class extends CustomType {
+  constructor(key2, value3) {
+    super();
+    this.key = key2;
+    this.value = value3;
+  }
+};
+var Object2 = class extends CustomType {
+  constructor(fields) {
+    super();
+    this.fields = fields;
+  }
+};
+var Optional = class extends CustomType {
+  constructor(of) {
+    super();
+    this.of = of;
+  }
+};
+var Result2 = class extends CustomType {
+  constructor(result, error2) {
+    super();
+    this.result = result;
+    this.error = error2;
+  }
+};
+var Enum = class extends CustomType {
+  constructor(variants) {
+    super();
+    this.variants = variants;
+  }
+};
+var StringValue = class extends CustomType {
+  constructor(value3) {
+    super();
+    this.value = value3;
+  }
+};
+var BoolValue = class extends CustomType {
+  constructor(value3) {
+    super();
+    this.value = value3;
+  }
+};
+var FloatValue = class extends CustomType {
+  constructor(value3) {
+    super();
+    this.value = value3;
+  }
+};
+var IntValue = class extends CustomType {
+  constructor(value3) {
+    super();
+    this.value = value3;
+  }
+};
+var NullValue = class extends CustomType {
+};
+var ListValue = class extends CustomType {
+  constructor(value3) {
+    super();
+    this.value = value3;
+  }
+};
+var DictValue = class extends CustomType {
+  constructor(value3) {
+    super();
+    this.value = value3;
+  }
+};
+var ObjectValue = class extends CustomType {
+  constructor(value3) {
+    super();
+    this.value = value3;
+  }
+};
+var OptionalValue = class extends CustomType {
+  constructor(value3) {
+    super();
+    this.value = value3;
+  }
+};
+var ResultValue = class extends CustomType {
+  constructor(value3) {
+    super();
+    this.value = value3;
+  }
+};
+var EnumValue = class extends CustomType {
+  constructor(variant, value3) {
+    super();
+    this.variant = variant;
+    this.value = value3;
+  }
+};
+var Converter = class extends CustomType {
+  constructor(encoder, decoder, type_def2) {
+    super();
+    this.encoder = encoder;
+    this.decoder = decoder;
+    this.type_def = type_def2;
+  }
+};
+var ObjectDefinition = class extends CustomType {
+  constructor(constructor2) {
+    super();
+    this.constructor = constructor2;
+  }
+};
+var ObjectParameterDefinition = class extends CustomType {
+  constructor(constructor2) {
+    super();
+    this.constructor = constructor2;
+  }
+};
+var ObjectConverterBuilder = class extends CustomType {
+  constructor(encoder, decoder, type_def2) {
+    super();
+    this.encoder = encoder;
+    this.decoder = decoder;
+    this.type_def = type_def2;
+  }
+};
+function object3(object_converter) {
+  return new ObjectConverterBuilder(
+    (_, _1) => {
+      return new ObjectValue(toList([]));
+    },
+    (_, curr) => {
+      if (object_converter instanceof ObjectDefinition) {
+        let constructor$1 = object_converter.constructor;
+        return new Ok(constructor$1());
+      } else {
+        let constructor$1 = object_converter.constructor;
+        return new Ok(constructor$1(curr));
+      }
+    },
+    new Object2(toList([]))
+  );
+}
+function parameter(next) {
+  return new ObjectParameterDefinition(
+    (v) => {
+      let $ = next(v[0]);
+      if ($ instanceof ObjectDefinition) {
+        let constructor$1 = $.constructor;
+        return constructor$1();
+      } else {
+        let constructor$1 = $.constructor;
+        return constructor$1(v[1]);
+      }
+    }
+  );
+}
+function constructor(c) {
+  return new ObjectDefinition(c);
+}
+function to_converter(converter) {
+  return new Converter(
+    (_capture) => {
+      return converter.encoder(_capture, void 0);
+    },
+    (_capture) => {
+      return converter.decoder(_capture, void 0);
+    },
+    converter.type_def
+  );
+}
+function get_type(val) {
+  if (val instanceof BoolValue) {
+    return "BoolValue";
+  } else if (val instanceof DictValue) {
+    return "DictValue";
+  } else if (val instanceof EnumValue) {
+    return "EnumValue";
+  } else if (val instanceof FloatValue) {
+    return "FloatValue";
+  } else if (val instanceof IntValue) {
+    return "IntValue";
+  } else if (val instanceof ListValue) {
+    return "ListValue";
+  } else if (val instanceof NullValue) {
+    return "NullValue";
+  } else if (val instanceof ObjectValue) {
+    return "ObjectValue";
+  } else if (val instanceof OptionalValue) {
+    return "OptionalValue";
+  } else if (val instanceof ResultValue) {
+    return "ResultValue";
+  } else {
+    return "StringValue";
+  }
+}
+function string4() {
+  return new Converter(
+    (v) => {
+      return new StringValue(v);
+    },
+    (v) => {
+      if (v instanceof StringValue) {
+        let val = v.value;
+        return new Ok(val);
+      } else {
+        let other = v;
+        return new Error(
+          toList([
+            new DecodeError("StringValue", get_type(other), toList([]))
+          ])
+        );
+      }
+    },
+    new String2()
+  );
+}
+function list2(of) {
+  return new Converter(
+    (v) => {
+      return new ListValue(
+        (() => {
+          let _pipe = v;
+          return map2(_pipe, of.encoder);
+        })()
+      );
+    },
+    (v) => {
+      if (v instanceof ListValue) {
+        let vals = v.value;
+        let _pipe = vals;
+        return fold(
+          _pipe,
+          new Ok(toList([])),
+          (result, val) => {
+            let $ = of.decoder(val);
+            if (result.isOk() && $.isOk()) {
+              let res = result[0];
+              let new_res = $[0];
+              return new Ok(append(res, toList([new_res])));
+            } else if (!result.isOk() && !$.isOk()) {
+              let errs = result[0];
+              let new_errs = $[0];
+              return new Error(append(errs, new_errs));
+            } else if (!$.isOk()) {
+              let errs = $[0];
+              return new Error(errs);
+            } else {
+              let errs = result[0];
+              return new Error(errs);
+            }
+          }
+        );
+      } else {
+        let other = v;
+        return new Error(
+          toList([
+            new DecodeError("ListValue", get_type(other), toList([]))
+          ])
+        );
+      }
+    },
+    new List2(of.type_def)
+  );
+}
+function field2(converter, field_name, field_getter, field_type) {
+  return new ObjectConverterBuilder(
+    (base, curr) => {
+      let value3 = field_getter(base);
+      if (!value3.isOk() && !value3[0]) {
+        return new NullValue();
+      } else {
+        let field_value = value3[0];
+        let $ = converter.encoder(base, [field_value, curr]);
+        if ($ instanceof ObjectValue) {
+          let fields = $.value;
+          return new ObjectValue(
+            append(
+              fields,
+              toList([[field_name, field_type.encoder(field_value)]])
+            )
+          );
+        } else {
+          return new NullValue();
+        }
+      }
+    },
+    (v, curr) => {
+      if (v instanceof ObjectValue) {
+        let values = v.value;
+        let field_value = (() => {
+          let _pipe = values;
+          let _pipe$1 = key_find(_pipe, field_name);
+          let _pipe$2 = replace_error(
+            _pipe$1,
+            toList([
+              new DecodeError("Value", "None", toList([field_name]))
+            ])
+          );
+          return then$(_pipe$2, field_type.decoder);
+        })();
+        return try$(
+          field_value,
+          (a2) => {
+            return converter.decoder(v, [a2, curr]);
+          }
+        );
+      } else {
+        return new Error(toList([]));
+      }
+    },
+    (() => {
+      let $ = converter.type_def;
+      if ($ instanceof Object2) {
+        let fields = $.fields;
+        return new Object2(
+          append(fields, toList([[field_name, field_type.type_def]]))
+        );
+      } else {
+        return new Object2(toList([[field_name, field_type.type_def]]));
+      }
+    })()
+  );
+}
+function optional2(of) {
+  return new Converter(
+    (v) => {
+      return new OptionalValue(
+        (() => {
+          let _pipe = v;
+          return map(_pipe, of.encoder);
+        })()
+      );
+    },
+    (v) => {
+      if (v instanceof OptionalValue && v.value instanceof None) {
+        return new Ok(new None());
+      } else if (v instanceof OptionalValue && v.value instanceof Some) {
+        let val = v.value[0];
+        let _pipe = val;
+        let _pipe$1 = of.decoder(_pipe);
+        return map3(
+          _pipe$1,
+          (var0) => {
+            return new Some(var0);
+          }
+        );
+      } else {
+        let other = v;
+        return new Error(
+          toList([
+            new DecodeError(
+              "OptionalValue",
+              get_type(other),
+              toList([])
+            )
+          ])
+        );
+      }
+    },
+    new Optional(of.type_def)
+  );
+}
+function enum$(tags, converters) {
+  return new Converter(
+    (v) => {
+      let tag = tags(v);
+      let $ = (() => {
+        let _pipe = converters;
+        return key_find(_pipe, tag);
+      })();
+      if ($.isOk()) {
+        let variant = $[0];
+        return new EnumValue(tag, variant.encoder(v));
+      } else {
+        return new NullValue();
+      }
+    },
+    (v) => {
+      if (v instanceof EnumValue) {
+        let variant_name = v.variant;
+        let value3 = v.value;
+        return try$(
+          (() => {
+            let _pipe = converters;
+            let _pipe$1 = key_find(_pipe, variant_name);
+            return replace_error(
+              _pipe$1,
+              toList([
+                new DecodeError(
+                  "One of: " + (() => {
+                    let _pipe$2 = converters;
+                    let _pipe$3 = map2(_pipe$2, (v2) => {
+                      return v2[0];
+                    });
+                    return join2(_pipe$3, "/");
+                  })(),
+                  variant_name,
+                  toList(["0"])
+                )
+              ])
+            );
+          })(),
+          (variant) => {
+            return variant.decoder(value3);
+          }
+        );
+      } else {
+        let other = v;
+        return new Error(
+          toList([
+            new DecodeError("EnumValue", get_type(other), toList([]))
+          ])
+        );
+      }
+    },
+    new Enum(
+      (() => {
+        let _pipe = converters;
+        return map2(
+          _pipe,
+          (var$) => {
+            return [var$[0], var$[1].type_def];
+          }
+        );
+      })()
+    )
+  );
+}
+function encode(converter) {
+  return converter.encoder;
+}
+function decode3(converter) {
+  return converter.decoder;
+}
+function type_def(converter) {
+  return converter.type_def;
+}
+
 // build/dev/javascript/shared/shared/types/song.mjs
 var Song = class extends CustomType {
   constructor(id2, title, artists, album, album_cover2, source, preview_url) {
@@ -4222,81 +4609,172 @@ var Spotify = class extends CustomType {
     this.url = url;
   }
 };
-function song_source_encoder(song_source) {
-  if (song_source instanceof Youtube) {
-    let url = song_source.url;
-    return object2(
-      toList([["source", string3("youtube")], ["url", string3(url)]])
+function song_source_converter() {
+  let youtube_source_converter = (() => {
+    let _pipe = object3(
+      parameter(
+        (url) => {
+          return constructor(() => {
+            return new Youtube(url);
+          });
+        }
+      )
     );
-  } else {
-    let url = song_source.url;
-    return object2(
-      toList([["source", string3("spotify")], ["url", string3(url)]])
+    let _pipe$1 = field2(
+      _pipe,
+      "url",
+      (v) => {
+        if (v instanceof Youtube) {
+          let url = v.url;
+          return new Ok(url);
+        } else {
+          return new Error(void 0);
+        }
+      },
+      string4()
     );
-  }
-}
-function song_encoder(song) {
-  return object2(
+    return to_converter(_pipe$1);
+  })();
+  let spotify_source_converter = (() => {
+    let _pipe = object3(
+      parameter(
+        (url) => {
+          return constructor(() => {
+            return new Spotify(url);
+          });
+        }
+      )
+    );
+    let _pipe$1 = field2(
+      _pipe,
+      "url",
+      (v) => {
+        if (v instanceof Spotify) {
+          let url = v.url;
+          return new Ok(url);
+        } else {
+          return new Error(void 0);
+        }
+      },
+      string4()
+    );
+    return to_converter(_pipe$1);
+  })();
+  return enum$(
+    (v) => {
+      if (v instanceof Spotify) {
+        return "spotify";
+      } else {
+        return "youtube";
+      }
+    },
     toList([
-      ["id", string3(song.id)],
-      ["title", string3(song.title)],
-      [
-        "artists",
-        (() => {
-          let _pipe = song.artists;
-          return array2(_pipe, string3);
-        })()
-      ],
-      ["album", string3(song.album)],
-      ["album_cover", string3(song.album_cover)],
-      ["source", song_source_encoder(song.source)],
-      ["preview_url", nullable(song.preview_url, string3)]
+      ["spotify", spotify_source_converter],
+      ["youtube", youtube_source_converter]
     ])
   );
 }
-function song_source_decoder(v) {
-  let source = (() => {
-    let _pipe = v;
-    return field("source", string2)(_pipe);
-  })();
-  if (source.isOk() && source[0] === "youtube") {
-    let _pipe = v;
-    let _pipe$1 = field("url", string2)(_pipe);
-    return map3(_pipe$1, (var0) => {
-      return new Youtube(var0);
-    });
-  } else if (source.isOk() && source[0] === "spotify") {
-    let _pipe = v;
-    let _pipe$1 = field("url", string2)(_pipe);
-    return map3(_pipe$1, (var0) => {
-      return new Spotify(var0);
-    });
-  } else if (source.isOk()) {
-    let s = source[0];
-    return new Error(
-      toList([
-        new DecodeError("Wrong source name", s, toList(["source"]))
-      ])
-    );
-  } else {
-    let err = source[0];
-    return new Error(err);
-  }
-}
-function song_decoder(v) {
-  let _pipe = v;
-  return decode7(
-    (var0, var1, var2, var3, var4, var5, var6) => {
-      return new Song(var0, var1, var2, var3, var4, var5, var6);
+function song_converter() {
+  let _pipe = object3(
+    parameter(
+      (id2) => {
+        return parameter(
+          (title) => {
+            return parameter(
+              (artists) => {
+                return parameter(
+                  (album) => {
+                    return parameter(
+                      (album_cover2) => {
+                        return parameter(
+                          (source) => {
+                            return parameter(
+                              (preview_url) => {
+                                return constructor(
+                                  () => {
+                                    return new Song(
+                                      id2,
+                                      title,
+                                      artists,
+                                      album,
+                                      album_cover2,
+                                      source,
+                                      preview_url
+                                    );
+                                  }
+                                );
+                              }
+                            );
+                          }
+                        );
+                      }
+                    );
+                  }
+                );
+              }
+            );
+          }
+        );
+      }
+    )
+  );
+  let _pipe$1 = field2(
+    _pipe,
+    "id",
+    (v) => {
+      return new Ok(v.id);
     },
-    field("id", string2),
-    field("title", string2),
-    field("artists", list(string2)),
-    field("album", string2),
-    field("album_cover", string2),
-    field("source", song_source_decoder),
-    field("preview_url", optional(string2))
-  )(_pipe);
+    string4()
+  );
+  let _pipe$2 = field2(
+    _pipe$1,
+    "title",
+    (v) => {
+      return new Ok(v.title);
+    },
+    string4()
+  );
+  let _pipe$3 = field2(
+    _pipe$2,
+    "artists",
+    (v) => {
+      return new Ok(v.artists);
+    },
+    list2(string4())
+  );
+  let _pipe$4 = field2(
+    _pipe$3,
+    "album",
+    (v) => {
+      return new Ok(v.album);
+    },
+    string4()
+  );
+  let _pipe$5 = field2(
+    _pipe$4,
+    "album_cover",
+    (v) => {
+      return new Ok(v.album_cover);
+    },
+    string4()
+  );
+  let _pipe$6 = field2(
+    _pipe$5,
+    "source",
+    (v) => {
+      return new Ok(v.source);
+    },
+    song_source_converter()
+  );
+  let _pipe$7 = field2(
+    _pipe$6,
+    "preview_url",
+    (v) => {
+      return new Ok(v.preview_url);
+    },
+    optional2(string4())
+  );
+  return to_converter(_pipe$7);
 }
 
 // build/dev/javascript/shared/shared/types/playlist.mjs
@@ -4314,37 +4792,71 @@ var UpsertPlaylist = class extends CustomType {
     this.name = name;
   }
 };
-function playlist_encoder(playlist) {
-  return object2(
-    toList([
-      ["id", string3(playlist.id)],
-      ["name", string3(playlist.name)],
-      ["songs", array2(playlist.songs, song_encoder)]
-    ])
+function playlist_converter() {
+  let _pipe = object3(
+    parameter(
+      (id2) => {
+        return parameter(
+          (name) => {
+            return parameter(
+              (songs) => {
+                return constructor(
+                  () => {
+                    return new Playlist(id2, name, songs);
+                  }
+                );
+              }
+            );
+          }
+        );
+      }
+    )
   );
-}
-function playlist_decoder(value3) {
-  let _pipe = value3;
-  return decode3(
-    (var0, var1, var2) => {
-      return new Playlist(var0, var1, var2);
+  let _pipe$1 = field2(
+    _pipe,
+    "id",
+    (v) => {
+      return new Ok(v.id);
     },
-    field("id", string2),
-    field("name", string2),
-    field("songs", list(song_decoder))
-  )(_pipe);
-}
-function upsert_playlist_encoder(upsert2) {
-  return object2(toList([["name", string3(upsert2.name)]]));
-}
-function upsert_playlist_decoder(value3) {
-  let _pipe = value3;
-  return decode1(
-    (var0) => {
-      return new UpsertPlaylist(var0);
+    string4()
+  );
+  let _pipe$2 = field2(
+    _pipe$1,
+    "name",
+    (v) => {
+      return new Ok(v.name);
     },
-    field("name", string2)
-  )(_pipe);
+    string4()
+  );
+  let _pipe$3 = field2(
+    _pipe$2,
+    "songs",
+    (v) => {
+      return new Ok(v.songs);
+    },
+    list2(song_converter())
+  );
+  return to_converter(_pipe$3);
+}
+function upsert_playlist_converter() {
+  let _pipe = object3(
+    parameter(
+      (name) => {
+        return constructor(() => {
+          return new UpsertPlaylist(name);
+        });
+      }
+    )
+  );
+  let _pipe$1 = field2(
+    _pipe,
+    "name",
+    (v) => {
+      return new Ok(v.name);
+    },
+    string4()
+  );
+  return to_converter(_pipe$1);
 }
 
 // build/dev/javascript/client/client/events/playlist_events.mjs
@@ -4579,9 +5091,9 @@ function on_create(_) {
       new ClientError("Couldn't find element with id create-playlist-name")
     );
   } else {
-    let el2 = element3[0];
+    let el = element3[0];
     let value3 = (() => {
-      let _pipe = el2;
+      let _pipe = el;
       return value2(_pipe);
     })();
     if (!value3.isOk()) {
@@ -4715,9 +5227,9 @@ function on_update(_, id2) {
       new ClientError("Couldn't find element with id update-playlist-name")
     );
   } else {
-    let el2 = element3[0];
+    let el = element3[0];
     let value3 = (() => {
-      let _pipe = el2;
+      let _pipe = el;
       return value2(_pipe);
     })();
     if (!value3.isOk()) {
@@ -4948,10 +5460,10 @@ function index_list(idx, decoder) {
   return (dynamic2) => {
     return try$(
       list(dynamic)(dynamic2),
-      (list3) => {
+      (list4) => {
         let $ = idx >= 0;
         if ($) {
-          let _pipe = list3;
+          let _pipe = list4;
           let _pipe$1 = drop(_pipe, idx);
           let _pipe$2 = first(_pipe$1);
           let _pipe$3 = replace_error(
@@ -4959,7 +5471,7 @@ function index_list(idx, decoder) {
             toList([
               new DecodeError(
                 "A list with at least" + to_string2(idx + 1) + "elements",
-                "A list with" + to_string2(length(list3)) + "elements",
+                "A list with" + to_string2(length(list4)) + "elements",
                 toList([to_string2(idx)])
               )
             ])
@@ -5151,15 +5663,15 @@ function json_body(encoder, decoder) {
     )
   );
 }
-function encode(body2, value3) {
+function encode2(body2, value3) {
   let _pipe = value3;
   return body2.converter.encoder(_pipe);
 }
-function decode8(body2, value3) {
+function decode7(body2, value3) {
   let _pipe = value3;
   return body2.converter.decoder(_pipe);
 }
-function get_type(body2) {
+function get_type2(body2) {
   return body2.btype;
 }
 
@@ -5222,11 +5734,11 @@ function id_path(root) {
     )
   );
 }
-function encode2(path, value3) {
+function encode3(path, value3) {
   let _pipe = value3;
   return path.converter.encoder(_pipe);
 }
-function get_type2(path) {
+function get_type3(path) {
   return path.ptype;
 }
 
@@ -5265,11 +5777,11 @@ function empty_query() {
 function complex_query(converter) {
   return new RouteQuery(new ComplexQuery(), converter);
 }
-function encode3(query, value3) {
+function encode4(query, value3) {
   let _pipe = value3;
   return query.converter.encoder(_pipe);
 }
-function get_type3(query) {
+function get_type4(query) {
   return query.qtype;
 }
 
@@ -5333,7 +5845,7 @@ function with_response_body(route, res_body) {
   );
 }
 
-// build/dev/javascript/glitr_lustre/glitr_lustre.mjs
+// build/dev/javascript/glitr_lustre/glitr/lustre.mjs
 var RequestFactory = class extends CustomType {
   constructor(scheme, host, port) {
     super();
@@ -5393,7 +5905,7 @@ function with_body(request, body2) {
 function add_path(req, rreq, on_error, then$3) {
   let $ = (() => {
     let _pipe = rreq.route.path;
-    return get_type2(_pipe);
+    return get_type3(_pipe);
   })();
   let $1 = rreq.path_opt;
   if ($1 instanceof None) {
@@ -5407,7 +5919,7 @@ function add_path(req, rreq, on_error, then$3) {
           _pipe,
           (() => {
             let _pipe$1 = rreq.route.path;
-            let _pipe$2 = encode2(_pipe$1, path);
+            let _pipe$2 = encode3(_pipe$1, path);
             return join2(_pipe$2, "/");
           })()
         );
@@ -5418,7 +5930,7 @@ function add_path(req, rreq, on_error, then$3) {
 function add_query(req, rreq, on_error, then$3) {
   let $ = (() => {
     let _pipe = rreq.route.query;
-    return get_type3(_pipe);
+    return get_type4(_pipe);
   })();
   let $1 = rreq.query_opt;
   if ($ instanceof ComplexQuery && $1 instanceof None) {
@@ -5436,7 +5948,7 @@ function add_query(req, rreq, on_error, then$3) {
           _pipe,
           (() => {
             let _pipe$1 = rreq.route.query;
-            return encode3(_pipe$1, query);
+            return encode4(_pipe$1, query);
           })()
         );
       })()
@@ -5446,7 +5958,7 @@ function add_query(req, rreq, on_error, then$3) {
 function add_body(req, rreq, on_error, then$3) {
   let $ = (() => {
     let _pipe = rreq.route.req_body;
-    return get_type(_pipe);
+    return get_type2(_pipe);
   })();
   let $1 = rreq.body_opt;
   if ($ instanceof JsonBody && $1 instanceof None) {
@@ -5464,7 +5976,7 @@ function add_body(req, rreq, on_error, then$3) {
           _pipe,
           (() => {
             let _pipe$12 = rreq.route.req_body;
-            let _pipe$2 = encode(_pipe$12, body2);
+            let _pipe$2 = encode2(_pipe$12, body2);
             return to_string3(_pipe$2);
           })()
         );
@@ -5480,7 +5992,7 @@ function add_body(req, rreq, on_error, then$3) {
           _pipe,
           (() => {
             let _pipe$1 = rreq.route.req_body;
-            let _pipe$2 = encode(_pipe$1, body2);
+            let _pipe$2 = encode2(_pipe$1, body2);
             return to_string3(_pipe$2);
           })()
         );
@@ -5533,7 +6045,7 @@ function send3(rreq, as_msg, on_error) {
                       _pipe$1,
                       (value3) => {
                         let _pipe$22 = rreq.route.res_body;
-                        let _pipe$3 = decode8(_pipe$22, value3);
+                        let _pipe$3 = decode7(_pipe$22, value3);
                         return map_error(_pipe$3, glitr_to_http_error);
                       }
                     );
@@ -5549,6 +6061,357 @@ function send3(rreq, as_msg, on_error) {
   );
 }
 
+// build/dev/javascript/glitr_convert/glitr/convert/json.mjs
+function encode_value(val) {
+  if (val instanceof StringValue) {
+    let v = val.value;
+    return string3(v);
+  } else if (val instanceof BoolValue) {
+    let v = val.value;
+    return bool2(v);
+  } else if (val instanceof FloatValue) {
+    let v = val.value;
+    return float2(v);
+  } else if (val instanceof IntValue) {
+    let v = val.value;
+    return int2(v);
+  } else if (val instanceof ListValue) {
+    let vals = val.value;
+    return array2(vals, encode_value);
+  } else if (val instanceof DictValue) {
+    let v = val.value;
+    return array2(
+      (() => {
+        let _pipe = v;
+        return map_to_list(_pipe);
+      })(),
+      (keyval) => {
+        return array2(toList([keyval[0], keyval[1]]), encode_value);
+      }
+    );
+  } else if (val instanceof ObjectValue) {
+    let v = val.value;
+    return object2(
+      map2(v, (f) => {
+        return [f[0], encode_value(f[1])];
+      })
+    );
+  } else if (val instanceof OptionalValue) {
+    let v = val.value;
+    return nullable(v, encode_value);
+  } else if (val instanceof ResultValue) {
+    let v = val.value;
+    if (v.isOk()) {
+      let res = v[0];
+      return object2(
+        toList([["type", string3("ok")], ["value", encode_value(res)]])
+      );
+    } else {
+      let err = v[0];
+      return object2(
+        toList([["type", string3("error")], ["value", encode_value(err)]])
+      );
+    }
+  } else if (val instanceof EnumValue) {
+    let variant = val.variant;
+    let v = val.value;
+    return object2(
+      toList([["variant", string3(variant)], ["value", encode_value(v)]])
+    );
+  } else {
+    return null$();
+  }
+}
+function json_encode(value3, converter) {
+  let _pipe = value3;
+  let _pipe$1 = encode(converter)(_pipe);
+  return encode_value(_pipe$1);
+}
+function decode_value(of) {
+  if (of instanceof String2) {
+    return (val) => {
+      let _pipe = val;
+      let _pipe$1 = string2(_pipe);
+      return map3(
+        _pipe$1,
+        (var0) => {
+          return new StringValue(var0);
+        }
+      );
+    };
+  } else if (of instanceof Bool) {
+    return (val) => {
+      let _pipe = val;
+      let _pipe$1 = bool(_pipe);
+      return map3(_pipe$1, (var0) => {
+        return new BoolValue(var0);
+      });
+    };
+  } else if (of instanceof Float) {
+    return (val) => {
+      let _pipe = val;
+      let _pipe$1 = float(_pipe);
+      return map3(_pipe$1, (var0) => {
+        return new FloatValue(var0);
+      });
+    };
+  } else if (of instanceof Int) {
+    return (val) => {
+      let _pipe = val;
+      let _pipe$1 = int(_pipe);
+      return map3(_pipe$1, (var0) => {
+        return new IntValue(var0);
+      });
+    };
+  } else if (of instanceof List2) {
+    let el = of.of;
+    return (val) => {
+      let _pipe = val;
+      let _pipe$1 = list(dynamic)(_pipe);
+      let _pipe$2 = then$(
+        _pipe$1,
+        (val_list) => {
+          return fold(
+            val_list,
+            new Ok(toList([])),
+            (result, list_el) => {
+              let $ = (() => {
+                let _pipe$22 = list_el;
+                return decode_value(el)(_pipe$22);
+              })();
+              if (result.isOk() && $.isOk()) {
+                let result_list = result[0];
+                let jval = $[0];
+                return new Ok(prepend(jval, result_list));
+              } else if (result.isOk() && !$.isOk()) {
+                let errs = $[0];
+                return new Error(errs);
+              } else if (!result.isOk() && $.isOk()) {
+                let errs = result[0];
+                return new Error(errs);
+              } else {
+                let errs = result[0];
+                let new_errs = $[0];
+                return new Error(append(errs, new_errs));
+              }
+            }
+          );
+        }
+      );
+      let _pipe$3 = map3(_pipe$2, reverse);
+      return map3(_pipe$3, (var0) => {
+        return new ListValue(var0);
+      });
+    };
+  } else if (of instanceof Dict2) {
+    let k = of.key;
+    let v = of.value;
+    return (val) => {
+      let _pipe = val;
+      let _pipe$1 = list(
+        list(any(toList([decode_value(k), decode_value(v)])))
+      )(_pipe);
+      let _pipe$2 = then$(
+        _pipe$1,
+        (_capture) => {
+          return fold(
+            _capture,
+            new Ok(toList([])),
+            (result, el) => {
+              if (result.isOk() && el.atLeastLength(2)) {
+                let vals = result[0];
+                let first4 = el.head;
+                let second2 = el.tail.head;
+                return new Ok(prepend([first4, second2], vals));
+              } else if (result.isOk()) {
+                return new Error(
+                  toList([
+                    new DecodeError("2 elements", "0 or 1", toList([]))
+                  ])
+                );
+              } else if (!result.isOk() && el.atLeastLength(2)) {
+                let errs = result[0];
+                return new Error(errs);
+              } else {
+                let errs = result[0];
+                return new Error(
+                  prepend(
+                    new DecodeError("2 elements", "0 or 1", toList([])),
+                    errs
+                  )
+                );
+              }
+            }
+          );
+        }
+      );
+      let _pipe$3 = map3(_pipe$2, from_list);
+      return map3(_pipe$3, (var0) => {
+        return new DictValue(var0);
+      });
+    };
+  } else if (of instanceof Object2) {
+    let fields = of.fields;
+    return (val) => {
+      let _pipe = fold(
+        fields,
+        new Ok(toList([])),
+        (result, f) => {
+          let $ = (() => {
+            let _pipe2 = val;
+            return field(f[0], decode_value(f[1]))(_pipe2);
+          })();
+          if (result.isOk() && $.isOk()) {
+            let field_list = result[0];
+            let jval = $[0];
+            return new Ok(prepend([f[0], jval], field_list));
+          } else if (result.isOk() && !$.isOk()) {
+            let errs = $[0];
+            return new Error(errs);
+          } else if (!result.isOk() && $.isOk()) {
+            let errs = result[0];
+            return new Error(errs);
+          } else {
+            let errs = result[0];
+            let new_errs = $[0];
+            return new Error(append(errs, new_errs));
+          }
+        }
+      );
+      let _pipe$1 = map3(_pipe, reverse);
+      return map3(
+        _pipe$1,
+        (var0) => {
+          return new ObjectValue(var0);
+        }
+      );
+    };
+  } else if (of instanceof Optional) {
+    let of$1 = of.of;
+    return (val) => {
+      let _pipe = val;
+      let _pipe$1 = optional(decode_value(of$1))(_pipe);
+      return map3(
+        _pipe$1,
+        (var0) => {
+          return new OptionalValue(var0);
+        }
+      );
+    };
+  } else if (of instanceof Result2) {
+    let res = of.result;
+    let err = of.error;
+    return (val) => {
+      return try$(
+        (() => {
+          let _pipe = val;
+          return field("type", string2)(_pipe);
+        })(),
+        (type_val) => {
+          if (type_val === "ok") {
+            let _pipe = val;
+            let _pipe$1 = field("value", decode_value(res))(_pipe);
+            let _pipe$2 = map3(
+              _pipe$1,
+              (var0) => {
+                return new Ok(var0);
+              }
+            );
+            return map3(
+              _pipe$2,
+              (var0) => {
+                return new ResultValue(var0);
+              }
+            );
+          } else if (type_val === "error") {
+            let _pipe = val;
+            let _pipe$1 = field("value", decode_value(err))(_pipe);
+            let _pipe$2 = map3(
+              _pipe$1,
+              (var0) => {
+                return new Error(var0);
+              }
+            );
+            return map3(
+              _pipe$2,
+              (var0) => {
+                return new ResultValue(var0);
+              }
+            );
+          } else {
+            let other = type_val;
+            return new Error(
+              toList([
+                new DecodeError(
+                  "'ok' or 'error'",
+                  other,
+                  toList(["type"])
+                )
+              ])
+            );
+          }
+        }
+      );
+    };
+  } else if (of instanceof Enum) {
+    let variants = of.variants;
+    return (val) => {
+      return try$(
+        (() => {
+          let _pipe = val;
+          return field("variant", string2)(_pipe);
+        })(),
+        (variant_name) => {
+          return try$(
+            (() => {
+              let _pipe = key_find(variants, variant_name);
+              return replace_error(
+                _pipe,
+                toList([
+                  new DecodeError(
+                    "One of: " + (() => {
+                      let _pipe$1 = variants;
+                      let _pipe$2 = map2(_pipe$1, (v) => {
+                        return v[0];
+                      });
+                      return join2(_pipe$2, "/");
+                    })(),
+                    variant_name,
+                    toList(["variant"])
+                  )
+                ])
+              );
+            })(),
+            (variant_def) => {
+              return try$(
+                (() => {
+                  let _pipe = val;
+                  let _pipe$1 = field("value", dynamic)(_pipe);
+                  return then$(_pipe$1, decode_value(variant_def));
+                })(),
+                (variant_value) => {
+                  return new Ok(new EnumValue(variant_name, variant_value));
+                }
+              );
+            }
+          );
+        }
+      );
+    };
+  } else {
+    return (_) => {
+      return new Ok(new NullValue());
+    };
+  }
+}
+function json_decode(converter) {
+  return (value3) => {
+    let _pipe = value3;
+    let _pipe$1 = decode_value(type_def(converter))(_pipe);
+    return then$(_pipe$1, decode3(converter));
+  };
+}
+
 // build/dev/javascript/glitr/glitr/service.mjs
 var RouteService = class extends CustomType {
   constructor(root_path, base, upsert2) {
@@ -5558,146 +6421,110 @@ var RouteService = class extends CustomType {
     this.upsert = upsert2;
   }
 };
+function nil_converter() {
+  return [
+    (_) => {
+      return null$();
+    },
+    (_) => {
+      return new Ok(void 0);
+    }
+  ];
+}
 function new$7() {
-  return new RouteService(toList([]), new None(), new None());
+  return new RouteService(toList([]), nil_converter(), nil_converter());
 }
 function with_root_path(service, root_path) {
   return service.withFields({ root_path });
 }
-function with_base_type(service, base_encoder, base_decoder) {
+function with_base_converter(service, converter) {
   return new RouteService(
     service.root_path,
-    new Some([base_encoder, base_decoder]),
+    [
+      (val) => {
+        let _pipe = val;
+        return json_encode(_pipe, converter);
+      },
+      json_decode(converter)
+    ],
     service.upsert
   );
 }
-function with_upsert_type(service, upsert_encoder, upsert_decoder) {
+function with_upsert_converter(service, converter) {
   return new RouteService(
     service.root_path,
     service.base,
-    new Some([upsert_encoder, upsert_decoder])
+    [
+      (val) => {
+        let _pipe = val;
+        return json_encode(_pipe, converter);
+      },
+      json_decode(converter)
+    ]
   );
 }
 function create_route(service) {
-  let $ = service.upsert;
-  let $1 = service.base;
-  if ($ instanceof None) {
-    return new Error(
-      new RouteError(
-        "No upsert type provided, make sure you called with_upsert_type"
-      )
-    );
-  } else if ($1 instanceof None) {
-    return new Error(
-      new RouteError(
-        "No base type provided, make sure you called with_base_type"
-      )
-    );
-  } else {
-    let upsert2 = $[0];
-    let base = $1[0];
-    let _pipe = new$6();
-    let _pipe$1 = with_method(_pipe, new Post());
-    let _pipe$2 = with_path(
-      _pipe$1,
-      static_path(service.root_path)
-    );
-    let _pipe$3 = with_request_body(
-      _pipe$2,
-      json_body(upsert2[0], upsert2[1])
-    );
-    let _pipe$4 = with_response_body(
-      _pipe$3,
-      json_body(base[0], base[1])
-    );
-    return new Ok(_pipe$4);
-  }
+  let _pipe = new$6();
+  let _pipe$1 = with_method(_pipe, new Post());
+  let _pipe$2 = with_path(_pipe$1, static_path(service.root_path));
+  let _pipe$3 = with_request_body(
+    _pipe$2,
+    json_body(service.upsert[0], service.upsert[1])
+  );
+  return with_response_body(
+    _pipe$3,
+    json_body(service.base[0], service.base[1])
+  );
 }
 function get_all_route(service) {
-  let $ = service.base;
-  if ($ instanceof None) {
-    return new Error(
-      new RouteError(
-        "No base type provided, make sure you called with_base_type"
-      )
-    );
-  } else {
-    let base = $[0];
-    let _pipe = new$6();
-    let _pipe$1 = with_method(_pipe, new Get());
-    let _pipe$2 = with_path(
-      _pipe$1,
-      static_path(service.root_path)
-    );
-    let _pipe$3 = with_response_body(
-      _pipe$2,
-      json_body(
-        (v) => {
-          let _pipe$32 = v;
-          return array2(_pipe$32, base[0]);
-        },
-        list(base[1])
-      )
-    );
-    return new Ok(_pipe$3);
-  }
+  let _pipe = new$6();
+  let _pipe$1 = with_method(_pipe, new Get());
+  let _pipe$2 = with_path(_pipe$1, static_path(service.root_path));
+  return with_response_body(
+    _pipe$2,
+    json_body(
+      (v) => {
+        let _pipe$3 = v;
+        return array2(_pipe$3, service.base[0]);
+      },
+      list(service.base[1])
+    )
+  );
 }
 function update_route(service) {
-  let $ = service.upsert;
-  let $1 = service.base;
-  if ($ instanceof None) {
-    return new Error(
-      new RouteError(
-        "No upsert body type provided, make sure you called with_upsert_type"
-      )
-    );
-  } else if ($1 instanceof None) {
-    return new Error(
-      new RouteError(
-        "No base body type provided, make sure you called with_base_type"
-      )
-    );
-  } else {
-    let upsert2 = $[0];
-    let base = $1[0];
-    let _pipe = new$6();
-    let _pipe$1 = with_method(_pipe, new Post());
-    let _pipe$2 = with_path(_pipe$1, id_path(service.root_path));
-    let _pipe$3 = with_request_body(
-      _pipe$2,
-      json_body(upsert2[0], upsert2[1])
-    );
-    let _pipe$4 = with_response_body(
-      _pipe$3,
-      json_body(base[0], base[1])
-    );
-    return new Ok(_pipe$4);
-  }
+  let _pipe = new$6();
+  let _pipe$1 = with_method(_pipe, new Post());
+  let _pipe$2 = with_path(_pipe$1, id_path(service.root_path));
+  let _pipe$3 = with_request_body(
+    _pipe$2,
+    json_body(service.upsert[0], service.upsert[1])
+  );
+  return with_response_body(
+    _pipe$3,
+    json_body(service.base[0], service.base[1])
+  );
 }
 function delete_route(service) {
   let _pipe = new$6();
   let _pipe$1 = with_method(_pipe, new Delete());
   let _pipe$2 = with_path(_pipe$1, id_path(service.root_path));
-  let _pipe$3 = with_response_body(
+  return with_response_body(
     _pipe$2,
     json_body(string3, string2)
   );
-  return new Ok(_pipe$3);
 }
 
 // build/dev/javascript/shared/shared/routes/playlist_routes.mjs
 function playlist_service() {
   let _pipe = new$7();
   let _pipe$1 = with_root_path(_pipe, toList(["api", "playlists"]));
-  let _pipe$2 = with_base_type(
+  let _pipe$2 = with_base_converter(
     _pipe$1,
-    playlist_encoder,
-    playlist_decoder
+    playlist_converter()
   );
-  return with_upsert_type(
+  return with_upsert_converter(
     _pipe$2,
-    upsert_playlist_encoder,
-    upsert_playlist_decoder
+    upsert_playlist_converter()
   );
 }
 function get_all() {
@@ -5760,95 +6587,56 @@ function send_and_handle_errors(req, on_success) {
     }
   );
 }
-function unwrap_service_route(route, callback) {
-  if (!route.isOk()) {
-    let err = route[0];
-    return from((_) => {
-      return warn(err);
-    });
-  } else {
-    let route$1 = route[0];
-    return callback(route$1);
-  }
-}
 
 // build/dev/javascript/client/client/services/playlist_service.mjs
 function get_all2() {
-  return unwrap_service_route(
-    get_all(),
-    (route) => {
-      let _pipe = factory();
-      let _pipe$1 = for_route(_pipe, route);
-      let _pipe$2 = with_path2(_pipe$1, void 0);
-      return send_and_handle_errors(
-        _pipe$2,
-        (d) => {
-          return new PlaylistEvent(
-            new ServerSentPlaylists(d)
-          );
-        }
-      );
+  let _pipe = factory();
+  let _pipe$1 = for_route(_pipe, get_all());
+  let _pipe$2 = with_path2(_pipe$1, void 0);
+  return send_and_handle_errors(
+    _pipe$2,
+    (d) => {
+      return new PlaylistEvent(new ServerSentPlaylists(d));
     }
   );
 }
 function create3(name) {
-  return unwrap_service_route(
-    create2(),
-    (route) => {
-      let _pipe = factory();
-      let _pipe$1 = for_route(_pipe, route);
-      let _pipe$2 = with_path2(_pipe$1, void 0);
-      let _pipe$3 = with_body(
-        _pipe$2,
-        new UpsertPlaylist(name)
-      );
-      return send_and_handle_errors(
-        _pipe$3,
-        (d) => {
-          return new PlaylistEvent(
-            new ServerCreatedPlaylist(d)
-          );
-        }
+  let _pipe = factory();
+  let _pipe$1 = for_route(_pipe, create2());
+  let _pipe$2 = with_path2(_pipe$1, void 0);
+  let _pipe$3 = with_body(_pipe$2, new UpsertPlaylist(name));
+  return send_and_handle_errors(
+    _pipe$3,
+    (d) => {
+      return new PlaylistEvent(
+        new ServerCreatedPlaylist(d)
       );
     }
   );
 }
 function update2(id2, name) {
-  return unwrap_service_route(
-    update(),
-    (route) => {
-      let _pipe = factory();
-      let _pipe$1 = for_route(_pipe, route);
-      let _pipe$2 = with_path2(_pipe$1, id2);
-      let _pipe$3 = with_body(
-        _pipe$2,
-        new UpsertPlaylist(name)
-      );
-      return send_and_handle_errors(
-        _pipe$3,
-        (d) => {
-          return new PlaylistEvent(
-            new ServerUpdatedPlaylist(d)
-          );
-        }
+  let _pipe = factory();
+  let _pipe$1 = for_route(_pipe, update());
+  let _pipe$2 = with_path2(_pipe$1, id2);
+  let _pipe$3 = with_body(_pipe$2, new UpsertPlaylist(name));
+  return send_and_handle_errors(
+    _pipe$3,
+    (d) => {
+      return new PlaylistEvent(
+        new ServerUpdatedPlaylist(d)
       );
     }
   );
 }
 function delete$3(id2) {
-  return unwrap_service_route(
-    delete$2(),
-    (route) => {
-      let _pipe = factory();
-      let _pipe$1 = for_route(_pipe, route);
-      let _pipe$2 = with_path2(_pipe$1, id2);
-      return send_and_handle_errors(
-        _pipe$2,
-        (d) => {
-          return new PlaylistEvent(
-            new ServerDeletedPlaylist(d)
-          );
-        }
+  let _pipe = factory();
+  let _pipe$1 = for_route(_pipe, delete$2());
+  let _pipe$2 = with_path2(_pipe$1, id2);
+  return send_and_handle_errors(
+    _pipe$2,
+    (d) => {
+      return new PlaylistEvent(
+        new ServerDeletedPlaylist(d)
       );
     }
   );
@@ -6004,9 +6792,12 @@ function search2() {
     _pipe$3,
     json_body(
       (_capture) => {
-        return array2(_capture, song_encoder);
+        return json_encode(
+          _capture,
+          list2(song_converter())
+        );
       },
-      list(song_decoder)
+      json_decode(list2(song_converter()))
     )
   );
 }
@@ -6016,10 +6807,7 @@ function search3(q, token) {
   let _pipe = factory();
   let _pipe$1 = for_route(_pipe, search2());
   let _pipe$2 = with_path2(_pipe$1, void 0);
-  let _pipe$3 = with_query2(
-    _pipe$2,
-    new SearchQuery(q, token)
-  );
+  let _pipe$3 = with_query2(_pipe$2, new SearchQuery(q, token));
   return send3(
     _pipe$3,
     (res) => {
@@ -6090,11 +6878,11 @@ function init3(_) {
   let $ = parse2(location());
   if (!$.isOk()) {
     throw makeError(
-      "assignment_no_match",
+      "let_assert",
       "client",
       40,
       "init",
-      "Assignment pattern did not match",
+      "Pattern match failed, no pattern matched the value.",
       { value: $ }
     );
   }
@@ -6236,11 +7024,11 @@ function main() {
   let $ = start2(app, "#app", void 0);
   if (!$.isOk()) {
     throw makeError(
-      "assignment_no_match",
+      "let_assert",
       "client",
       32,
       "main",
-      "Assignment pattern did not match",
+      "Pattern match failed, no pattern matched the value.",
       { value: $ }
     );
   }
