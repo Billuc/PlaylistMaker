@@ -1,8 +1,8 @@
 import glitr/convert
-import shared/types/song
+import shared/types/playlist_song
 
 pub type Playlist {
-  Playlist(id: String, name: String, songs: List(song.Song))
+  Playlist(id: String, name: String, songs: List(playlist_song.PlaylistSong))
 }
 
 pub fn playlist_converter() -> convert.Converter(Playlist) {
@@ -18,7 +18,7 @@ pub fn playlist_converter() -> convert.Converter(Playlist) {
   |> convert.field(
     "songs",
     fn(v) { Ok(v.songs) },
-    convert.list(song.song_converter()),
+    convert.list(playlist_song.playlist_song_converter()),
   )
   |> convert.to_converter
 }

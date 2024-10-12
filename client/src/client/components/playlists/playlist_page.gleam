@@ -1,5 +1,5 @@
+import client/components/playlist_songs/song_list
 import client/components/playlists/update_playlist
-import client/components/songs/song_list
 import client/events/playlist_events
 import client/types/msg
 import lustre/attribute as attr

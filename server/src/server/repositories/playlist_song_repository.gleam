@@ -49,6 +49,21 @@ pub fn get(
   })
 }
 
+pub fn get_by_playlist(
+  ctx: web.Context,
+  playlist_id: String,
+) -> Result(List(playlist_song.PlaylistSong), errors.AppError) {
+  s.new()
+  |> cc.cake_select_fields(playlist_song.playlist_song_converter())
+  |> s.from_table(db_name)
+  |> s.where(w.col("playlist_id") |> w.eq(w.string(playlist_id)))
+  |> s.to_query()
+  |> db_utils.exec_read_query(
+    ctx.db,
+    cc.cake_decode(playlist_song.playlist_song_converter()),
+  )
+}
+
 pub fn create(
   ctx: web.Context,
   create: playlist_song.UpsertPlaylistSong,

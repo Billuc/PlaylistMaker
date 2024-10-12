@@ -3,6 +3,7 @@ import gleam/result
 import glitr
 import glitr/wisp/errors
 import server/repositories/playlist_repository
+import server/repositories/playlist_song_repository
 import server/web
 import shared/types/playlist
 
@@ -12,7 +13,12 @@ pub fn get_all(
 ) -> Result(List(playlist.Playlist), errors.AppError) {
   playlist_repository.get_all(ctx)
   |> result.map(fn(dtos) {
-    list.map(dtos, fn(dto) { playlist.Playlist(dto.id, dto.name, []) })
+    list.map(dtos, fn(dto) {
+      let songs =
+        playlist_song_repository.get_by_playlist(ctx, dto.id)
+        |> result.unwrap([])
+      playlist.Playlist(dto.id, dto.name, songs)
+    })
   })
 }
 
@@ -20,8 +26,12 @@ pub fn get(
   ctx: web.Context,
   opts: glitr.RouteOptions(String, Nil, Nil),
 ) -> Result(playlist.Playlist, errors.AppError) {
+  let songs =
+    playlist_song_repository.get_by_playlist(ctx, opts.path)
+    |> result.unwrap([])
+
   playlist_repository.get(ctx, opts.path)
-  |> result.map(fn(dto) { playlist.Playlist(dto.id, dto.name, []) })
+  |> result.map(fn(dto) { playlist.Playlist(dto.id, dto.name, songs) })
 }
 
 pub fn create(
@@ -29,8 +39,7 @@ pub fn create(
   opts: glitr.RouteOptions(Nil, Nil, playlist.UpsertPlaylist),
 ) -> Result(playlist.Playlist, errors.AppError) {
   playlist_repository.create(ctx, opts.body)
-  |> result.then(playlist_repository.get(ctx, _))
-  |> result.map(fn(dto) { playlist.Playlist(dto.id, dto.name, []) })
+  |> result.then(fn(id) { get(ctx, glitr.RouteOptions(id, Nil, Nil)) })
 }
 
 pub fn update(
@@ -38,8 +47,7 @@ pub fn update(
   opts: glitr.RouteOptions(String, Nil, playlist.UpsertPlaylist),
 ) -> Result(playlist.Playlist, errors.AppError) {
   playlist_repository.update(ctx, opts.body, opts.path)
-  |> result.then(playlist_repository.get(ctx, _))
-  |> result.map(fn(dto) { playlist.Playlist(dto.id, dto.name, []) })
+  |> result.then(fn(id) { get(ctx, glitr.RouteOptions(id, Nil, Nil)) })
 }
 
 pub fn delete(
