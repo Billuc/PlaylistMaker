@@ -5042,7 +5042,7 @@ function layout(children2, left_children) {
   return div(
     toList([
       class$(
-        "bg-zinc-800 min-w-screen min-h-screen text-pink-100 p-4 flex flex-nowrap items-stretch"
+        "bg-zinc-800 min-w-screen min-h-screen max-h-screen text-pink-100 p-4 flex flex-nowrap items-stretch"
       )
     ]),
     toList([
@@ -5055,7 +5055,11 @@ function layout(children2, left_children) {
         left_children
       ),
       div(
-        toList([class$("py-8 px-4 grow flex flex-col items-center")]),
+        toList([
+          class$(
+            "py-8 px-4 grow flex flex-col items-center overflow-y-scroll"
+          )
+        ]),
         toList([
           div(
             toList([class$("max-w-3xl flex flex-col items-stretch")]),
