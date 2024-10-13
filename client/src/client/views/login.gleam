@@ -3,12 +3,10 @@ import lustre/attribute
 import lustre/element.{type Element}
 import lustre/element/html
 
-pub fn home() -> List(Element(msg.Msg)) {
+pub fn view() -> List(Element(msg.Msg)) {
   [
     html.h3([attribute.class("text-lg mb-4 text-center")], [
-      html.text(
-        "Search songs and create playlists that can be exported to Spotify, Youtube Music,...",
-      ),
+      html.text("Search songs and create playlists"),
     ]),
     html.a(
       [

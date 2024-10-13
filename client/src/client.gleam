@@ -1,15 +1,16 @@
-import client/components/home
 import client/components/layout
 import client/components/navigation_bar
-import client/components/not_found
-import client/components/playlists/playlist_page
-import client/components/search
 import client/events/playlist_event_handler
 import client/events/song_event_handler
 import client/services/playlist_service
 import client/types/model.{type Model, Model}
 import client/types/msg
 import client/types/route
+import client/views/home
+import client/views/login
+import client/views/not_found
+import client/views/playlist_page
+import client/views/search
 import gleam/dict
 import gleam/list
 import gleam/option
@@ -98,8 +99,8 @@ fn update(model: Model, msg: msg.Msg) -> #(Model, Effect(msg.Msg)) {
 
 fn view(model: Model) -> Element(msg.Msg) {
   let children = case model.token, model.route {
-    "", route.Home | "", route.Search(_, _) -> home.home()
-    _, route.Home -> search.search(False, [])
+    "", route.Home | "", route.Search(_, _) -> login.view()
+    _, route.Home -> home.view()
     _, route.Search(searching, songs) -> search.search(searching, songs)
     _, route.Playlist(id) -> {
       model.playlists

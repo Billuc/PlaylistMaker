@@ -47,8 +47,8 @@ var List = class {
     return length5;
   }
 };
-function prepend(element3, tail) {
-  return new NonEmpty(element3, tail);
+function prepend(element2, tail) {
+  return new NonEmpty(element2, tail);
 }
 function toList(elements2, tail) {
   return List.fromArray(elements2, tail);
@@ -89,8 +89,8 @@ var BitArray = class _BitArray {
     return this.buffer.length;
   }
   // @internal
-  byteAt(index4) {
-    return this.buffer[index4];
+  byteAt(index3) {
+    return this.buffer[index3];
   }
   // @internal
   floatFromSlice(start3, end, isBigEndian) {
@@ -105,8 +105,8 @@ var BitArray = class _BitArray {
     return new _BitArray(this.buffer.slice(start3, end));
   }
   // @internal
-  sliceAfter(index4) {
-    return new _BitArray(this.buffer.slice(index4));
+  sliceAfter(index3) {
+    return new _BitArray(this.buffer.slice(index3));
   }
 };
 function byteArrayToInt(byteArray, start3, end, isBigEndian, isSigned) {
@@ -130,12 +130,12 @@ function byteArrayToInt(byteArray, start3, end, isBigEndian, isSigned) {
   return value3;
 }
 function byteArrayToFloat(byteArray, start3, end, isBigEndian) {
-  const view11 = new DataView(byteArray.buffer);
+  const view13 = new DataView(byteArray.buffer);
   const byteSize = end - start3;
   if (byteSize === 8) {
-    return view11.getFloat64(start3, !isBigEndian);
+    return view13.getFloat64(start3, !isBigEndian);
   } else if (byteSize === 4) {
-    return view11.getFloat32(start3, !isBigEndian);
+    return view13.getFloat32(start3, !isBigEndian);
   } else {
     const msg = `Sized floats must be 32-bit or 64-bit on JavaScript, got size of ${byteSize * 8} bits`;
     throw new globalThis.Error(msg);
@@ -317,14 +317,6 @@ function scan(regex, string5) {
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/int.mjs
-function absolute_value(x) {
-  let $ = x >= 0;
-  if ($) {
-    return x;
-  } else {
-    return x * -1;
-  }
-}
 function parse(string5) {
   return parse_int(string5);
 }
@@ -339,22 +331,6 @@ function second(pair) {
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/list.mjs
-function count_length(loop$list, loop$count) {
-  while (true) {
-    let list4 = loop$list;
-    let count = loop$count;
-    if (list4.atLeastLength(1)) {
-      let list$1 = list4.tail;
-      loop$list = list$1;
-      loop$count = count + 1;
-    } else {
-      return count;
-    }
-  }
-}
-function length(list4) {
-  return count_length(list4, 0);
-}
 function do_reverse(loop$remaining, loop$accumulator) {
   while (true) {
     let remaining = loop$remaining;
@@ -372,65 +348,65 @@ function do_reverse(loop$remaining, loop$accumulator) {
 function reverse(xs) {
   return do_reverse(xs, toList([]));
 }
-function first(list4) {
-  if (list4.hasLength(0)) {
+function first(list3) {
+  if (list3.hasLength(0)) {
     return new Error(void 0);
   } else {
-    let x = list4.head;
+    let x = list3.head;
     return new Ok(x);
   }
 }
 function do_map(loop$list, loop$fun, loop$acc) {
   while (true) {
-    let list4 = loop$list;
+    let list3 = loop$list;
     let fun = loop$fun;
     let acc = loop$acc;
-    if (list4.hasLength(0)) {
+    if (list3.hasLength(0)) {
       return reverse(acc);
     } else {
-      let x = list4.head;
-      let xs = list4.tail;
+      let x = list3.head;
+      let xs = list3.tail;
       loop$list = xs;
       loop$fun = fun;
       loop$acc = prepend(fun(x), acc);
     }
   }
 }
-function map2(list4, fun) {
-  return do_map(list4, fun, toList([]));
+function map2(list3, fun) {
+  return do_map(list3, fun, toList([]));
 }
 function do_index_map(loop$list, loop$fun, loop$index, loop$acc) {
   while (true) {
-    let list4 = loop$list;
+    let list3 = loop$list;
     let fun = loop$fun;
-    let index4 = loop$index;
+    let index3 = loop$index;
     let acc = loop$acc;
-    if (list4.hasLength(0)) {
+    if (list3.hasLength(0)) {
       return reverse(acc);
     } else {
-      let x = list4.head;
-      let xs = list4.tail;
-      let acc$1 = prepend(fun(x, index4), acc);
+      let x = list3.head;
+      let xs = list3.tail;
+      let acc$1 = prepend(fun(x, index3), acc);
       loop$list = xs;
       loop$fun = fun;
-      loop$index = index4 + 1;
+      loop$index = index3 + 1;
       loop$acc = acc$1;
     }
   }
 }
-function index_map(list4, fun) {
-  return do_index_map(list4, fun, 0, toList([]));
+function index_map(list3, fun) {
+  return do_index_map(list3, fun, 0, toList([]));
 }
 function do_try_map(loop$list, loop$fun, loop$acc) {
   while (true) {
-    let list4 = loop$list;
+    let list3 = loop$list;
     let fun = loop$fun;
     let acc = loop$acc;
-    if (list4.hasLength(0)) {
+    if (list3.hasLength(0)) {
       return new Ok(reverse(acc));
     } else {
-      let x = list4.head;
-      let xs = list4.tail;
+      let x = list3.head;
+      let xs = list3.tail;
       let $ = fun(x);
       if ($.isOk()) {
         let y = $[0];
@@ -444,21 +420,21 @@ function do_try_map(loop$list, loop$fun, loop$acc) {
     }
   }
 }
-function try_map(list4, fun) {
-  return do_try_map(list4, fun, toList([]));
+function try_map(list3, fun) {
+  return do_try_map(list3, fun, toList([]));
 }
 function drop(loop$list, loop$n) {
   while (true) {
-    let list4 = loop$list;
+    let list3 = loop$list;
     let n = loop$n;
     let $ = n <= 0;
     if ($) {
-      return list4;
+      return list3;
     } else {
-      if (list4.hasLength(0)) {
+      if (list3.hasLength(0)) {
         return toList([]);
       } else {
-        let xs = list4.tail;
+        let xs = list3.tail;
         loop$list = xs;
         loop$n = n - 1;
       }
@@ -467,18 +443,18 @@ function drop(loop$list, loop$n) {
 }
 function do_take(loop$list, loop$n, loop$acc) {
   while (true) {
-    let list4 = loop$list;
+    let list3 = loop$list;
     let n = loop$n;
     let acc = loop$acc;
     let $ = n <= 0;
     if ($) {
       return reverse(acc);
     } else {
-      if (list4.hasLength(0)) {
+      if (list3.hasLength(0)) {
         return reverse(acc);
       } else {
-        let x = list4.head;
-        let xs = list4.tail;
+        let x = list3.head;
+        let xs = list3.tail;
         loop$list = xs;
         loop$n = n - 1;
         loop$acc = prepend(x, acc);
@@ -486,36 +462,36 @@ function do_take(loop$list, loop$n, loop$acc) {
     }
   }
 }
-function take(list4, n) {
-  return do_take(list4, n, toList([]));
+function take(list3, n) {
+  return do_take(list3, n, toList([]));
 }
 function do_append(loop$first, loop$second) {
   while (true) {
-    let first4 = loop$first;
+    let first3 = loop$first;
     let second2 = loop$second;
-    if (first4.hasLength(0)) {
+    if (first3.hasLength(0)) {
       return second2;
     } else {
-      let item = first4.head;
-      let rest$1 = first4.tail;
+      let item = first3.head;
+      let rest$1 = first3.tail;
       loop$first = rest$1;
       loop$second = prepend(item, second2);
     }
   }
 }
-function append(first4, second2) {
-  return do_append(reverse(first4), second2);
+function append(first3, second2) {
+  return do_append(reverse(first3), second2);
 }
 function fold(loop$list, loop$initial, loop$fun) {
   while (true) {
-    let list4 = loop$list;
+    let list3 = loop$list;
     let initial = loop$initial;
     let fun = loop$fun;
-    if (list4.hasLength(0)) {
+    if (list3.hasLength(0)) {
       return initial;
     } else {
-      let x = list4.head;
-      let rest$1 = list4.tail;
+      let x = list3.head;
+      let rest$1 = list3.tail;
       loop$list = rest$1;
       loop$initial = fun(initial, x);
       loop$fun = fun;
@@ -527,16 +503,16 @@ function do_index_fold(loop$over, loop$acc, loop$with, loop$index) {
     let over = loop$over;
     let acc = loop$acc;
     let with$ = loop$with;
-    let index4 = loop$index;
+    let index3 = loop$index;
     if (over.hasLength(0)) {
       return acc;
     } else {
       let first$1 = over.head;
       let rest$1 = over.tail;
       loop$over = rest$1;
-      loop$acc = with$(acc, first$1, index4);
+      loop$acc = with$(acc, first$1, index3);
       loop$with = with$;
-      loop$index = index4 + 1;
+      loop$index = index3 + 1;
     }
   }
 }
@@ -565,28 +541,28 @@ function find_map(loop$haystack, loop$fun) {
 }
 function do_intersperse(loop$list, loop$separator, loop$acc) {
   while (true) {
-    let list4 = loop$list;
+    let list3 = loop$list;
     let separator = loop$separator;
     let acc = loop$acc;
-    if (list4.hasLength(0)) {
+    if (list3.hasLength(0)) {
       return reverse(acc);
     } else {
-      let x = list4.head;
-      let rest$1 = list4.tail;
+      let x = list3.head;
+      let rest$1 = list3.tail;
       loop$list = rest$1;
       loop$separator = separator;
       loop$acc = prepend(x, prepend(separator, acc));
     }
   }
 }
-function intersperse(list4, elem) {
-  if (list4.hasLength(0)) {
-    return list4;
-  } else if (list4.hasLength(1)) {
-    return list4;
+function intersperse(list3, elem) {
+  if (list3.hasLength(0)) {
+    return list3;
+  } else if (list3.hasLength(1)) {
+    return list3;
   } else {
-    let x = list4.head;
-    let rest$1 = list4.tail;
+    let x = list3.head;
+    let rest$1 = list3.tail;
     return do_intersperse(rest$1, elem, toList([x]));
   }
 }
@@ -623,16 +599,16 @@ function key_find(keyword_list, desired_key) {
     }
   );
 }
-function key_set(list4, key2, value3) {
-  if (list4.hasLength(0)) {
+function key_set(list3, key2, value3) {
+  if (list3.hasLength(0)) {
     return toList([[key2, value3]]);
-  } else if (list4.atLeastLength(1) && isEqual(list4.head[0], key2)) {
-    let k = list4.head[0];
-    let rest$1 = list4.tail;
+  } else if (list3.atLeastLength(1) && isEqual(list3.head[0], key2)) {
+    let k = list3.head[0];
+    let rest$1 = list3.tail;
     return prepend([key2, value3], rest$1);
   } else {
-    let first$1 = list4.head;
-    let rest$1 = list4.tail;
+    let first$1 = list3.head;
+    let rest$1 = list3.tail;
     return prepend(first$1, key_set(rest$1, key2, value3));
   }
 }
@@ -711,7 +687,7 @@ function split2(iodata, pattern) {
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/string.mjs
-function length3(string5) {
+function length2(string5) {
   return string_length(string5);
 }
 function lowercase2(string5) {
@@ -745,7 +721,7 @@ function slice(string5, idx, len) {
   } else {
     let $1 = idx < 0;
     if ($1) {
-      let translated_idx = length3(string5) + idx;
+      let translated_idx = length2(string5) + idx;
       let $2 = translated_idx < 0;
       if ($2) {
         return "";
@@ -762,7 +738,7 @@ function drop_left(string5, num_graphemes) {
   if ($) {
     return string5;
   } else {
-    return slice(string5, num_graphemes, length3(string5) - num_graphemes);
+    return slice(string5, num_graphemes, length2(string5) - num_graphemes);
   }
 }
 function split3(x, substring) {
@@ -803,31 +779,10 @@ function bool(data) {
 function shallow_list(value3) {
   return decode_list(value3);
 }
-function optional(decode7) {
+function optional(decode5) {
   return (value3) => {
-    return decode_option(value3, decode7);
+    return decode_option(value3, decode5);
   };
-}
-function at_least_decode_tuple_error(size2, data) {
-  let s = (() => {
-    if (size2 === 1) {
-      return "";
-    } else {
-      return "s";
-    }
-  })();
-  let error2 = (() => {
-    let _pipe = toList([
-      "Tuple of at least ",
-      to_string2(size2),
-      " element",
-      s
-    ]);
-    let _pipe$1 = from_strings(_pipe);
-    let _pipe$2 = to_string3(_pipe$1);
-    return new DecodeError(_pipe$2, classify(data), toList([]));
-  })();
-  return new Error(toList([error2]));
 }
 function any(decoders) {
   return (data) => {
@@ -872,8 +827,8 @@ function list(decoder_type) {
   return (dynamic2) => {
     return try$(
       shallow_list(dynamic2),
-      (list4) => {
-        let _pipe = list4;
+      (list3) => {
+        let _pipe = list3;
         let _pipe$1 = try_map(_pipe, decoder_type);
         return map_errors(
           _pipe$1,
@@ -909,48 +864,6 @@ function field(name, inner_type) {
           _pipe$2,
           (_capture) => {
             return push_path(_capture, name);
-          }
-        );
-      }
-    );
-  };
-}
-function element(index4, inner_type) {
-  return (data) => {
-    return try$(
-      decode_tuple(data),
-      (tuple) => {
-        let size2 = length2(tuple);
-        return try$(
-          (() => {
-            let $ = index4 >= 0;
-            if ($) {
-              let $1 = index4 < size2;
-              if ($1) {
-                return tuple_get(tuple, index4);
-              } else {
-                return at_least_decode_tuple_error(index4 + 1, data);
-              }
-            } else {
-              let $1 = absolute_value(index4) <= size2;
-              if ($1) {
-                return tuple_get(tuple, size2 + index4);
-              } else {
-                return at_least_decode_tuple_error(
-                  absolute_value(index4),
-                  data
-                );
-              }
-            }
-          })(),
-          (data2) => {
-            let _pipe = inner_type(data2);
-            return map_errors(
-              _pipe,
-              (_capture) => {
-                return push_path(_capture, index4);
-              }
-            );
           }
         );
       }
@@ -1094,21 +1007,21 @@ function bitcount(x) {
 function index(bitmap, bit) {
   return bitcount(bitmap & bit - 1);
 }
-function cloneAndSet(arr, at2, val) {
+function cloneAndSet(arr, at, val) {
   const len = arr.length;
   const out = new Array(len);
   for (let i = 0; i < len; ++i) {
     out[i] = arr[i];
   }
-  out[at2] = val;
+  out[at] = val;
   return out;
 }
-function spliceIn(arr, at2, val) {
+function spliceIn(arr, at, val) {
   const len = arr.length;
   const out = new Array(len + 1);
   let i = 0;
   let g = 0;
-  while (i < at2) {
+  while (i < at) {
     out[g++] = arr[i++];
   }
   out[g++] = val;
@@ -1117,12 +1030,12 @@ function spliceIn(arr, at2, val) {
   }
   return out;
 }
-function spliceOut(arr, at2) {
+function spliceOut(arr, at) {
   const len = arr.length;
   const out = new Array(len - 1);
   let i = 0;
   let g = 0;
-  while (i < at2) {
+  while (i < at) {
     out[g++] = arr[i++];
   }
   ++i;
@@ -1300,12 +1213,12 @@ function assocCollision(root, shift, hash, key2, val, addedLeaf) {
         array: cloneAndSet(root.array, idx, { type: ENTRY, k: key2, v: val })
       };
     }
-    const size2 = root.array.length;
+    const size = root.array.length;
     addedLeaf.val = true;
     return {
       type: COLLISION_NODE,
       hash,
-      array: cloneAndSet(root.array, size2, { type: ENTRY, k: key2, v: val })
+      array: cloneAndSet(root.array, size, { type: ENTRY, k: key2, v: val })
     };
   }
   return assoc(
@@ -1322,8 +1235,8 @@ function assocCollision(root, shift, hash, key2, val, addedLeaf) {
   );
 }
 function collisionIndexOf(root, key2) {
-  const size2 = root.array.length;
-  for (let i = 0; i < size2; i++) {
+  const size = root.array.length;
+  for (let i = 0; i < size; i++) {
     if (isEqual(key2, root.array[i].k)) {
       return i;
     }
@@ -1506,8 +1419,8 @@ function forEach(root, fn) {
     return;
   }
   const items = root.array;
-  const size2 = items.length;
-  for (let i = 0; i < size2; i++) {
+  const size = items.length;
+  for (let i = 0; i < size; i++) {
     const item = items[i];
     if (item === void 0) {
       continue;
@@ -1553,9 +1466,9 @@ var Dict = class _Dict {
    * @param {undefined | Node<K,V>} root
    * @param {number} size
    */
-  constructor(root, size2) {
+  constructor(root, size) {
     this.root = root;
-    this.size = size2;
+    this.size = size;
   }
   /**
    * @template NotFound
@@ -1700,15 +1613,15 @@ function graphemes_iterator(string5) {
   }
 }
 function pop_grapheme(string5) {
-  let first4;
+  let first3;
   const iterator = graphemes_iterator(string5);
   if (iterator) {
-    first4 = iterator.next().value?.segment;
+    first3 = iterator.next().value?.segment;
   } else {
-    first4 = string5.match(/./su)?.[0];
+    first3 = string5.match(/./su)?.[0];
   }
-  if (first4) {
-    return new Ok([first4, string5.slice(first4.length)]);
+  if (first3) {
+    return new Ok([first3, string5.slice(first3.length)]);
   } else {
     return new Error(Nil);
   }
@@ -1735,9 +1648,6 @@ function concat(xs) {
     result = result + x;
   }
   return result;
-}
-function length2(data) {
-  return data.length;
 }
 function starts_with(haystack, needle) {
   return haystack.startsWith(needle);
@@ -1883,12 +1793,6 @@ function decode_float(data) {
 function decode_bool(data) {
   return typeof data === "boolean" ? new Ok(data) : decoder_error("Bool", data);
 }
-function decode_tuple(data) {
-  return Array.isArray(data) ? new Ok(data) : decoder_error("Tuple", data);
-}
-function tuple_get(data, index4) {
-  return index4 >= 0 && data.length > index4 ? new Ok(data[index4]) : new Error(Nil);
-}
 function decode_list(data) {
   if (Array.isArray(data)) {
     return new Ok(List.fromArray(data));
@@ -1935,25 +1839,25 @@ function new$() {
 function get(from2, get3) {
   return map_get(from2, get3);
 }
-function insert(dict2, key2, value3) {
-  return map_insert(key2, value3, dict2);
+function insert(dict, key2, value3) {
+  return map_insert(key2, value3, dict);
 }
 function fold_list_of_pair(loop$list, loop$initial) {
   while (true) {
-    let list4 = loop$list;
+    let list3 = loop$list;
     let initial = loop$initial;
-    if (list4.hasLength(0)) {
+    if (list3.hasLength(0)) {
       return initial;
     } else {
-      let x = list4.head;
-      let rest2 = list4.tail;
-      loop$list = rest2;
+      let x = list3.head;
+      let rest = list3.tail;
+      loop$list = rest;
       loop$initial = insert(initial, x[0], x[1]);
     }
   }
 }
-function from_list(list4) {
-  return fold_list_of_pair(list4, new$());
+function from_list(list3) {
+  return fold_list_of_pair(list3, new$());
 }
 function reverse_and_concat(loop$remaining, loop$accumulator) {
   while (true) {
@@ -1963,46 +1867,46 @@ function reverse_and_concat(loop$remaining, loop$accumulator) {
       return accumulator;
     } else {
       let item = remaining.head;
-      let rest2 = remaining.tail;
-      loop$remaining = rest2;
+      let rest = remaining.tail;
+      loop$remaining = rest;
       loop$accumulator = prepend(item, accumulator);
     }
   }
 }
 function do_keys_acc(loop$list, loop$acc) {
   while (true) {
-    let list4 = loop$list;
+    let list3 = loop$list;
     let acc = loop$acc;
-    if (list4.hasLength(0)) {
+    if (list3.hasLength(0)) {
       return reverse_and_concat(acc, toList([]));
     } else {
-      let x = list4.head;
-      let xs = list4.tail;
+      let x = list3.head;
+      let xs = list3.tail;
       loop$list = xs;
       loop$acc = prepend(x[0], acc);
     }
   }
 }
-function do_keys(dict2) {
-  let list_of_pairs = map_to_list(dict2);
+function do_keys(dict) {
+  let list_of_pairs = map_to_list(dict);
   return do_keys_acc(list_of_pairs, toList([]));
 }
-function keys(dict2) {
-  return do_keys(dict2);
+function keys(dict) {
+  return do_keys(dict);
 }
-function delete$(dict2, key2) {
-  return map_remove(key2, dict2);
+function delete$(dict, key2) {
+  return map_remove(key2, dict);
 }
 function drop2(loop$dict, loop$disallowed_keys) {
   while (true) {
-    let dict2 = loop$dict;
+    let dict = loop$dict;
     let disallowed_keys = loop$disallowed_keys;
     if (disallowed_keys.hasLength(0)) {
-      return dict2;
+      return dict;
     } else {
       let x = disallowed_keys.head;
       let xs = disallowed_keys.tail;
-      loop$dict = delete$(dict2, x);
+      loop$dict = delete$(dict, x);
       loop$disallowed_keys = xs;
     }
   }
@@ -2062,24 +1966,24 @@ function noneify_empty_string(x) {
 }
 function extra_required(loop$list, loop$remaining) {
   while (true) {
-    let list4 = loop$list;
+    let list3 = loop$list;
     let remaining = loop$remaining;
     if (remaining === 0) {
       return 0;
-    } else if (list4.hasLength(0)) {
+    } else if (list3.hasLength(0)) {
       return remaining;
     } else {
-      let xs = list4.tail;
+      let xs = list3.tail;
       loop$list = xs;
       loop$remaining = remaining - 1;
     }
   }
 }
-function pad_list(list4, size2) {
-  let _pipe = list4;
+function pad_list(list3, size) {
+  let _pipe = list3;
   return append(
     _pipe,
-    repeat(new None(), extra_required(list4, size2))
+    repeat(new None(), extra_required(list3, size))
   );
 }
 function split_authority(authority) {
@@ -2183,7 +2087,7 @@ function do_remove_dot_segments(loop$input, loop$accumulator) {
       return reverse(accumulator);
     } else {
       let segment = input2.head;
-      let rest2 = input2.tail;
+      let rest = input2.tail;
       let accumulator$1 = (() => {
         if (segment === "") {
           let accumulator$12 = accumulator;
@@ -2202,7 +2106,7 @@ function do_remove_dot_segments(loop$input, loop$accumulator) {
           return prepend(segment$1, accumulator$12);
         }
       })();
-      loop$input = rest2;
+      loop$input = rest;
       loop$accumulator = accumulator$1;
     }
   }
@@ -2307,8 +2211,8 @@ function object(entries) {
 function identity2(x) {
   return x;
 }
-function array(list4) {
-  return list4.toArray();
+function array(list3) {
+  return list3.toArray();
 }
 function do_null() {
   return null;
@@ -2473,9 +2377,9 @@ function array2(entries, inner_type) {
 
 // build/dev/javascript/lustre/lustre/effect.mjs
 var Effect = class extends CustomType {
-  constructor(all2) {
+  constructor(all) {
     super();
-    this.all = all2;
+    this.all = all;
   }
 };
 function custom(run) {
@@ -2569,27 +2473,27 @@ function do_element_list_handlers(elements2, handlers2, key2) {
   return index_fold(
     elements2,
     handlers2,
-    (handlers3, element3, index4) => {
-      let key$1 = key2 + "-" + to_string2(index4);
-      return do_handlers(element3, handlers3, key$1);
+    (handlers3, element2, index3) => {
+      let key$1 = key2 + "-" + to_string2(index3);
+      return do_handlers(element2, handlers3, key$1);
     }
   );
 }
 function do_handlers(loop$element, loop$handlers, loop$key) {
   while (true) {
-    let element3 = loop$element;
+    let element2 = loop$element;
     let handlers2 = loop$handlers;
     let key2 = loop$key;
-    if (element3 instanceof Text) {
+    if (element2 instanceof Text) {
       return handlers2;
-    } else if (element3 instanceof Map2) {
-      let subtree = element3.subtree;
+    } else if (element2 instanceof Map2) {
+      let subtree = element2.subtree;
       loop$element = subtree();
       loop$handlers = handlers2;
       loop$key = key2;
-    } else if (element3 instanceof Element2) {
-      let attrs = element3.attrs;
-      let children2 = element3.children;
+    } else if (element2 instanceof Element2) {
+      let attrs = element2.attrs;
+      let children2 = element2.children;
       let handlers$1 = fold(
         attrs,
         handlers2,
@@ -2606,13 +2510,13 @@ function do_handlers(loop$element, loop$handlers, loop$key) {
       );
       return do_element_list_handlers(children2, handlers$1, key2);
     } else {
-      let elements2 = element3.elements;
+      let elements2 = element2.elements;
       return do_element_list_handlers(elements2, handlers2, key2);
     }
   }
 }
-function handlers(element3) {
-  return do_handlers(element3, new$(), "0");
+function handlers(element2) {
+  return do_handlers(element2, new$(), "0");
 }
 
 // build/dev/javascript/lustre/lustre/attribute.mjs
@@ -2642,7 +2546,7 @@ function src(uri) {
 }
 
 // build/dev/javascript/lustre/lustre/element.mjs
-function element2(tag, attrs, children2) {
+function element(tag, attrs, children2) {
   if (tag === "area") {
     return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "base") {
@@ -2702,9 +2606,9 @@ function do_keyed(el, key2) {
     let _pipe = elements2;
     let _pipe$1 = index_map(
       _pipe,
-      (element3, idx) => {
-        if (element3 instanceof Element2) {
-          let el_key = element3.key;
+      (element2, idx) => {
+        if (element2 instanceof Element2) {
+          let el_key = element2.key;
           let new_key = (() => {
             if (el_key === "") {
               return key2 + "-" + to_string2(idx);
@@ -2712,9 +2616,9 @@ function do_keyed(el, key2) {
               return key2 + "-" + el_key;
             }
           })();
-          return do_keyed(element3, new_key);
+          return do_keyed(element2, new_key);
         } else {
-          return do_keyed(element3, key2);
+          return do_keyed(element2, key2);
         }
       }
     );
@@ -2741,9 +2645,9 @@ function text(content) {
 
 // build/dev/javascript/gleam_stdlib/gleam/set.mjs
 var Set2 = class extends CustomType {
-  constructor(dict2) {
+  constructor(dict) {
     super();
-    this.dict = dict2;
+    this.dict = dict;
   }
 };
 function new$3() {
@@ -3114,20 +3018,20 @@ function diffKeyedChild(prevChild, child, el, stack, incomingKeyedChildren, keye
   stack.unshift({ prev: keyedChild, next: child, parent: el });
   return prevChild;
 }
-function* children(element3) {
-  for (const child of element3.children) {
+function* children(element2) {
+  for (const child of element2.children) {
     yield* forceChild(child);
   }
 }
-function* forceChild(element3) {
-  if (element3.elements !== void 0) {
-    for (const inner of element3.elements) {
+function* forceChild(element2) {
+  if (element2.elements !== void 0) {
+    for (const inner of element2.elements) {
       yield* forceChild(inner);
     }
-  } else if (element3.subtree !== void 0) {
-    yield* forceChild(element3.subtree());
+  } else if (element2.subtree !== void 0) {
+    yield* forceChild(element2.subtree());
   } else {
-    yield element3;
+    yield element2;
   }
 }
 
@@ -3145,13 +3049,13 @@ var LustreClientApplication = class _LustreClientApplication {
    *
    * @returns {Gleam.Ok<(action: Lustre.Action<Lustre.Client, Msg>>) => void>}
    */
-  static start({ init: init4, update: update4, view: view11 }, selector, flags) {
+  static start({ init: init4, update: update4, view: view13 }, selector, flags) {
     if (!is_browser())
       return new Error(new NotABrowser());
     const root = selector instanceof HTMLElement ? selector : document.querySelector(selector);
     if (!root)
       return new Error(new ElementNotFound(selector));
-    const app = new _LustreClientApplication(root, init4(flags), update4, view11);
+    const app = new _LustreClientApplication(root, init4(flags), update4, view13);
     return new Ok((action) => app.send(action));
   }
   /**
@@ -3162,11 +3066,11 @@ var LustreClientApplication = class _LustreClientApplication {
    *
    * @returns {LustreClientApplication}
    */
-  constructor(root, [init4, effects], update4, view11) {
+  constructor(root, [init4, effects], update4, view13) {
     this.root = root;
     this.#model = init4;
     this.#update = update4;
-    this.#view = view11;
+    this.#view = view13;
     this.#tickScheduled = window.requestAnimationFrame(
       () => this.#tick(effects.all.toArray(), true)
     );
@@ -3284,20 +3188,20 @@ var LustreClientApplication = class _LustreClientApplication {
 };
 var start = LustreClientApplication.start;
 var LustreServerApplication = class _LustreServerApplication {
-  static start({ init: init4, update: update4, view: view11, on_attribute_change }, flags) {
+  static start({ init: init4, update: update4, view: view13, on_attribute_change }, flags) {
     const app = new _LustreServerApplication(
       init4(flags),
       update4,
-      view11,
+      view13,
       on_attribute_change
     );
     return new Ok((action) => app.send(action));
   }
-  constructor([model, effects], update4, view11, on_attribute_change) {
+  constructor([model, effects], update4, view13, on_attribute_change) {
     this.#model = model;
     this.#update = update4;
-    this.#view = view11;
-    this.#html = view11(model);
+    this.#view = view13;
+    this.#html = view13(model);
     this.#onAttributeChange = on_attribute_change;
     this.#renderers = /* @__PURE__ */ new Map();
     this.#handlers = handlers(this.#html);
@@ -3402,11 +3306,11 @@ var prevent_default = (event2) => event2.preventDefault();
 
 // build/dev/javascript/lustre/lustre.mjs
 var App = class extends CustomType {
-  constructor(init4, update4, view11, on_attribute_change) {
+  constructor(init4, update4, view13, on_attribute_change) {
     super();
     this.init = init4;
     this.update = update4;
-    this.view = view11;
+    this.view = view13;
     this.on_attribute_change = on_attribute_change;
   }
 };
@@ -3418,8 +3322,8 @@ var ElementNotFound = class extends CustomType {
 };
 var NotABrowser = class extends CustomType {
 };
-function application(init4, update4, view11) {
-  return new App(init4, update4, view11, new None());
+function application(init4, update4, view13) {
+  return new App(init4, update4, view13, new None());
 }
 function start2(app, selector, flags) {
   return guard(
@@ -3644,8 +3548,8 @@ function try_await(promise, callback) {
 }
 
 // build/dev/javascript/plinth/element_ffi.mjs
-function value2(element3) {
-  let value3 = element3.value;
+function value2(element2) {
+  let value3 = element2.value;
   if (value3 != void 0) {
     return new Ok(value3);
   }
@@ -3796,52 +3700,52 @@ function text2(content) {
   return text(content);
 }
 function aside(attrs, children2) {
-  return element2("aside", attrs, children2);
+  return element("aside", attrs, children2);
 }
 function h1(attrs, children2) {
-  return element2("h1", attrs, children2);
+  return element("h1", attrs, children2);
 }
 function h2(attrs, children2) {
-  return element2("h2", attrs, children2);
+  return element("h2", attrs, children2);
 }
 function h3(attrs, children2) {
-  return element2("h3", attrs, children2);
+  return element("h3", attrs, children2);
 }
 function div(attrs, children2) {
-  return element2("div", attrs, children2);
+  return element("div", attrs, children2);
 }
 function li(attrs, children2) {
-  return element2("li", attrs, children2);
+  return element("li", attrs, children2);
 }
 function p(attrs, children2) {
-  return element2("p", attrs, children2);
+  return element("p", attrs, children2);
 }
 function ul(attrs, children2) {
-  return element2("ul", attrs, children2);
+  return element("ul", attrs, children2);
 }
 function a(attrs, children2) {
-  return element2("a", attrs, children2);
+  return element("a", attrs, children2);
 }
 function span(attrs, children2) {
-  return element2("span", attrs, children2);
+  return element("span", attrs, children2);
 }
 function img(attrs) {
-  return element2("img", attrs, toList([]));
+  return element("img", attrs, toList([]));
 }
 function button(attrs, children2) {
-  return element2("button", attrs, children2);
+  return element("button", attrs, children2);
 }
 function form(attrs, children2) {
-  return element2("form", attrs, children2);
+  return element("form", attrs, children2);
 }
 function input(attrs) {
-  return element2("input", attrs, toList([]));
+  return element("input", attrs, toList([]));
 }
 function label(attrs, children2) {
-  return element2("label", attrs, children2);
+  return element("label", attrs, children2);
 }
 function dialog(attrs, children2) {
-  return element2("dialog", attrs, children2);
+  return element("dialog", attrs, children2);
 }
 
 // build/dev/javascript/gleam_http/gleam/http.mjs
@@ -5133,39 +5037,6 @@ var OnRouteChange = class extends CustomType {
   }
 };
 
-// build/dev/javascript/client/client/components/home.mjs
-function home() {
-  return toList([
-    h3(
-      toList([class$("text-lg mb-4 text-center")]),
-      toList([
-        text2(
-          "Search songs and create playlists that can be exported to Spotify, Youtube Music,..."
-        )
-      ])
-    ),
-    a(
-      toList([
-        href("/login"),
-        class$(
-          "text-green-400 bg-zinc-700 hover:bg-zinc-600 rounded-md font-bold flex gap-2 py-2 px-4"
-        )
-      ]),
-      toList([
-        img(
-          toList([
-            src(
-              "https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_Green.png"
-            ),
-            class$("h-6")
-          ])
-        ),
-        text2("Login to Spotify")
-      ])
-    )
-  ]);
-}
-
 // build/dev/javascript/client/client/components/layout.mjs
 function layout(children2, left_children) {
   return div(
@@ -5187,11 +5058,7 @@ function layout(children2, left_children) {
         toList([class$("py-8 px-4 grow flex flex-col items-center")]),
         toList([
           div(
-            toList([
-              class$(
-                "w-3/4 md:w-2/3 lg:w-1/2 max-w-3xl flex flex-col items-stretch"
-              )
-            ]),
+            toList([class$("max-w-3xl flex flex-col items-stretch")]),
             children2
           )
         ])
@@ -5212,13 +5079,13 @@ function on_click(msg) {
 
 // build/dev/javascript/client/client/components/playlists/create_playlist.mjs
 function on_create(_) {
-  let element3 = getElementById("create-playlist-name");
-  if (!element3.isOk()) {
+  let element2 = getElementById("create-playlist-name");
+  if (!element2.isOk()) {
     return new Ok(
       new ClientError("Couldn't find element with id create-playlist-name")
     );
   } else {
-    let el = element3[0];
+    let el = element2[0];
     let value3 = (() => {
       let _pipe = el;
       return value2(_pipe);
@@ -5425,7 +5292,7 @@ function id_path(root) {
         let $ = reverse(segs);
         if ($.atLeastLength(1) && isEqual($.tail, reverse_root)) {
           let id2 = $.head;
-          let rest2 = $.tail;
+          let rest = $.tail;
           return new Ok(id2);
         } else {
           return new Error(void 0);
@@ -5602,7 +5469,7 @@ function with_query2(request, query) {
 function with_body(request, body2) {
   return request.withFields({ body_opt: new Some(body2) });
 }
-function add_path(req, rreq, on_error, then$3) {
+function add_path(req, rreq, on_error, then$2) {
   let $ = (() => {
     let _pipe = rreq.route.path;
     return get_type3(_pipe);
@@ -5612,7 +5479,7 @@ function add_path(req, rreq, on_error, then$3) {
     return on_error("Path option is missing, please call with_path before send");
   } else {
     let path = $1[0];
-    return then$3(
+    return then$2(
       (() => {
         let _pipe = req;
         return set_path(
@@ -5627,7 +5494,7 @@ function add_path(req, rreq, on_error, then$3) {
     );
   }
 }
-function add_query(req, rreq, on_error, then$3) {
+function add_query(req, rreq, on_error, then$2) {
   let $ = (() => {
     let _pipe = rreq.route.query;
     return get_type4(_pipe);
@@ -5638,10 +5505,10 @@ function add_query(req, rreq, on_error, then$3) {
       "Query option is missing, please call with_query before send"
     );
   } else if ($ instanceof EmptyQuery) {
-    return then$3(req);
+    return then$2(req);
   } else {
     let query = $1[0];
-    return then$3(
+    return then$2(
       (() => {
         let _pipe = req;
         return set_query(
@@ -5655,7 +5522,7 @@ function add_query(req, rreq, on_error, then$3) {
     );
   }
 }
-function add_body(req, rreq, on_error, then$3) {
+function add_body(req, rreq, on_error, then$2) {
   let $ = (() => {
     let _pipe = rreq.route.req_body;
     return get_type2(_pipe);
@@ -5666,10 +5533,10 @@ function add_body(req, rreq, on_error, then$3) {
   } else if ($ instanceof StringBody && $1 instanceof None) {
     return on_error("Body option is missing, please call with_body before send");
   } else if ($ instanceof EmptyBody) {
-    return then$3(req);
+    return then$2(req);
   } else if ($ instanceof JsonBody && $1 instanceof Some) {
     let body2 = $1[0];
-    return then$3(
+    return then$2(
       (() => {
         let _pipe = req;
         let _pipe$1 = set_body(
@@ -5685,7 +5552,7 @@ function add_body(req, rreq, on_error, then$3) {
     );
   } else {
     let body2 = $1[0];
-    return then$3(
+    return then$2(
       (() => {
         let _pipe = req;
         return set_body(
@@ -5762,15 +5629,15 @@ function send3(rreq, as_msg, on_error) {
 }
 
 // build/dev/javascript/client/modal_dialog_ffi.mjs
-function showModal(element3) {
-  if (!element3 || !(element3 instanceof HTMLDialogElement))
+function showModal(element2) {
+  if (!element2 || !(element2 instanceof HTMLDialogElement))
     return;
-  element3.showModal();
+  element2.showModal();
 }
-function closeModal(element3) {
-  if (!element3 || !(element3 instanceof HTMLDialogElement))
+function closeModal(element2) {
+  if (!element2 || !(element2 instanceof HTMLDialogElement))
     return;
-  element3.close();
+  element2.close();
 }
 
 // build/dev/javascript/client/utils.mjs
@@ -5903,460 +5770,6 @@ function view2(playlists) {
       ])
     ),
     view()
-  ]);
-}
-
-// build/dev/javascript/client/client/components/not_found.mjs
-function view3() {
-  return toList([
-    h3(
-      toList([class$("text-lg my-20 text-center")]),
-      toList([
-        text2("The content you were looking for couldn't be found...")
-      ])
-    )
-  ]);
-}
-
-// build/dev/javascript/client/client/components/playlist_songs/song_row.mjs
-function album_cover(song) {
-  return div(
-    toList([]),
-    toList([
-      img(
-        toList([
-          src(song.album_cover),
-          class$("w-16 h-16 rounded-sm")
-        ])
-      )
-    ])
-  );
-}
-function view4(song) {
-  return div(
-    toList([
-      class$(
-        "flex items-center gap-4 py-4 px-8 bg-zinc-700/50 hover:bg-zinc-700/80"
-      )
-    ]),
-    toList([
-      album_cover(song),
-      div(
-        toList([class$("flex flex-col flex-1")]),
-        toList([
-          span(
-            toList([class$("font-semibold")]),
-            toList([text2(song.title)])
-          ),
-          span(
-            toList([class$("text-sm text-zinc-100/70")]),
-            toList([
-              text2(
-                (() => {
-                  let _pipe = song.artists;
-                  return join2(_pipe, " - ");
-                })()
-              )
-            ])
-          ),
-          span(
-            toList([class$("text-sm text-zinc-100/70")]),
-            toList([text2(song.album)])
-          )
-        ])
-      )
-    ])
-  );
-}
-
-// build/dev/javascript/client/client/components/playlist_songs/song_list.mjs
-function view5(results) {
-  return keyed(
-    (_capture) => {
-      return ul(
-        toList([class$("rounded-lg overflow-clip mt-8 w-full")]),
-        _capture
-      );
-    },
-    map2(
-      results,
-      (song) => {
-        let child = li(toList([]), toList([view4(song)]));
-        return [song.id, child];
-      }
-    )
-  );
-}
-
-// build/dev/javascript/client/client/components/playlists/update_playlist.mjs
-function on_update(_, id2) {
-  let element3 = getElementById("update-playlist-name");
-  if (!element3.isOk()) {
-    return new Ok(
-      new ClientError("Couldn't find element with id update-playlist-name")
-    );
-  } else {
-    let el = element3[0];
-    let value3 = (() => {
-      let _pipe = el;
-      return value2(_pipe);
-    })();
-    if (!value3.isOk()) {
-      return new Ok(new ClientError("Couldn't get value of element"));
-    } else {
-      let name = value3[0];
-      return new Ok(
-        new PlaylistEvent(new UpdatePlaylist(id2, name))
-      );
-    }
-  }
-}
-function view6(p2) {
-  return dialog(
-    toList([
-      id("update-playlist"),
-      class$(
-        "p-4 rounded-lg backdrop:bg-zinc-900 backdrop:opacity-80"
-      )
-    ]),
-    toList([
-      h1(
-        toList([class$("text-2xl font-bold mb-4")]),
-        toList([text2("Update a playlist " + p2.name)])
-      ),
-      div(
-        toList([class$("flex flex-col gap-4")]),
-        toList([
-          label(
-            toList([class$("flex gap-2 items-center")]),
-            toList([
-              span(toList([]), toList([text2("Playlist name")])),
-              input(
-                toList([
-                  id("update-playlist-name"),
-                  placeholder("Playlist name..."),
-                  class$(
-                    "p-2 rounded-md bg-zinc-100 focus:bg-zinc-200"
-                  ),
-                  value(p2.name)
-                ])
-              )
-            ])
-          ),
-          div(
-            toList([class$("flex justify-end")]),
-            toList([
-              button(
-                toList([
-                  class$("p-2 bg-zinc-100"),
-                  on2(
-                    "click",
-                    (_) => {
-                      return new Ok(new CloseDialog("update-playlist"));
-                    }
-                  )
-                ]),
-                toList([text2("Close")])
-              ),
-              button(
-                toList([
-                  class$("p-2 bg-green-500 text-zinc-100"),
-                  on2(
-                    "click",
-                    (_capture) => {
-                      return on_update(_capture, p2.id);
-                    }
-                  )
-                ]),
-                toList([text2("Save")])
-              )
-            ])
-          )
-        ])
-      )
-    ])
-  );
-}
-
-// build/dev/javascript/client/client/components/playlists/playlist_page.mjs
-function edit_button() {
-  return button(
-    toList([
-      class$("py-2 px-4 bg-cyan-600 hover:bg-cyan-500/50 rounded-md"),
-      on_click(new OpenDialog("update-playlist"))
-    ]),
-    toList([text2("Edit")])
-  );
-}
-function delete_button(p2) {
-  return button(
-    toList([
-      class$("py-2 px-4 bg-red-600 hover:bg-red-500/50 rounded-md"),
-      on_click(
-        new PlaylistEvent(new DeletePlaylist(p2.id))
-      )
-    ]),
-    toList([text2("Delete")])
-  );
-}
-function view7(p2) {
-  return toList([
-    h3(
-      toList([class$("text-lg mb-4 text-center")]),
-      toList([text2(p2.name)])
-    ),
-    div(
-      toList([class$("flex gap-4 mb-4")]),
-      toList([edit_button(), delete_button(p2)])
-    ),
-    view5(p2.songs),
-    view6(p2)
-  ]);
-}
-
-// build/dev/javascript/decipher/decipher.mjs
-function index_list(idx, decoder) {
-  return (dynamic2) => {
-    return try$(
-      list(dynamic)(dynamic2),
-      (list4) => {
-        let $ = idx >= 0;
-        if ($) {
-          let _pipe = list4;
-          let _pipe$1 = drop(_pipe, idx);
-          let _pipe$2 = first(_pipe$1);
-          let _pipe$3 = replace_error(
-            _pipe$2,
-            toList([
-              new DecodeError(
-                "A list with at least" + to_string2(idx + 1) + "elements",
-                "A list with" + to_string2(length(list4)) + "elements",
-                toList([to_string2(idx)])
-              )
-            ])
-          );
-          return then$(_pipe$3, decoder);
-        } else {
-          return new Error(
-            toList([
-              new DecodeError(
-                "An 'index' decoder with a non-negative index",
-                to_string2(idx),
-                toList([])
-              )
-            ])
-          );
-        }
-      }
-    );
-  };
-}
-function index3(idx, decoder) {
-  return any(
-    toList([
-      element(idx, decoder),
-      field(to_string2(idx), decoder),
-      index_list(idx, decoder)
-    ])
-  );
-}
-function do_at(path, decoder, dynamic2) {
-  if (path.hasLength(0)) {
-    return decoder(dynamic2);
-  } else {
-    let head = path.head;
-    let rest2 = path.tail;
-    let $ = parse(head);
-    if ($.isOk()) {
-      let idx = $[0];
-      let _pipe = dynamic2;
-      let _pipe$1 = index3(idx, dynamic)(_pipe);
-      return then$(
-        _pipe$1,
-        (_capture) => {
-          return do_at(rest2, decoder, _capture);
-        }
-      );
-    } else {
-      let _pipe = dynamic2;
-      let _pipe$1 = field(head, dynamic)(_pipe);
-      return then$(
-        _pipe$1,
-        (_capture) => {
-          return do_at(rest2, decoder, _capture);
-        }
-      );
-    }
-  }
-}
-function at(path, decoder) {
-  return (dynamic2) => {
-    return do_at(path, decoder, dynamic2);
-  };
-}
-
-// build/dev/javascript/client/client/components/songs/song_row.mjs
-function album_cover2(song) {
-  let $ = song.preview_url;
-  if ($ instanceof Some) {
-    let url = $[0];
-    return div(
-      toList([class$("group relative")]),
-      toList([
-        img(
-          toList([
-            src(song.album_cover),
-            class$("w-16 h-16 rounded-sm"),
-            on2(
-              "click",
-              (_) => {
-                return new Ok(
-                  new SongEvent(new PlayPreview(url))
-                );
-              }
-            )
-          ])
-        ),
-        div(
-          toList([
-            class$(
-              "absolute w-full h-full top-0 left-0 group-hover:opacity-100 bg-zinc-100/50 text-zinc-800 p-2 opacity-0 transition-opacity duration-300 pointer-events-none"
-            )
-          ]),
-          toList([img(toList([src("./play-circle.svg")]))])
-        )
-      ])
-    );
-  } else {
-    return div(
-      toList([]),
-      toList([
-        img(
-          toList([
-            src(song.album_cover),
-            class$("w-16 h-16 rounded-sm")
-          ])
-        )
-      ])
-    );
-  }
-}
-function view8(song) {
-  return div(
-    toList([
-      class$(
-        "flex items-center gap-4 py-4 px-8 bg-zinc-700/50 hover:bg-zinc-700/80"
-      )
-    ]),
-    toList([
-      album_cover2(song),
-      div(
-        toList([class$("flex flex-col flex-1")]),
-        toList([
-          span(
-            toList([class$("font-semibold")]),
-            toList([text2(song.title)])
-          ),
-          span(
-            toList([class$("text-sm text-zinc-100/70")]),
-            toList([
-              text2(
-                (() => {
-                  let _pipe = song.artists;
-                  return join2(_pipe, " - ");
-                })()
-              )
-            ])
-          ),
-          span(
-            toList([class$("text-sm text-zinc-100/70")]),
-            toList([text2(song.album)])
-          )
-        ])
-      )
-    ])
-  );
-}
-
-// build/dev/javascript/client/client/components/songs/song_list.mjs
-function view9(results) {
-  return keyed(
-    (_capture) => {
-      return ul(
-        toList([class$("rounded-lg overflow-clip mt-8 w-full")]),
-        _capture
-      );
-    },
-    map2(
-      results,
-      (song) => {
-        let child = li(toList([]), toList([view8(song)]));
-        return [song.id, child];
-      }
-    )
-  );
-}
-
-// build/dev/javascript/client/client/components/spinner.mjs
-function spinner() {
-  return div(
-    toList([
-      class$(
-        "mt-8 w-8 h-8 animate-spin rounded-full border-2 border-t-zinc-800 border-x-zinc-800/50 border-b-zinc-800/50"
-      )
-    ]),
-    toList([])
-  );
-}
-
-// build/dev/javascript/client/client/components/search.mjs
-function on_click2(ev) {
-  let _pipe = ev;
-  let _pipe$1 = at(
-    toList(["target", "previousElementSibling", "value"]),
-    string2
-  )(_pipe);
-  return map3(
-    _pipe$1,
-    (s) => {
-      return new SongEvent(new SearchSongs(s));
-    }
-  );
-}
-function search(searching, results) {
-  return toList([
-    div(
-      toList([
-        class$(
-          "rounded-md overflow-clip flex items-stretch max-w-lg mx-auto"
-        )
-      ]),
-      toList([
-        input(
-          toList([
-            class$(
-              "py-2 px-4 bg-zinc-700/30 hover:bg-zinc-700/70 focus:bg-zinc-600/80 grow"
-            ),
-            id("search-songs")
-          ])
-        ),
-        button(
-          toList([
-            class$("bg-zinc-700 hover:bg-zinc-600 py-2 px-4"),
-            on2("click", on_click2)
-          ]),
-          toList([text2("Search")])
-        )
-      ])
-    ),
-    p(toList([]), toList([text2("Search songs from Spotify")])),
-    (() => {
-      if (searching) {
-        return spinner();
-      } else {
-        return view9(results);
-      }
-    })()
   ]);
 }
 
@@ -6519,9 +5932,9 @@ function decode_value(of) {
             (result, el) => {
               if (result.isOk() && el.atLeastLength(2)) {
                 let vals = result[0];
-                let first4 = el.head;
+                let first3 = el.head;
                 let second2 = el.tail.head;
-                return new Ok(prepend([first4, second2], vals));
+                return new Ok(prepend([first3, second2], vals));
               } else if (result.isOk()) {
                 return new Error(
                   toList([
@@ -6730,7 +6143,7 @@ function nil_converter() {
     }
   ];
 }
-function new$7() {
+function new$6() {
   return new RouteService(toList([]), nil_converter(), nil_converter());
 }
 function with_root_path(service, root_path) {
@@ -6815,7 +6228,7 @@ function delete_route(service) {
 
 // build/dev/javascript/shared/shared/routes/playlist_routes.mjs
 function playlist_service() {
-  let _pipe = new$7();
+  let _pipe = new$6();
   let _pipe$1 = with_root_path(_pipe, toList(["api", "playlists"]));
   let _pipe$2 = with_base_converter(
     _pipe$1,
@@ -6830,7 +6243,7 @@ function get_all() {
   let _pipe = playlist_service();
   return get_all_route(_pipe);
 }
-function create2() {
+function create() {
   let _pipe = playlist_service();
   return create_route(_pipe);
 }
@@ -6863,9 +6276,9 @@ function get_all2() {
     }
   );
 }
-function create3(name) {
+function create2(name) {
   let _pipe = factory();
-  let _pipe$1 = for_route(_pipe, create2());
+  let _pipe$1 = for_route(_pipe, create());
   let _pipe$2 = with_path2(_pipe$1, void 0);
   let _pipe$3 = with_body(_pipe$2, new UpsertPlaylist(name));
   return send_and_handle_errors(
@@ -6919,7 +6332,7 @@ var Model2 = class extends CustomType {
 function on_playlist_event(model, event2) {
   if (event2 instanceof CreatePlaylist) {
     let name = event2.name;
-    return [model, create3(name)];
+    return [model, create2(name)];
   } else if (event2 instanceof UpdatePlaylist) {
     let id2 = event2.id;
     let name = event2.name;
@@ -7038,7 +6451,7 @@ function search_decoder(value3) {
     }
   );
 }
-function search2() {
+function search() {
   let _pipe = new$5();
   let _pipe$1 = with_method(_pipe, new Get());
   let _pipe$2 = with_path(
@@ -7066,9 +6479,9 @@ function search2() {
 }
 
 // build/dev/javascript/client/client/services/song_service.mjs
-function search3(q, token) {
+function search2(q, token) {
   let _pipe = factory();
-  let _pipe$1 = for_route(_pipe, search2());
+  let _pipe$1 = for_route(_pipe, search());
   let _pipe$2 = with_path2(_pipe$1, void 0);
   let _pipe$3 = with_query2(_pipe$2, new SearchQuery(q, token));
   return send3(
@@ -7098,7 +6511,7 @@ function on_song_event(model, event2) {
     let q = event2.search;
     return [
       model.withFields({ route: new Search(true, toList([])) }),
-      search3(q, model.token)
+      search2(q, model.token)
     ];
   } else if (event2 instanceof ServerSentSongs) {
     let songs = event2.results;
@@ -7119,6 +6532,392 @@ function on_song_event(model, event2) {
       )
     ];
   }
+}
+
+// build/dev/javascript/client/client/views/home.mjs
+function view3() {
+  return toList([
+    h3(
+      toList([class$("text-lg mb-4 text-center")]),
+      toList([text2("Search songs and create playlists")])
+    ),
+    p(
+      toList([class$("mb-4 text-center")]),
+      toList([
+        text2(
+          "Start by creating a playlist or searching songs by clicking on the corresponding buttons on the left"
+        )
+      ])
+    )
+  ]);
+}
+
+// build/dev/javascript/client/client/views/login.mjs
+function view4() {
+  return toList([
+    h3(
+      toList([class$("text-lg mb-4 text-center")]),
+      toList([text2("Search songs and create playlists")])
+    ),
+    a(
+      toList([
+        href("/login"),
+        class$(
+          "text-green-400 bg-zinc-700 hover:bg-zinc-600 rounded-md font-bold flex gap-2 py-2 px-4"
+        )
+      ]),
+      toList([
+        img(
+          toList([
+            src(
+              "https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_Green.png"
+            ),
+            class$("h-6")
+          ])
+        ),
+        text2("Login to Spotify")
+      ])
+    )
+  ]);
+}
+
+// build/dev/javascript/client/client/views/not_found.mjs
+function view5() {
+  return toList([
+    h3(
+      toList([class$("text-lg my-20 text-center")]),
+      toList([
+        text2("The content you were looking for couldn't be found...")
+      ])
+    )
+  ]);
+}
+
+// build/dev/javascript/client/client/components/playlist_songs/song_row.mjs
+function album_cover(song) {
+  return div(
+    toList([]),
+    toList([
+      img(
+        toList([
+          src(song.album_cover),
+          class$("w-16 h-16 rounded-sm")
+        ])
+      )
+    ])
+  );
+}
+function view6(song) {
+  return div(
+    toList([
+      class$(
+        "flex items-center gap-4 py-4 px-8 bg-zinc-700/50 hover:bg-zinc-700/80"
+      )
+    ]),
+    toList([
+      album_cover(song),
+      div(
+        toList([class$("flex flex-col flex-1")]),
+        toList([
+          span(
+            toList([class$("font-semibold")]),
+            toList([text2(song.title)])
+          ),
+          span(
+            toList([class$("text-sm text-zinc-100/70")]),
+            toList([
+              text2(
+                (() => {
+                  let _pipe = song.artists;
+                  return join2(_pipe, " - ");
+                })()
+              )
+            ])
+          ),
+          span(
+            toList([class$("text-sm text-zinc-100/70")]),
+            toList([text2(song.album)])
+          )
+        ])
+      )
+    ])
+  );
+}
+
+// build/dev/javascript/client/client/components/playlist_songs/song_list.mjs
+function view7(results) {
+  return keyed(
+    (_capture) => {
+      return ul(
+        toList([class$("rounded-lg overflow-clip mt-8 w-full")]),
+        _capture
+      );
+    },
+    map2(
+      results,
+      (song) => {
+        let child = li(toList([]), toList([view6(song)]));
+        return [song.id, child];
+      }
+    )
+  );
+}
+
+// build/dev/javascript/client/client/components/playlists/update_playlist.mjs
+function on_update(_, id2) {
+  let element2 = getElementById("update-playlist-name");
+  if (!element2.isOk()) {
+    return new Ok(
+      new ClientError("Couldn't find element with id update-playlist-name")
+    );
+  } else {
+    let el = element2[0];
+    let value3 = (() => {
+      let _pipe = el;
+      return value2(_pipe);
+    })();
+    if (!value3.isOk()) {
+      return new Ok(new ClientError("Couldn't get value of element"));
+    } else {
+      let name = value3[0];
+      return new Ok(
+        new PlaylistEvent(new UpdatePlaylist(id2, name))
+      );
+    }
+  }
+}
+function view8(p2) {
+  return dialog(
+    toList([
+      id("update-playlist"),
+      class$(
+        "p-4 rounded-lg backdrop:bg-zinc-900 backdrop:opacity-80"
+      )
+    ]),
+    toList([
+      h1(
+        toList([class$("text-2xl font-bold mb-4")]),
+        toList([text2("Update a playlist " + p2.name)])
+      ),
+      div(
+        toList([class$("flex flex-col gap-4")]),
+        toList([
+          label(
+            toList([class$("flex gap-2 items-center")]),
+            toList([
+              span(toList([]), toList([text2("Playlist name")])),
+              input(
+                toList([
+                  id("update-playlist-name"),
+                  placeholder("Playlist name..."),
+                  class$(
+                    "p-2 rounded-md bg-zinc-100 focus:bg-zinc-200"
+                  ),
+                  value(p2.name)
+                ])
+              )
+            ])
+          ),
+          div(
+            toList([class$("flex justify-end")]),
+            toList([
+              button(
+                toList([
+                  class$("p-2 bg-zinc-100"),
+                  on2(
+                    "click",
+                    (_) => {
+                      return new Ok(new CloseDialog("update-playlist"));
+                    }
+                  )
+                ]),
+                toList([text2("Close")])
+              ),
+              button(
+                toList([
+                  class$("p-2 bg-green-500 text-zinc-100"),
+                  on2(
+                    "click",
+                    (_capture) => {
+                      return on_update(_capture, p2.id);
+                    }
+                  )
+                ]),
+                toList([text2("Save")])
+              )
+            ])
+          )
+        ])
+      )
+    ])
+  );
+}
+
+// build/dev/javascript/client/client/views/playlist_page.mjs
+function edit_button() {
+  return button(
+    toList([
+      class$("py-2 px-4 bg-cyan-600 hover:bg-cyan-500/50 rounded-md"),
+      on_click(new OpenDialog("update-playlist"))
+    ]),
+    toList([text2("Edit")])
+  );
+}
+function delete_button(p2) {
+  return button(
+    toList([
+      class$("py-2 px-4 bg-red-600 hover:bg-red-500/50 rounded-md"),
+      on_click(
+        new PlaylistEvent(new DeletePlaylist(p2.id))
+      )
+    ]),
+    toList([text2("Delete")])
+  );
+}
+function view9(p2) {
+  return toList([
+    h3(
+      toList([class$("text-lg mb-4 text-center")]),
+      toList([text2(p2.name)])
+    ),
+    div(
+      toList([class$("flex gap-4 mb-4")]),
+      toList([edit_button(), delete_button(p2)])
+    ),
+    view7(p2.songs),
+    view8(p2)
+  ]);
+}
+
+// build/dev/javascript/client/client/components/songs/song_row.mjs
+function album_cover2(song) {
+  let $ = song.preview_url;
+  if ($ instanceof Some) {
+    let url = $[0];
+    return div(
+      toList([class$("group relative")]),
+      toList([
+        img(
+          toList([
+            src(song.album_cover),
+            class$("w-16 h-16 rounded-sm"),
+            on2(
+              "click",
+              (_) => {
+                return new Ok(
+                  new SongEvent(new PlayPreview(url))
+                );
+              }
+            )
+          ])
+        ),
+        div(
+          toList([
+            class$(
+              "absolute w-full h-full top-0 left-0 group-hover:opacity-100 bg-zinc-100/50 text-zinc-800 p-2 opacity-0 transition-opacity duration-300 pointer-events-none"
+            )
+          ]),
+          toList([img(toList([src("./play-circle.svg")]))])
+        )
+      ])
+    );
+  } else {
+    return div(
+      toList([]),
+      toList([
+        img(
+          toList([
+            src(song.album_cover),
+            class$("w-16 h-16 rounded-sm")
+          ])
+        )
+      ])
+    );
+  }
+}
+function view10(song) {
+  return div(
+    toList([
+      class$(
+        "flex items-center gap-4 py-4 px-8 bg-zinc-700/50 hover:bg-zinc-700/80"
+      )
+    ]),
+    toList([
+      album_cover2(song),
+      div(
+        toList([class$("flex flex-col flex-1")]),
+        toList([
+          span(
+            toList([class$("font-semibold")]),
+            toList([text2(song.title)])
+          ),
+          span(
+            toList([class$("text-sm text-zinc-100/70")]),
+            toList([
+              text2(
+                (() => {
+                  let _pipe = song.artists;
+                  return join2(_pipe, " - ");
+                })()
+              )
+            ])
+          ),
+          span(
+            toList([class$("text-sm text-zinc-100/70")]),
+            toList([text2(song.album)])
+          )
+        ])
+      )
+    ])
+  );
+}
+
+// build/dev/javascript/client/client/components/songs/song_list.mjs
+function view11(results) {
+  return keyed(
+    (_capture) => {
+      return ul(
+        toList([class$("rounded-lg overflow-clip mt-8 w-full")]),
+        _capture
+      );
+    },
+    map2(
+      results,
+      (song) => {
+        let child = li(toList([]), toList([view10(song)]));
+        return [song.id, child];
+      }
+    )
+  );
+}
+
+// build/dev/javascript/client/client/components/spinner.mjs
+function spinner() {
+  return div(
+    toList([
+      class$(
+        "mt-8 w-8 h-8 animate-spin rounded-full border-2 border-t-zinc-100 border-x-zinc-100/50 border-b-zinc-100/50"
+      )
+    ]),
+    toList([])
+  );
+}
+
+// build/dev/javascript/client/client/views/search.mjs
+function search3(searching, results) {
+  return toList([
+    p(
+      toList([class$("text-xl font-black mb-4")]),
+      toList([text2("Results :")])
+    ),
+    (() => {
+      if (searching) {
+        return spinner();
+      } else {
+        return view11(results);
+      }
+    })()
+  ]);
 }
 
 // build/dev/javascript/client/router.mjs
@@ -7143,7 +6942,7 @@ function init3(_) {
     throw makeError(
       "let_assert",
       "client",
-      40,
+      41,
       "init",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
@@ -7252,28 +7051,28 @@ function update3(model, msg) {
     return [model.withFields({ route }), none()];
   }
 }
-function view10(model) {
+function view12(model) {
   let children2 = (() => {
     let $ = model.token;
     let $1 = model.route;
     if ($ === "" && $1 instanceof Home) {
-      return home();
+      return view4();
     } else if ($ === "" && $1 instanceof Search) {
-      return home();
+      return view4();
     } else if ($1 instanceof Home) {
-      return search(false, toList([]));
+      return view3();
     } else if ($1 instanceof Search) {
       let searching = $1.searching;
       let songs = $1.results;
-      return search(searching, songs);
+      return search3(searching, songs);
     } else if ($1 instanceof Playlist2) {
       let id2 = $1.id;
       let _pipe = model.playlists;
       let _pipe$1 = get(_pipe, id2);
-      let _pipe$2 = map3(_pipe$1, view7);
-      return unwrap2(_pipe$2, view3());
+      let _pipe$2 = map3(_pipe$1, view9);
+      return unwrap2(_pipe$2, view5());
     } else {
-      return view3();
+      return view5();
     }
   })();
   let left_children = view2(
@@ -7285,13 +7084,13 @@ function view10(model) {
   return layout(children2, left_children);
 }
 function main() {
-  let app = application(init3, update3, view10);
+  let app = application(init3, update3, view12);
   let $ = start2(app, "#app", void 0);
   if (!$.isOk()) {
     throw makeError(
       "let_assert",
       "client",
-      32,
+      33,
       "main",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
