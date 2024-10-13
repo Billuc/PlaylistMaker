@@ -38,7 +38,7 @@ pub fn login(
       #(
         "redirect_uri",
         req
-          |> request.set_path("callback")
+          |> request.set_path("api/callback")
           |> request.set_body(Nil)
           |> request.to_uri
           |> fn(uri) { uri.Uri(..uri, query: option.None) }
