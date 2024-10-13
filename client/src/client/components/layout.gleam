@@ -22,19 +22,16 @@ pub fn layout(
         ],
         left_children,
       ),
-      html.div(
-        [
-          attribute.class(
-            "w-3/4 md:w-2/3 lg:w-1/2 max-w-3xl flex-1 flex flex-col items-center py-8",
-          ),
-        ],
-        [
-          html.h1([attribute.class("text-4xl font-bold mb-8")], [
-            html.text("Playlist Maker"),
-          ]),
-          ..children
-        ],
-      ),
+      html.div([attribute.class("py-8 px-4 grow flex flex-col items-center")], [
+        html.div(
+          [
+            attribute.class(
+              "w-3/4 md:w-2/3 lg:w-1/2 max-w-3xl flex flex-col items-stretch",
+            ),
+          ],
+          children,
+        ),
+      ]),
     ],
   )
 }

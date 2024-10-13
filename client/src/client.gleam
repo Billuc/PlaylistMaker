@@ -1,7 +1,7 @@
 import client/components/home
 import client/components/layout
+import client/components/navigation_bar
 import client/components/not_found
-import client/components/playlist_bar
 import client/components/playlists/playlist_page
 import client/components/search
 import client/events/playlist_event_handler
@@ -98,7 +98,7 @@ fn update(model: Model, msg: msg.Msg) -> #(Model, Effect(msg.Msg)) {
 
 fn view(model: Model) -> Element(msg.Msg) {
   let children = case model.token, model.route {
-    "", route.Home -> home.home()
+    "", route.Home | "", route.Search(_, _) -> home.home()
     _, route.Home -> search.search(False, [])
     _, route.Search(searching, songs) -> search.search(searching, songs)
     _, route.Playlist(id) -> {
@@ -110,7 +110,7 @@ fn view(model: Model) -> Element(msg.Msg) {
     _, _ -> not_found.view()
   }
 
-  let left_children = playlist_bar.view(model.playlists |> dict.to_list)
+  let left_children = navigation_bar.view(model.playlists |> dict.to_list)
 
   layout.layout(children, left_children)
 }

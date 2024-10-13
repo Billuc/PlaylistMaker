@@ -130,12 +130,12 @@ function byteArrayToInt(byteArray, start3, end, isBigEndian, isSigned) {
   return value3;
 }
 function byteArrayToFloat(byteArray, start3, end, isBigEndian) {
-  const view9 = new DataView(byteArray.buffer);
+  const view11 = new DataView(byteArray.buffer);
   const byteSize = end - start3;
   if (byteSize === 8) {
-    return view9.getFloat64(start3, !isBigEndian);
+    return view11.getFloat64(start3, !isBigEndian);
   } else if (byteSize === 4) {
-    return view9.getFloat32(start3, !isBigEndian);
+    return view11.getFloat32(start3, !isBigEndian);
   } else {
     const msg = `Sized floats must be 32-bit or 64-bit on JavaScript, got size of ${byteSize * 8} bits`;
     throw new globalThis.Error(msg);
@@ -803,9 +803,9 @@ function bool(data) {
 function shallow_list(value3) {
   return decode_list(value3);
 }
-function optional(decode8) {
+function optional(decode7) {
   return (value3) => {
-    return decode_option(value3, decode8);
+    return decode_option(value3, decode7);
   };
 }
 function at_least_decode_tuple_error(size2, data) {
@@ -3145,13 +3145,13 @@ var LustreClientApplication = class _LustreClientApplication {
    *
    * @returns {Gleam.Ok<(action: Lustre.Action<Lustre.Client, Msg>>) => void>}
    */
-  static start({ init: init4, update: update4, view: view9 }, selector, flags) {
+  static start({ init: init4, update: update4, view: view11 }, selector, flags) {
     if (!is_browser())
       return new Error(new NotABrowser());
     const root = selector instanceof HTMLElement ? selector : document.querySelector(selector);
     if (!root)
       return new Error(new ElementNotFound(selector));
-    const app = new _LustreClientApplication(root, init4(flags), update4, view9);
+    const app = new _LustreClientApplication(root, init4(flags), update4, view11);
     return new Ok((action) => app.send(action));
   }
   /**
@@ -3162,11 +3162,11 @@ var LustreClientApplication = class _LustreClientApplication {
    *
    * @returns {LustreClientApplication}
    */
-  constructor(root, [init4, effects], update4, view9) {
+  constructor(root, [init4, effects], update4, view11) {
     this.root = root;
     this.#model = init4;
     this.#update = update4;
-    this.#view = view9;
+    this.#view = view11;
     this.#tickScheduled = window.requestAnimationFrame(
       () => this.#tick(effects.all.toArray(), true)
     );
@@ -3284,20 +3284,20 @@ var LustreClientApplication = class _LustreClientApplication {
 };
 var start = LustreClientApplication.start;
 var LustreServerApplication = class _LustreServerApplication {
-  static start({ init: init4, update: update4, view: view9, on_attribute_change }, flags) {
+  static start({ init: init4, update: update4, view: view11, on_attribute_change }, flags) {
     const app = new _LustreServerApplication(
       init4(flags),
       update4,
-      view9,
+      view11,
       on_attribute_change
     );
     return new Ok((action) => app.send(action));
   }
-  constructor([model, effects], update4, view9, on_attribute_change) {
+  constructor([model, effects], update4, view11, on_attribute_change) {
     this.#model = model;
     this.#update = update4;
-    this.#view = view9;
-    this.#html = view9(model);
+    this.#view = view11;
+    this.#html = view11(model);
     this.#onAttributeChange = on_attribute_change;
     this.#renderers = /* @__PURE__ */ new Map();
     this.#handlers = handlers(this.#html);
@@ -3398,14 +3398,15 @@ var LustreServerApplication = class _LustreServerApplication {
 };
 var start_server_application = LustreServerApplication.start;
 var is_browser = () => globalThis.window && window.document;
+var prevent_default = (event2) => event2.preventDefault();
 
 // build/dev/javascript/lustre/lustre.mjs
 var App = class extends CustomType {
-  constructor(init4, update4, view9, on_attribute_change) {
+  constructor(init4, update4, view11, on_attribute_change) {
     super();
     this.init = init4;
     this.update = update4;
-    this.view = view9;
+    this.view = view11;
     this.on_attribute_change = on_attribute_change;
   }
 };
@@ -3417,8 +3418,8 @@ var ElementNotFound = class extends CustomType {
 };
 var NotABrowser = class extends CustomType {
 };
-function application(init4, update4, view9) {
-  return new App(init4, update4, view9, new None());
+function application(init4, update4, view11) {
+  return new App(init4, update4, view11, new None());
 }
 function start2(app, selector, flags) {
   return guard(
@@ -3800,6 +3801,9 @@ function aside(attrs, children2) {
 function h1(attrs, children2) {
   return element2("h1", attrs, children2);
 }
+function h2(attrs, children2) {
+  return element2("h2", attrs, children2);
+}
 function h3(attrs, children2) {
   return element2("h3", attrs, children2);
 }
@@ -3808,6 +3812,9 @@ function div(attrs, children2) {
 }
 function li(attrs, children2) {
   return element2("li", attrs, children2);
+}
+function p(attrs, children2) {
+  return element2("p", attrs, children2);
 }
 function ul(attrs, children2) {
   return element2("ul", attrs, children2);
@@ -3823,6 +3830,9 @@ function img(attrs) {
 }
 function button(attrs, children2) {
   return element2("button", attrs, children2);
+}
+function form(attrs, children2) {
+  return element2("form", attrs, children2);
 }
 function input(attrs) {
   return element2("input", attrs, toList([]));
@@ -4586,13 +4596,13 @@ function type_def(converter) {
 
 // build/dev/javascript/shared/shared/types/song.mjs
 var Song = class extends CustomType {
-  constructor(id2, title, artists, album, album_cover2, source, preview_url) {
+  constructor(id2, title, artists, album, album_cover3, source, preview_url) {
     super();
     this.id = id2;
     this.title = title;
     this.artists = artists;
     this.album = album;
-    this.album_cover = album_cover2;
+    this.album_cover = album_cover3;
     this.source = source;
     this.preview_url = preview_url;
   }
@@ -4685,7 +4695,7 @@ function song_converter() {
                 return parameter(
                   (album) => {
                     return parameter(
-                      (album_cover2) => {
+                      (album_cover3) => {
                         return parameter(
                           (source) => {
                             return parameter(
@@ -4697,7 +4707,7 @@ function song_converter() {
                                       title,
                                       artists,
                                       album,
-                                      album_cover2,
+                                      album_cover3,
                                       source,
                                       preview_url
                                     );
@@ -4777,6 +4787,136 @@ function song_converter() {
   return to_converter(_pipe$7);
 }
 
+// build/dev/javascript/shared/shared/types/playlist_song.mjs
+var PlaylistSong = class extends CustomType {
+  constructor(id2, playlist_id, song_id, title, artists, album, album_cover3, source) {
+    super();
+    this.id = id2;
+    this.playlist_id = playlist_id;
+    this.song_id = song_id;
+    this.title = title;
+    this.artists = artists;
+    this.album = album;
+    this.album_cover = album_cover3;
+    this.source = source;
+  }
+};
+function playlist_song_converter() {
+  let _pipe = object3(
+    parameter(
+      (id2) => {
+        return parameter(
+          (playlist_id) => {
+            return parameter(
+              (song_id) => {
+                return parameter(
+                  (title) => {
+                    return parameter(
+                      (artists) => {
+                        return parameter(
+                          (album) => {
+                            return parameter(
+                              (album_cover3) => {
+                                return parameter(
+                                  (source) => {
+                                    return constructor(
+                                      () => {
+                                        return new PlaylistSong(
+                                          id2,
+                                          playlist_id,
+                                          song_id,
+                                          title,
+                                          artists,
+                                          album,
+                                          album_cover3,
+                                          source
+                                        );
+                                      }
+                                    );
+                                  }
+                                );
+                              }
+                            );
+                          }
+                        );
+                      }
+                    );
+                  }
+                );
+              }
+            );
+          }
+        );
+      }
+    )
+  );
+  let _pipe$1 = field2(
+    _pipe,
+    "id",
+    (v) => {
+      return new Ok(v.id);
+    },
+    string4()
+  );
+  let _pipe$2 = field2(
+    _pipe$1,
+    "playlist_id",
+    (v) => {
+      return new Ok(v.playlist_id);
+    },
+    string4()
+  );
+  let _pipe$3 = field2(
+    _pipe$2,
+    "song_id",
+    (v) => {
+      return new Ok(v.song_id);
+    },
+    string4()
+  );
+  let _pipe$4 = field2(
+    _pipe$3,
+    "title",
+    (v) => {
+      return new Ok(v.title);
+    },
+    string4()
+  );
+  let _pipe$5 = field2(
+    _pipe$4,
+    "artists",
+    (v) => {
+      return new Ok(v.artists);
+    },
+    list2(string4())
+  );
+  let _pipe$6 = field2(
+    _pipe$5,
+    "album",
+    (v) => {
+      return new Ok(v.album);
+    },
+    string4()
+  );
+  let _pipe$7 = field2(
+    _pipe$6,
+    "album_cover",
+    (v) => {
+      return new Ok(v.album_cover);
+    },
+    string4()
+  );
+  let _pipe$8 = field2(
+    _pipe$7,
+    "source",
+    (v) => {
+      return new Ok(v.source);
+    },
+    song_source_converter()
+  );
+  return to_converter(_pipe$8);
+}
+
 // build/dev/javascript/shared/shared/types/playlist.mjs
 var Playlist = class extends CustomType {
   constructor(id2, name, songs) {
@@ -4834,7 +4974,7 @@ function playlist_converter() {
     (v) => {
       return new Ok(v.songs);
     },
-    list2(song_converter())
+    list2(playlist_song_converter())
   );
   return to_converter(_pipe$3);
 }
@@ -5044,33 +5184,20 @@ function layout(children2, left_children) {
         left_children
       ),
       div(
+        toList([class$("py-8 px-4 grow flex flex-col items-center")]),
         toList([
-          class$(
-            "w-3/4 md:w-2/3 lg:w-1/2 max-w-3xl flex-1 flex flex-col items-center py-8"
+          div(
+            toList([
+              class$(
+                "w-3/4 md:w-2/3 lg:w-1/2 max-w-3xl flex flex-col items-stretch"
+              )
+            ]),
+            children2
           )
-        ]),
-        prepend(
-          h1(
-            toList([class$("text-4xl font-bold mb-8")]),
-            toList([text2("Playlist Maker")])
-          ),
-          children2
-        )
+        ])
       )
     ])
   );
-}
-
-// build/dev/javascript/client/client/components/not_found.mjs
-function view() {
-  return toList([
-    h3(
-      toList([class$("text-lg my-20 text-center")]),
-      toList([
-        text2("The content you were looking for couldn't be found...")
-      ])
-    )
-  ]);
 }
 
 // build/dev/javascript/lustre/lustre/event.mjs
@@ -5106,7 +5233,7 @@ function on_create(_) {
     }
   }
 }
-function view2() {
+function view() {
   return dialog(
     toList([
       id("create-playlist"),
@@ -5165,433 +5292,6 @@ function view2() {
       )
     ])
   );
-}
-
-// build/dev/javascript/client/client/components/playlist_bar.mjs
-function playlist_link(p) {
-  return a(
-    toList([
-      class$(
-        "text-center font-bold bg-zinc-800 hover:bg-zinc-700/50 rounded-md py-2 px-4"
-      ),
-      href("/playlists/" + p.id)
-    ]),
-    toList([text2(p.name)])
-  );
-}
-function view3(playlists) {
-  return toList([
-    div(
-      toList([class$("p-2 flex flex-col gap-2 items-stretch")]),
-      toList([
-        keyed(
-          (_capture) => {
-            return div(
-              toList([class$("flex flex-col items-stretch")]),
-              _capture
-            );
-          },
-          map2(
-            playlists,
-            (p) => {
-              let child = playlist_link(p[1]);
-              return [p[0], child];
-            }
-          )
-        ),
-        button(
-          toList([
-            class$(
-              "text-center font-bold bg-zinc-800 hover:bg-zinc-700/50 rounded-md py-2 px-4"
-            ),
-            on2(
-              "click",
-              (_) => {
-                return new Ok(new OpenDialog("create-playlist"));
-              }
-            )
-          ]),
-          toList([text2("+ Create playlist")])
-        )
-      ])
-    ),
-    view2()
-  ]);
-}
-
-// build/dev/javascript/client/client/components/playlists/update_playlist.mjs
-function on_update(_, id2) {
-  let element3 = getElementById("update-playlist-name");
-  if (!element3.isOk()) {
-    return new Ok(
-      new ClientError("Couldn't find element with id update-playlist-name")
-    );
-  } else {
-    let el = element3[0];
-    let value3 = (() => {
-      let _pipe = el;
-      return value2(_pipe);
-    })();
-    if (!value3.isOk()) {
-      return new Ok(new ClientError("Couldn't get value of element"));
-    } else {
-      let name = value3[0];
-      return new Ok(
-        new PlaylistEvent(new UpdatePlaylist(id2, name))
-      );
-    }
-  }
-}
-function view4(p) {
-  return dialog(
-    toList([
-      id("update-playlist"),
-      class$(
-        "p-4 rounded-lg backdrop:bg-zinc-900 backdrop:opacity-80"
-      )
-    ]),
-    toList([
-      h1(
-        toList([class$("text-2xl font-bold mb-4")]),
-        toList([text2("Update a playlist " + p.name)])
-      ),
-      div(
-        toList([class$("flex flex-col gap-4")]),
-        toList([
-          label(
-            toList([class$("flex gap-2 items-center")]),
-            toList([
-              span(toList([]), toList([text2("Playlist name")])),
-              input(
-                toList([
-                  id("update-playlist-name"),
-                  placeholder("Playlist name..."),
-                  class$(
-                    "p-2 rounded-md bg-zinc-100 focus:bg-zinc-200"
-                  ),
-                  value(p.name)
-                ])
-              )
-            ])
-          ),
-          div(
-            toList([class$("flex justify-end")]),
-            toList([
-              button(
-                toList([
-                  class$("p-2 bg-zinc-100"),
-                  on2(
-                    "click",
-                    (_) => {
-                      return new Ok(new CloseDialog("update-playlist"));
-                    }
-                  )
-                ]),
-                toList([text2("Close")])
-              ),
-              button(
-                toList([
-                  class$("p-2 bg-green-500 text-zinc-100"),
-                  on2(
-                    "click",
-                    (_capture) => {
-                      return on_update(_capture, p.id);
-                    }
-                  )
-                ]),
-                toList([text2("Save")])
-              )
-            ])
-          )
-        ])
-      )
-    ])
-  );
-}
-
-// build/dev/javascript/client/client/components/songs/song_row.mjs
-function album_cover(song) {
-  let $ = song.preview_url;
-  if ($ instanceof Some) {
-    let url = $[0];
-    return div(
-      toList([class$("group relative")]),
-      toList([
-        img(
-          toList([
-            src(song.album_cover),
-            class$("w-16 h-16 rounded-sm"),
-            on2(
-              "click",
-              (_) => {
-                return new Ok(
-                  new SongEvent(new PlayPreview(url))
-                );
-              }
-            )
-          ])
-        ),
-        div(
-          toList([
-            class$(
-              "absolute w-full h-full top-0 left-0 group-hover:opacity-100 bg-zinc-100/50 p-2 opacity-0 transition-opacity duration-300 pointer-events-none"
-            )
-          ]),
-          toList([
-            img(
-              toList([
-                src(
-                  "https://www.svgrepo.com/download/524827/play-circle.svg"
-                )
-              ])
-            )
-          ])
-        )
-      ])
-    );
-  } else {
-    return div(
-      toList([]),
-      toList([
-        img(
-          toList([
-            src(song.album_cover),
-            class$("w-16 h-16 rounded-sm")
-          ])
-        )
-      ])
-    );
-  }
-}
-function view5(song) {
-  return div(
-    toList([
-      class$(
-        "flex items-center gap-4 py-4 px-8 bg-zinc-700/50 hover:bg-zinc-700/80"
-      )
-    ]),
-    toList([
-      album_cover(song),
-      div(
-        toList([class$("flex flex-col flex-1")]),
-        toList([
-          span(
-            toList([class$("font-semibold")]),
-            toList([text2(song.title)])
-          ),
-          span(
-            toList([class$("text-sm text-zinc-100/70")]),
-            toList([
-              text2(
-                (() => {
-                  let _pipe = song.artists;
-                  return join2(_pipe, " - ");
-                })()
-              )
-            ])
-          ),
-          span(
-            toList([class$("text-sm text-zinc-100/70")]),
-            toList([text2(song.album)])
-          )
-        ])
-      )
-    ])
-  );
-}
-
-// build/dev/javascript/client/client/components/songs/song_list.mjs
-function view6(results) {
-  return keyed(
-    (_capture) => {
-      return ul(
-        toList([class$("rounded-lg overflow-clip mt-8 w-full")]),
-        _capture
-      );
-    },
-    map2(
-      results,
-      (song) => {
-        let child = li(toList([]), toList([view5(song)]));
-        return [song.id, child];
-      }
-    )
-  );
-}
-
-// build/dev/javascript/client/client/components/playlists/playlist_page.mjs
-function edit_button() {
-  return button(
-    toList([
-      class$("py-2 px-4 bg-cyan-600 hover:bg-cyan-500/50 rounded-md"),
-      on_click(new OpenDialog("update-playlist"))
-    ]),
-    toList([text2("Edit")])
-  );
-}
-function delete_button(p) {
-  return button(
-    toList([
-      class$("py-2 px-4 bg-red-600 hover:bg-red-500/50 rounded-md"),
-      on_click(
-        new PlaylistEvent(new DeletePlaylist(p.id))
-      )
-    ]),
-    toList([text2("Delete")])
-  );
-}
-function view7(p) {
-  return toList([
-    h3(
-      toList([class$("text-lg mb-4 text-center")]),
-      toList([text2(p.name)])
-    ),
-    div(
-      toList([class$("flex gap-4 mb-4")]),
-      toList([edit_button(), delete_button(p)])
-    ),
-    view6(p.songs),
-    view4(p)
-  ]);
-}
-
-// build/dev/javascript/decipher/decipher.mjs
-function index_list(idx, decoder) {
-  return (dynamic2) => {
-    return try$(
-      list(dynamic)(dynamic2),
-      (list4) => {
-        let $ = idx >= 0;
-        if ($) {
-          let _pipe = list4;
-          let _pipe$1 = drop(_pipe, idx);
-          let _pipe$2 = first(_pipe$1);
-          let _pipe$3 = replace_error(
-            _pipe$2,
-            toList([
-              new DecodeError(
-                "A list with at least" + to_string2(idx + 1) + "elements",
-                "A list with" + to_string2(length(list4)) + "elements",
-                toList([to_string2(idx)])
-              )
-            ])
-          );
-          return then$(_pipe$3, decoder);
-        } else {
-          return new Error(
-            toList([
-              new DecodeError(
-                "An 'index' decoder with a non-negative index",
-                to_string2(idx),
-                toList([])
-              )
-            ])
-          );
-        }
-      }
-    );
-  };
-}
-function index3(idx, decoder) {
-  return any(
-    toList([
-      element(idx, decoder),
-      field(to_string2(idx), decoder),
-      index_list(idx, decoder)
-    ])
-  );
-}
-function do_at(path, decoder, dynamic2) {
-  if (path.hasLength(0)) {
-    return decoder(dynamic2);
-  } else {
-    let head = path.head;
-    let rest2 = path.tail;
-    let $ = parse(head);
-    if ($.isOk()) {
-      let idx = $[0];
-      let _pipe = dynamic2;
-      let _pipe$1 = index3(idx, dynamic)(_pipe);
-      return then$(
-        _pipe$1,
-        (_capture) => {
-          return do_at(rest2, decoder, _capture);
-        }
-      );
-    } else {
-      let _pipe = dynamic2;
-      let _pipe$1 = field(head, dynamic)(_pipe);
-      return then$(
-        _pipe$1,
-        (_capture) => {
-          return do_at(rest2, decoder, _capture);
-        }
-      );
-    }
-  }
-}
-function at(path, decoder) {
-  return (dynamic2) => {
-    return do_at(path, decoder, dynamic2);
-  };
-}
-
-// build/dev/javascript/client/client/components/spinner.mjs
-function spinner() {
-  return div(
-    toList([
-      class$(
-        "mt-8 w-8 h-8 animate-spin rounded-full border-2 border-t-zinc-800 border-x-zinc-800/50 border-b-zinc-800/50"
-      )
-    ]),
-    toList([])
-  );
-}
-
-// build/dev/javascript/client/client/components/search.mjs
-function on_click2(ev) {
-  let _pipe = ev;
-  let _pipe$1 = at(
-    toList(["target", "previousElementSibling", "value"]),
-    string2
-  )(_pipe);
-  return map3(
-    _pipe$1,
-    (s) => {
-      return new SongEvent(new SearchSongs(s));
-    }
-  );
-}
-function search(searching, results) {
-  return toList([
-    div(
-      toList([class$("rounded-md overflow-clip flex items-stretch")]),
-      toList([
-        input(
-          toList([
-            class$(
-              "py-2 px-4 bg-zinc-700/30 hover:bg-zinc-700/70 focus:bg-zinc-600/80"
-            ),
-            id("search-songs")
-          ])
-        ),
-        button(
-          toList([
-            class$("bg-zinc-700 hover:bg-zinc-600 py-2 px-4"),
-            on2("click", on_click2)
-          ]),
-          toList([text2("Search")])
-        )
-      ])
-    ),
-    (() => {
-      if (searching) {
-        return spinner();
-      } else {
-        return view6(results);
-      }
-    })()
-  ]);
 }
 
 // build/dev/javascript/glitr/glitr/error.mjs
@@ -5667,7 +5367,7 @@ function encode2(body2, value3) {
   let _pipe = value3;
   return body2.converter.encoder(_pipe);
 }
-function decode7(body2, value3) {
+function decode4(body2, value3) {
   let _pipe = value3;
   return body2.converter.decoder(_pipe);
 }
@@ -5796,7 +5496,7 @@ var Route = class extends CustomType {
     this.res_body = res_body;
   }
 };
-function new$6() {
+function new$5() {
   return new Route(
     new Get(),
     static_path(toList([])),
@@ -6045,7 +5745,7 @@ function send3(rreq, as_msg, on_error) {
                       _pipe$1,
                       (value3) => {
                         let _pipe$22 = rreq.route.res_body;
-                        let _pipe$3 = decode7(_pipe$22, value3);
+                        let _pipe$3 = decode4(_pipe$22, value3);
                         return map_error(_pipe$3, glitr_to_http_error);
                       }
                     );
@@ -6059,6 +5759,605 @@ function send3(rreq, as_msg, on_error) {
       );
     }
   );
+}
+
+// build/dev/javascript/client/modal_dialog_ffi.mjs
+function showModal(element3) {
+  if (!element3 || !(element3 instanceof HTMLDialogElement))
+    return;
+  element3.showModal();
+}
+function closeModal(element3) {
+  if (!element3 || !(element3 instanceof HTMLDialogElement))
+    return;
+  element3.close();
+}
+
+// build/dev/javascript/client/utils.mjs
+function send_and_handle_errors(req, on_success) {
+  let _pipe = req;
+  return send3(
+    _pipe,
+    (res) => {
+      if (res.isOk()) {
+        let ok = res[0];
+        return on_success(ok);
+      } else {
+        let err = res[0];
+        return new ServerError(err);
+      }
+    },
+    (msg) => {
+      return from(
+        (dispatch) => {
+          return dispatch(new ClientError(msg));
+        }
+      );
+    }
+  );
+}
+function guard2(result, return$, otherwise) {
+  if (result.isOk()) {
+    let value3 = result[0];
+    return otherwise(value3);
+  } else {
+    return return$;
+  }
+}
+
+// build/dev/javascript/client/client/components/navigation_bar.mjs
+function playlist_link(p2) {
+  return a(
+    toList([
+      class$(
+        "text-center font-bold bg-zinc-800 hover:bg-zinc-700/50 rounded-md py-2 px-4"
+      ),
+      href("/playlists/" + p2.id)
+    ]),
+    toList([text2(p2.name)])
+  );
+}
+function on_submit(ev) {
+  prevent_default(ev);
+  let search4 = getElementById("search-songs-2");
+  return guard2(
+    search4,
+    new Ok(new ClientError("Can't find an element with ID search-songs-2")),
+    (el) => {
+      return guard2(
+        (() => {
+          let _pipe = el;
+          return value2(_pipe);
+        })(),
+        new Ok(new ClientError("Can't get value from search input")),
+        (value3) => {
+          return new Ok(new SongEvent(new SearchSongs(value3)));
+        }
+      );
+    }
+  );
+}
+function view2(playlists) {
+  return toList([
+    div(
+      toList([class$("p-2 flex flex-col gap-2 items-stretch")]),
+      toList([
+        h2(
+          toList([class$("text-center font-bold text-3xl")]),
+          toList([text2("Playlist Maker")])
+        ),
+        form(
+          toList([
+            on2("submit", on_submit),
+            class$(
+              "rounded-md bg-zinc-800 hover:bg-zinc-700/50 opacity-50 hover:opacity-100 flex mb-4 items-center"
+            )
+          ]),
+          toList([
+            img(
+              toList([
+                src("/search.svg"),
+                class$("w-4 h-4 mx-2")
+              ])
+            ),
+            input(
+              toList([
+                class$(
+                  "py-2 px-4 bg-zinc-700/30 hover:bg-zinc-700/70 focus:bg-zinc-600/80 grow"
+                ),
+                id("search-songs-2"),
+                placeholder("Search")
+              ])
+            )
+          ])
+        ),
+        keyed(
+          (_capture) => {
+            return div(
+              toList([class$("flex flex-col items-stretch")]),
+              _capture
+            );
+          },
+          map2(
+            playlists,
+            (p2) => {
+              let child = playlist_link(p2[1]);
+              return [p2[0], child];
+            }
+          )
+        ),
+        button(
+          toList([
+            class$(
+              "text-center font-bold bg-zinc-800 hover:bg-zinc-700/50 rounded-md py-2 px-4"
+            ),
+            on2(
+              "click",
+              (_) => {
+                return new Ok(new OpenDialog("create-playlist"));
+              }
+            )
+          ]),
+          toList([text2("+ Create playlist")])
+        )
+      ])
+    ),
+    view()
+  ]);
+}
+
+// build/dev/javascript/client/client/components/not_found.mjs
+function view3() {
+  return toList([
+    h3(
+      toList([class$("text-lg my-20 text-center")]),
+      toList([
+        text2("The content you were looking for couldn't be found...")
+      ])
+    )
+  ]);
+}
+
+// build/dev/javascript/client/client/components/playlist_songs/song_row.mjs
+function album_cover(song) {
+  return div(
+    toList([]),
+    toList([
+      img(
+        toList([
+          src(song.album_cover),
+          class$("w-16 h-16 rounded-sm")
+        ])
+      )
+    ])
+  );
+}
+function view4(song) {
+  return div(
+    toList([
+      class$(
+        "flex items-center gap-4 py-4 px-8 bg-zinc-700/50 hover:bg-zinc-700/80"
+      )
+    ]),
+    toList([
+      album_cover(song),
+      div(
+        toList([class$("flex flex-col flex-1")]),
+        toList([
+          span(
+            toList([class$("font-semibold")]),
+            toList([text2(song.title)])
+          ),
+          span(
+            toList([class$("text-sm text-zinc-100/70")]),
+            toList([
+              text2(
+                (() => {
+                  let _pipe = song.artists;
+                  return join2(_pipe, " - ");
+                })()
+              )
+            ])
+          ),
+          span(
+            toList([class$("text-sm text-zinc-100/70")]),
+            toList([text2(song.album)])
+          )
+        ])
+      )
+    ])
+  );
+}
+
+// build/dev/javascript/client/client/components/playlist_songs/song_list.mjs
+function view5(results) {
+  return keyed(
+    (_capture) => {
+      return ul(
+        toList([class$("rounded-lg overflow-clip mt-8 w-full")]),
+        _capture
+      );
+    },
+    map2(
+      results,
+      (song) => {
+        let child = li(toList([]), toList([view4(song)]));
+        return [song.id, child];
+      }
+    )
+  );
+}
+
+// build/dev/javascript/client/client/components/playlists/update_playlist.mjs
+function on_update(_, id2) {
+  let element3 = getElementById("update-playlist-name");
+  if (!element3.isOk()) {
+    return new Ok(
+      new ClientError("Couldn't find element with id update-playlist-name")
+    );
+  } else {
+    let el = element3[0];
+    let value3 = (() => {
+      let _pipe = el;
+      return value2(_pipe);
+    })();
+    if (!value3.isOk()) {
+      return new Ok(new ClientError("Couldn't get value of element"));
+    } else {
+      let name = value3[0];
+      return new Ok(
+        new PlaylistEvent(new UpdatePlaylist(id2, name))
+      );
+    }
+  }
+}
+function view6(p2) {
+  return dialog(
+    toList([
+      id("update-playlist"),
+      class$(
+        "p-4 rounded-lg backdrop:bg-zinc-900 backdrop:opacity-80"
+      )
+    ]),
+    toList([
+      h1(
+        toList([class$("text-2xl font-bold mb-4")]),
+        toList([text2("Update a playlist " + p2.name)])
+      ),
+      div(
+        toList([class$("flex flex-col gap-4")]),
+        toList([
+          label(
+            toList([class$("flex gap-2 items-center")]),
+            toList([
+              span(toList([]), toList([text2("Playlist name")])),
+              input(
+                toList([
+                  id("update-playlist-name"),
+                  placeholder("Playlist name..."),
+                  class$(
+                    "p-2 rounded-md bg-zinc-100 focus:bg-zinc-200"
+                  ),
+                  value(p2.name)
+                ])
+              )
+            ])
+          ),
+          div(
+            toList([class$("flex justify-end")]),
+            toList([
+              button(
+                toList([
+                  class$("p-2 bg-zinc-100"),
+                  on2(
+                    "click",
+                    (_) => {
+                      return new Ok(new CloseDialog("update-playlist"));
+                    }
+                  )
+                ]),
+                toList([text2("Close")])
+              ),
+              button(
+                toList([
+                  class$("p-2 bg-green-500 text-zinc-100"),
+                  on2(
+                    "click",
+                    (_capture) => {
+                      return on_update(_capture, p2.id);
+                    }
+                  )
+                ]),
+                toList([text2("Save")])
+              )
+            ])
+          )
+        ])
+      )
+    ])
+  );
+}
+
+// build/dev/javascript/client/client/components/playlists/playlist_page.mjs
+function edit_button() {
+  return button(
+    toList([
+      class$("py-2 px-4 bg-cyan-600 hover:bg-cyan-500/50 rounded-md"),
+      on_click(new OpenDialog("update-playlist"))
+    ]),
+    toList([text2("Edit")])
+  );
+}
+function delete_button(p2) {
+  return button(
+    toList([
+      class$("py-2 px-4 bg-red-600 hover:bg-red-500/50 rounded-md"),
+      on_click(
+        new PlaylistEvent(new DeletePlaylist(p2.id))
+      )
+    ]),
+    toList([text2("Delete")])
+  );
+}
+function view7(p2) {
+  return toList([
+    h3(
+      toList([class$("text-lg mb-4 text-center")]),
+      toList([text2(p2.name)])
+    ),
+    div(
+      toList([class$("flex gap-4 mb-4")]),
+      toList([edit_button(), delete_button(p2)])
+    ),
+    view5(p2.songs),
+    view6(p2)
+  ]);
+}
+
+// build/dev/javascript/decipher/decipher.mjs
+function index_list(idx, decoder) {
+  return (dynamic2) => {
+    return try$(
+      list(dynamic)(dynamic2),
+      (list4) => {
+        let $ = idx >= 0;
+        if ($) {
+          let _pipe = list4;
+          let _pipe$1 = drop(_pipe, idx);
+          let _pipe$2 = first(_pipe$1);
+          let _pipe$3 = replace_error(
+            _pipe$2,
+            toList([
+              new DecodeError(
+                "A list with at least" + to_string2(idx + 1) + "elements",
+                "A list with" + to_string2(length(list4)) + "elements",
+                toList([to_string2(idx)])
+              )
+            ])
+          );
+          return then$(_pipe$3, decoder);
+        } else {
+          return new Error(
+            toList([
+              new DecodeError(
+                "An 'index' decoder with a non-negative index",
+                to_string2(idx),
+                toList([])
+              )
+            ])
+          );
+        }
+      }
+    );
+  };
+}
+function index3(idx, decoder) {
+  return any(
+    toList([
+      element(idx, decoder),
+      field(to_string2(idx), decoder),
+      index_list(idx, decoder)
+    ])
+  );
+}
+function do_at(path, decoder, dynamic2) {
+  if (path.hasLength(0)) {
+    return decoder(dynamic2);
+  } else {
+    let head = path.head;
+    let rest2 = path.tail;
+    let $ = parse(head);
+    if ($.isOk()) {
+      let idx = $[0];
+      let _pipe = dynamic2;
+      let _pipe$1 = index3(idx, dynamic)(_pipe);
+      return then$(
+        _pipe$1,
+        (_capture) => {
+          return do_at(rest2, decoder, _capture);
+        }
+      );
+    } else {
+      let _pipe = dynamic2;
+      let _pipe$1 = field(head, dynamic)(_pipe);
+      return then$(
+        _pipe$1,
+        (_capture) => {
+          return do_at(rest2, decoder, _capture);
+        }
+      );
+    }
+  }
+}
+function at(path, decoder) {
+  return (dynamic2) => {
+    return do_at(path, decoder, dynamic2);
+  };
+}
+
+// build/dev/javascript/client/client/components/songs/song_row.mjs
+function album_cover2(song) {
+  let $ = song.preview_url;
+  if ($ instanceof Some) {
+    let url = $[0];
+    return div(
+      toList([class$("group relative")]),
+      toList([
+        img(
+          toList([
+            src(song.album_cover),
+            class$("w-16 h-16 rounded-sm"),
+            on2(
+              "click",
+              (_) => {
+                return new Ok(
+                  new SongEvent(new PlayPreview(url))
+                );
+              }
+            )
+          ])
+        ),
+        div(
+          toList([
+            class$(
+              "absolute w-full h-full top-0 left-0 group-hover:opacity-100 bg-zinc-100/50 text-zinc-800 p-2 opacity-0 transition-opacity duration-300 pointer-events-none"
+            )
+          ]),
+          toList([img(toList([src("./play-circle.svg")]))])
+        )
+      ])
+    );
+  } else {
+    return div(
+      toList([]),
+      toList([
+        img(
+          toList([
+            src(song.album_cover),
+            class$("w-16 h-16 rounded-sm")
+          ])
+        )
+      ])
+    );
+  }
+}
+function view8(song) {
+  return div(
+    toList([
+      class$(
+        "flex items-center gap-4 py-4 px-8 bg-zinc-700/50 hover:bg-zinc-700/80"
+      )
+    ]),
+    toList([
+      album_cover2(song),
+      div(
+        toList([class$("flex flex-col flex-1")]),
+        toList([
+          span(
+            toList([class$("font-semibold")]),
+            toList([text2(song.title)])
+          ),
+          span(
+            toList([class$("text-sm text-zinc-100/70")]),
+            toList([
+              text2(
+                (() => {
+                  let _pipe = song.artists;
+                  return join2(_pipe, " - ");
+                })()
+              )
+            ])
+          ),
+          span(
+            toList([class$("text-sm text-zinc-100/70")]),
+            toList([text2(song.album)])
+          )
+        ])
+      )
+    ])
+  );
+}
+
+// build/dev/javascript/client/client/components/songs/song_list.mjs
+function view9(results) {
+  return keyed(
+    (_capture) => {
+      return ul(
+        toList([class$("rounded-lg overflow-clip mt-8 w-full")]),
+        _capture
+      );
+    },
+    map2(
+      results,
+      (song) => {
+        let child = li(toList([]), toList([view8(song)]));
+        return [song.id, child];
+      }
+    )
+  );
+}
+
+// build/dev/javascript/client/client/components/spinner.mjs
+function spinner() {
+  return div(
+    toList([
+      class$(
+        "mt-8 w-8 h-8 animate-spin rounded-full border-2 border-t-zinc-800 border-x-zinc-800/50 border-b-zinc-800/50"
+      )
+    ]),
+    toList([])
+  );
+}
+
+// build/dev/javascript/client/client/components/search.mjs
+function on_click2(ev) {
+  let _pipe = ev;
+  let _pipe$1 = at(
+    toList(["target", "previousElementSibling", "value"]),
+    string2
+  )(_pipe);
+  return map3(
+    _pipe$1,
+    (s) => {
+      return new SongEvent(new SearchSongs(s));
+    }
+  );
+}
+function search(searching, results) {
+  return toList([
+    div(
+      toList([
+        class$(
+          "rounded-md overflow-clip flex items-stretch max-w-lg mx-auto"
+        )
+      ]),
+      toList([
+        input(
+          toList([
+            class$(
+              "py-2 px-4 bg-zinc-700/30 hover:bg-zinc-700/70 focus:bg-zinc-600/80 grow"
+            ),
+            id("search-songs")
+          ])
+        ),
+        button(
+          toList([
+            class$("bg-zinc-700 hover:bg-zinc-600 py-2 px-4"),
+            on2("click", on_click2)
+          ]),
+          toList([text2("Search")])
+        )
+      ])
+    ),
+    p(toList([]), toList([text2("Search songs from Spotify")])),
+    (() => {
+      if (searching) {
+        return spinner();
+      } else {
+        return view9(results);
+      }
+    })()
+  ]);
 }
 
 // build/dev/javascript/glitr_convert/glitr/convert/json.mjs
@@ -6464,7 +6763,7 @@ function with_upsert_converter(service, converter) {
   );
 }
 function create_route(service) {
-  let _pipe = new$6();
+  let _pipe = new$5();
   let _pipe$1 = with_method(_pipe, new Post());
   let _pipe$2 = with_path(_pipe$1, static_path(service.root_path));
   let _pipe$3 = with_request_body(
@@ -6477,7 +6776,7 @@ function create_route(service) {
   );
 }
 function get_all_route(service) {
-  let _pipe = new$6();
+  let _pipe = new$5();
   let _pipe$1 = with_method(_pipe, new Get());
   let _pipe$2 = with_path(_pipe$1, static_path(service.root_path));
   return with_response_body(
@@ -6492,7 +6791,7 @@ function get_all_route(service) {
   );
 }
 function update_route(service) {
-  let _pipe = new$6();
+  let _pipe = new$5();
   let _pipe$1 = with_method(_pipe, new Post());
   let _pipe$2 = with_path(_pipe$1, id_path(service.root_path));
   let _pipe$3 = with_request_body(
@@ -6505,7 +6804,7 @@ function update_route(service) {
   );
 }
 function delete_route(service) {
-  let _pipe = new$6();
+  let _pipe = new$5();
   let _pipe$1 = with_method(_pipe, new Delete());
   let _pipe$2 = with_path(_pipe$1, id_path(service.root_path));
   return with_response_body(
@@ -6550,42 +6849,6 @@ function factory() {
   let _pipe$1 = with_scheme(_pipe, new Http());
   let _pipe$2 = with_host(_pipe$1, "localhost");
   return with_port(_pipe$2, 2345);
-}
-
-// build/dev/javascript/client/modal_dialog_ffi.mjs
-function showModal(element3) {
-  if (!element3 || !(element3 instanceof HTMLDialogElement))
-    return;
-  element3.showModal();
-}
-function closeModal(element3) {
-  if (!element3 || !(element3 instanceof HTMLDialogElement))
-    return;
-  element3.close();
-}
-
-// build/dev/javascript/client/utils.mjs
-function send_and_handle_errors(req, on_success) {
-  let _pipe = req;
-  return send3(
-    _pipe,
-    (res) => {
-      if (res.isOk()) {
-        let ok = res[0];
-        return on_success(ok);
-      } else {
-        let err = res[0];
-        return new ServerError(err);
-      }
-    },
-    (msg) => {
-      return from(
-        (dispatch) => {
-          return dispatch(new ClientError(msg));
-        }
-      );
-    }
-  );
 }
 
 // build/dev/javascript/client/client/services/playlist_service.mjs
@@ -6671,8 +6934,8 @@ function on_playlist_event(model, event2) {
         playlists: from_list(
           (() => {
             let _pipe = playlists;
-            return map2(_pipe, (p) => {
-              return [p.id, p];
+            return map2(_pipe, (p2) => {
+              return [p2.id, p2];
             });
           })()
         )
@@ -6680,12 +6943,12 @@ function on_playlist_event(model, event2) {
       none()
     ];
   } else if (event2 instanceof ServerCreatedPlaylist) {
-    let p = event2.playlist;
+    let p2 = event2.playlist;
     return [
       model.withFields({
         playlists: (() => {
           let _pipe = model.playlists;
-          return insert(_pipe, p.id, p);
+          return insert(_pipe, p2.id, p2);
         })()
       }),
       from(
@@ -6695,12 +6958,12 @@ function on_playlist_event(model, event2) {
       )
     ];
   } else if (event2 instanceof ServerUpdatedPlaylist) {
-    let p = event2.playlist;
+    let p2 = event2.playlist;
     return [
       model.withFields({
         playlists: (() => {
           let _pipe = model.playlists;
-          return insert(_pipe, p.id, p);
+          return insert(_pipe, p2.id, p2);
         })()
       }),
       (() => {
@@ -6710,12 +6973,12 @@ function on_playlist_event(model, event2) {
       })()
     ];
   } else if (event2 instanceof ServerSentPlaylist) {
-    let p = event2.playlist;
+    let p2 = event2.playlist;
     return [
       model.withFields({
         playlists: (() => {
           let _pipe = model.playlists;
-          return insert(_pipe, p.id, p);
+          return insert(_pipe, p2.id, p2);
         })()
       }),
       (() => {
@@ -6776,7 +7039,7 @@ function search_decoder(value3) {
   );
 }
 function search2() {
-  let _pipe = new$6();
+  let _pipe = new$5();
   let _pipe$1 = with_method(_pipe, new Get());
   let _pipe$2 = with_path(
     _pipe$1,
@@ -6989,11 +7252,13 @@ function update3(model, msg) {
     return [model.withFields({ route }), none()];
   }
 }
-function view8(model) {
+function view10(model) {
   let children2 = (() => {
     let $ = model.token;
     let $1 = model.route;
     if ($ === "" && $1 instanceof Home) {
+      return home();
+    } else if ($ === "" && $1 instanceof Search) {
       return home();
     } else if ($1 instanceof Home) {
       return search(false, toList([]));
@@ -7006,12 +7271,12 @@ function view8(model) {
       let _pipe = model.playlists;
       let _pipe$1 = get(_pipe, id2);
       let _pipe$2 = map3(_pipe$1, view7);
-      return unwrap2(_pipe$2, view());
+      return unwrap2(_pipe$2, view3());
     } else {
-      return view();
+      return view3();
     }
   })();
-  let left_children = view3(
+  let left_children = view2(
     (() => {
       let _pipe = model.playlists;
       return map_to_list(_pipe);
@@ -7020,7 +7285,7 @@ function view8(model) {
   return layout(children2, left_children);
 }
 function main() {
-  let app = application(init3, update3, view8);
+  let app = application(init3, update3, view10);
   let $ = start2(app, "#app", void 0);
   if (!$.isOk()) {
     throw makeError(

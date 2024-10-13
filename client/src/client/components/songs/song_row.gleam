@@ -44,16 +44,10 @@ fn album_cover(song: song.Song) -> element.Element(msg.Msg) {
         html.div(
           [
             attribute.class(
-              "absolute w-full h-full top-0 left-0 group-hover:opacity-100 bg-zinc-100/50 p-2 opacity-0 transition-opacity duration-300 pointer-events-none",
+              "absolute w-full h-full top-0 left-0 group-hover:opacity-100 bg-zinc-100/50 text-zinc-800 p-2 opacity-0 transition-opacity duration-300 pointer-events-none",
             ),
           ],
-          [
-            html.img([
-              attribute.src(
-                "https://www.svgrepo.com/download/524827/play-circle.svg",
-              ),
-            ]),
-          ],
+          [html.img([attribute.src("./play-circle.svg")])],
         ),
       ])
     option.None ->

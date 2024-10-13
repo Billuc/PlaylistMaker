@@ -24,3 +24,10 @@ pub fn show_modal(element: element.Element) -> Nil
 
 @external(javascript, "./modal_dialog_ffi.mjs", "closeModal")
 pub fn close_modal(element: element.Element) -> Nil
+
+pub fn guard(result: Result(a, b), return: c, otherwise: fn(a) -> c) -> c {
+  case result {
+    Ok(value) -> otherwise(value)
+    Error(_) -> return
+  }
+}
