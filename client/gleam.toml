@@ -30,3 +30,4 @@ modem = ">= 2.0.1 and < 3.0.0"
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"
 lustre_dev_tools = ">= 1.5.4 and < 2.0.0"
+lucide_lustre = ">= 2.0.0 and < 3.0.0"
