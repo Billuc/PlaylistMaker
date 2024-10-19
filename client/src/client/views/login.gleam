@@ -20,7 +20,7 @@ pub fn view() -> List(Element(msg.Msg)) {
           attribute.src(
             "https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_Green.png",
           ),
-          attribute.class("h-6"),
+          attribute.class("h-6 mx-auto"),
         ]),
         html.text("Login to Spotify"),
       ],

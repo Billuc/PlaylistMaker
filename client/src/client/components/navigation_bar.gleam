@@ -28,26 +28,7 @@ pub fn view(
           html.text("Playlist Maker"),
         ],
       ),
-      html.form(
-        [
-          event.on("submit", on_submit),
-          attribute.class(
-            "rounded-md bg-zinc-800 hover:bg-zinc-700/50 opacity-50 hover:opacity-100 flex mb-4 items-center",
-          ),
-        ],
-        [
-          html.button([attribute.class("w-6 h-6 mx-2")], [
-            lucide_lustre.search([attribute.class("w-full h-full")]),
-          ]),
-          html.input([
-            attribute.class(
-              "py-2 px-4 bg-zinc-700/30 hover:bg-zinc-700/70 focus:bg-zinc-600/80 grow",
-            ),
-            attribute.id("search-songs-2"),
-            attribute.placeholder("Search"),
-          ]),
-        ],
-      ),
+      search_bar(),
       element.keyed(
         html.div([attribute.class("flex flex-col items-stretch")], _),
         {
@@ -69,6 +50,29 @@ pub fn view(
     ]),
     create_playlist.view(),
   ]
+}
+
+fn search_bar() -> element.Element(msg.Msg) {
+  html.form(
+    [
+      event.on("submit", on_submit),
+      attribute.class(
+        "rounded-md bg-zinc-800 hover:bg-zinc-700/50 opacity-50 hover:opacity-100 flex mb-4 items-center",
+      ),
+    ],
+    [
+      html.button([attribute.class("w-6 h-6 mx-2")], [
+        lucide_lustre.search([attribute.class("w-full h-full")]),
+      ]),
+      html.input([
+        attribute.class(
+          "py-2 px-4 bg-zinc-700/30 hover:bg-zinc-700/70 focus:bg-zinc-600/80 grow",
+        ),
+        attribute.id("search-songs-2"),
+        attribute.placeholder("Search"),
+      ]),
+    ],
+  )
 }
 
 fn playlist_link(p: playlist.Playlist) -> element.Element(msg.Msg) {
