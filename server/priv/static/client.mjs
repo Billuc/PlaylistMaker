@@ -800,11 +800,11 @@ function split3(x, substring) {
 
 // build/dev/javascript/gleam_stdlib/gleam/dynamic.mjs
 var DecodeError = class extends CustomType {
-  constructor(expected, found, path) {
+  constructor(expected, found, path2) {
     super();
     this.expected = expected;
     this.found = found;
-    this.path = path;
+    this.path = path2;
   }
 };
 function dynamic(value3) {
@@ -1981,13 +1981,13 @@ function drop2(loop$dict, loop$disallowed_keys) {
 
 // build/dev/javascript/gleam_stdlib/gleam/uri.mjs
 var Uri = class extends CustomType {
-  constructor(scheme, userinfo, host, port, path, query, fragment) {
+  constructor(scheme, userinfo, host, port, path2, query, fragment) {
     super();
     this.scheme = scheme;
     this.userinfo = userinfo;
     this.host = host;
     this.port = port;
-    this.path = path;
+    this.path = path2;
     this.query = query;
     this.fragment = fragment;
   }
@@ -2095,13 +2095,13 @@ function do_parse(uri_string) {
     if (matches.hasLength(8)) {
       let scheme2 = matches.tail.head;
       let authority_with_slashes = matches.tail.tail.head;
-      let path2 = matches.tail.tail.tail.tail.head;
+      let path3 = matches.tail.tail.tail.tail.head;
       let query_with_question_mark = matches.tail.tail.tail.tail.tail.head;
       let fragment2 = matches.tail.tail.tail.tail.tail.tail.tail.head;
       return [
         scheme2,
         authority_with_slashes,
-        path2,
+        path3,
         query_with_question_mark,
         fragment2
       ];
@@ -2111,11 +2111,11 @@ function do_parse(uri_string) {
   })();
   let scheme = $[0];
   let authority = $[1];
-  let path = $[2];
+  let path2 = $[2];
   let query = $[3];
   let fragment = $[4];
   let scheme$1 = noneify_empty_string(scheme);
-  let path$1 = unwrap(path, "");
+  let path$1 = unwrap(path2, "");
   let query$1 = noneify_query(query);
   let $1 = split_authority(authority);
   let userinfo = $1[0];
@@ -2181,8 +2181,8 @@ function do_remove_dot_segments(loop$input, loop$accumulator) {
 function remove_dot_segments(input2) {
   return do_remove_dot_segments(input2, toList([]));
 }
-function path_segments(path) {
-  return remove_dot_segments(split3(path, "/"));
+function path_segments(path2) {
+  return remove_dot_segments(split3(path2, "/"));
 }
 function to_string4(uri) {
   let parts = (() => {
@@ -2487,10 +2487,10 @@ var Text = class extends CustomType {
   }
 };
 var Element2 = class extends CustomType {
-  constructor(key2, namespace, tag, attrs, children2, self_closing, void$) {
+  constructor(key2, namespace2, tag, attrs, children2, self_closing, void$) {
     super();
     this.key = key2;
-    this.namespace = namespace;
+    this.namespace = namespace2;
     this.tag = tag;
     this.attrs = attrs;
     this.children = children2;
@@ -2654,7 +2654,7 @@ function element(tag, attrs, children2) {
 }
 function do_keyed(el, key2) {
   if (el instanceof Element2) {
-    let namespace = el.namespace;
+    let namespace2 = el.namespace;
     let tag = el.tag;
     let attrs = el.attrs;
     let children2 = el.children;
@@ -2662,7 +2662,7 @@ function do_keyed(el, key2) {
     let void$ = el.void;
     return new Element2(
       key2,
-      namespace,
+      namespace2,
       tag,
       attrs,
       children2,
@@ -2711,6 +2711,9 @@ function keyed(el, children2) {
       }
     )
   );
+}
+function namespaced(namespace2, tag, attrs, children2) {
+  return new Element2("", namespace2, tag, attrs, children2, false, false);
 }
 function text(content) {
   return new Text(content);
@@ -2862,9 +2865,9 @@ function morph(prev, next, dispatch) {
   return out;
 }
 function createElementNode({ prev, next, dispatch, stack }) {
-  const namespace = next.namespace || "http://www.w3.org/1999/xhtml";
+  const namespace2 = next.namespace || "http://www.w3.org/1999/xhtml";
   const canMorph = prev && prev.nodeType === Node.ELEMENT_NODE && prev.localName === next.tag && prev.namespaceURI === (next.namespace || "http://www.w3.org/1999/xhtml");
-  const el = canMorph ? prev : namespace ? document.createElementNS(namespace, next.tag) : document.createElement(next.tag);
+  const el = canMorph ? prev : namespace2 ? document.createElementNS(namespace2, next.tag) : document.createElement(next.tag);
   let handlersForEl;
   if (!registeredHandlers.has(el)) {
     const emptyHandlers = /* @__PURE__ */ new Map();
@@ -3027,14 +3030,14 @@ function lustreServerEventHandler(event2) {
     tag,
     data: include.reduce(
       (data2, property) => {
-        const path = property.split(".");
-        for (let i = 0, o = data2, e = event2; i < path.length; i++) {
-          if (i === path.length - 1) {
-            o[path[i]] = e[path[i]];
+        const path2 = property.split(".");
+        for (let i = 0, o = data2, e = event2; i < path2.length; i++) {
+          if (i === path2.length - 1) {
+            o[path2[i]] = e[path2[i]];
           } else {
-            o[path[i]] ??= {};
-            e = e[path[i]];
-            o = o[path[i]];
+            o[path2[i]] ??= {};
+            e = e[path2[i]];
+            o = o[path2[i]];
           }
         }
         return data2;
@@ -3541,7 +3544,7 @@ var relative = /* @__PURE__ */ new Uri(
   /* @__PURE__ */ new None(),
   /* @__PURE__ */ new None()
 );
-function push(path, query, fragment) {
+function push(path2, query, fragment) {
   return from(
     (_) => {
       return guard(
@@ -3549,7 +3552,7 @@ function push(path, query, fragment) {
         void 0,
         () => {
           return do_push(
-            relative.withFields({ path, query, fragment })
+            relative.withFields({ path: path2, query, fragment })
           );
         }
       );
@@ -3898,7 +3901,7 @@ function scheme_to_string(scheme) {
 
 // build/dev/javascript/gleam_http/gleam/http/request.mjs
 var Request = class extends CustomType {
-  constructor(method, headers, body2, scheme, host, port, path, query) {
+  constructor(method, headers, body2, scheme, host, port, path2, query) {
     super();
     this.method = method;
     this.headers = headers;
@@ -3906,7 +3909,7 @@ var Request = class extends CustomType {
     this.scheme = scheme;
     this.host = host;
     this.port = port;
-    this.path = path;
+    this.path = path2;
     this.query = query;
   }
 };
@@ -3931,9 +3934,9 @@ function set_body(req, body2) {
   let scheme = req.scheme;
   let host = req.host;
   let port = req.port;
-  let path = req.path;
+  let path2 = req.path;
   let query = req.query;
-  return new Request(method, headers, body2, scheme, host, port, path, query);
+  return new Request(method, headers, body2, scheme, host, port, path2, query);
 }
 function set_query(req, query) {
   let pair = (t) => {
@@ -3975,8 +3978,8 @@ function set_host(req, host) {
 function set_port(req, port) {
   return req.withFields({ port: new Some(port) });
 }
-function set_path(req, path) {
-  return req.withFields({ path });
+function set_path(req, path2) {
+  return req.withFields({ path: path2 });
 }
 
 // build/dev/javascript/gleam_http/gleam/http/response.mjs
@@ -5313,7 +5316,11 @@ function layout(children2, left_children) {
         ]),
         toList([
           div(
-            toList([class$("max-w-3xl flex flex-col items-stretch")]),
+            toList([
+              class$(
+                "w-3/4 md:w-2/3 lg:w-1/2 max-w-3xl flex flex-col items-stretch"
+              )
+            ]),
             children2
           )
         ])
@@ -5523,9 +5530,9 @@ function static_path(root) {
       (_) => {
         return root;
       },
-      (path) => {
+      (path2) => {
         return guard(
-          isEqual(path, root),
+          isEqual(path2, root),
           new Ok(void 0),
           () => {
             return new Error(void 0);
@@ -5556,12 +5563,12 @@ function id_path(root) {
     )
   );
 }
-function encode3(path, value3) {
+function encode3(path2, value3) {
   let _pipe = value3;
-  return path.converter.encoder(_pipe);
+  return path2.converter.encoder(_pipe);
 }
-function get_type3(path) {
-  return path.ptype;
+function get_type3(path2) {
+  return path2.ptype;
 }
 
 // build/dev/javascript/glitr/glitr/query.mjs
@@ -5609,10 +5616,10 @@ function get_type4(query) {
 
 // build/dev/javascript/glitr/glitr/route.mjs
 var Route = class extends CustomType {
-  constructor(method, path, query, req_body, res_body) {
+  constructor(method, path2, query, req_body, res_body) {
     super();
     this.method = method;
-    this.path = path;
+    this.path = path2;
     this.query = query;
     this.req_body = req_body;
     this.res_body = res_body;
@@ -5630,10 +5637,10 @@ function new$5() {
 function with_method(route, method) {
   return route.withFields({ method });
 }
-function with_path(route, path) {
+function with_path(route, path2) {
   return new Route(
     route.method,
-    path,
+    path2,
     route.query,
     route.req_body,
     route.res_body
@@ -5715,8 +5722,8 @@ function for_route(factory2, route) {
     new None()
   );
 }
-function with_path2(request, path) {
-  return request.withFields({ path_opt: new Some(path) });
+function with_path2(request, path2) {
+  return request.withFields({ path_opt: new Some(path2) });
 }
 function with_query2(request, query) {
   return request.withFields({ query_opt: new Some(query) });
@@ -5733,7 +5740,7 @@ function add_path(req, rreq, on_error, then$2) {
   if ($1 instanceof None) {
     return on_error("Path option is missing, please call with_path before send");
   } else {
-    let path = $1[0];
+    let path2 = $1[0];
     return then$2(
       (() => {
         let _pipe = req;
@@ -5741,7 +5748,7 @@ function add_path(req, rreq, on_error, then$2) {
           _pipe,
           (() => {
             let _pipe$1 = rreq.route.path;
-            let _pipe$2 = encode3(_pipe$1, path);
+            let _pipe$2 = encode3(_pipe$1, path2);
             return join2(_pipe$2, "/");
           })()
         );
@@ -5919,9 +5926,14 @@ function send_and_handle_errors(req, on_success) {
   );
 }
 function show_modal_by_id(id2) {
-  let _pipe = getElementById(id2);
-  let _pipe$1 = map3(_pipe, showModal);
-  return unwrap2(_pipe$1, void 0);
+  requestAnimationFrame(
+    (_) => {
+      let _pipe = getElementById(id2);
+      let _pipe$1 = map3(_pipe, showModal);
+      return unwrap2(_pipe$1, void 0);
+    }
+  );
+  return void 0;
 }
 function result_guard(result, return$, otherwise) {
   if (result.isOk()) {
@@ -6634,8 +6646,8 @@ function on_playlist_event(model, event2) {
         })()
       }),
       from(
-        (dispatch) => {
-          return dispatch(new CloseDialog("create-playlist"));
+        (_) => {
+          return show_modal_by_id("create-playlist");
         }
       )
     ];
@@ -6703,6 +6715,10 @@ function create3() {
   let _pipe = playlist_song_service();
   return create_route(_pipe);
 }
+function delete$4() {
+  let _pipe = playlist_song_service();
+  return delete_route(_pipe);
+}
 
 // build/dev/javascript/client/client/services/playlist_song_service.mjs
 function create4(data) {
@@ -6719,9 +6735,9 @@ function create4(data) {
     }
   );
 }
-function delete$4(id2) {
+function delete$5(id2) {
   let _pipe = factory();
-  let _pipe$1 = for_route(_pipe, delete$2());
+  let _pipe$1 = for_route(_pipe, delete$4());
   let _pipe$2 = with_path2(_pipe$1, id2);
   return send_and_handle_errors(
     _pipe$2,
@@ -6809,7 +6825,7 @@ function on_playlist_song_event(model, event2) {
     ];
   } else if (event2 instanceof DeletePlaylistSong) {
     let id2 = event2.id;
-    return [model, delete$4(id2)];
+    return [model, delete$5(id2)];
   } else if (event2 instanceof ServerCreatedPlaylistSong) {
     let song = event2.song;
     return [
@@ -6818,8 +6834,8 @@ function on_playlist_song_event(model, event2) {
         return add_playlist_song(_pipe, song);
       })(),
       from(
-        (dispatch) => {
-          return dispatch(new CloseDialog("create-playlist-song"));
+        (_) => {
+          return show_modal_by_id("create-playlist-song");
         }
       )
     ];
@@ -6963,12 +6979,7 @@ function on_song_event(model, event2) {
       model.withFields({ current_song: new Some(song) }),
       from(
         (_) => {
-          requestAnimationFrame(
-            (_2) => {
-              return show_modal_by_id("create-playlist-song");
-            }
-          );
-          return void 0;
+          return show_modal_by_id("create-playlist-song");
         }
       )
     ];
@@ -7034,6 +7045,57 @@ function view5() {
   ]);
 }
 
+// build/dev/javascript/lustre/lustre/element/svg.mjs
+var namespace = "http://www.w3.org/2000/svg";
+function circle(attrs) {
+  return namespaced(namespace, "circle", attrs, toList([]));
+}
+function svg(attrs, children2) {
+  return namespaced(namespace, "svg", attrs, children2);
+}
+function path(attrs) {
+  return namespaced(namespace, "path", attrs, toList([]));
+}
+
+// build/dev/javascript/client/lucide_lustre.mjs
+function circle_x(attributes) {
+  return svg(
+    prepend(
+      attribute("stroke-linejoin", "round"),
+      prepend(
+        attribute("stroke-linecap", "round"),
+        prepend(
+          attribute("stroke-width", "2"),
+          prepend(
+            attribute("stroke", "currentColor"),
+            prepend(
+              attribute("fill", "none"),
+              prepend(
+                attribute("viewBox", "0 0 24 24"),
+                prepend(
+                  attribute("height", "24"),
+                  prepend(attribute("width", "24"), attributes)
+                )
+              )
+            )
+          )
+        )
+      )
+    ),
+    toList([
+      circle(
+        toList([
+          attribute("r", "10"),
+          attribute("cy", "12"),
+          attribute("cx", "12")
+        ])
+      ),
+      path(toList([attribute("d", "m15 9-6 6")])),
+      path(toList([attribute("d", "m9 9 6 6")]))
+    ])
+  );
+}
+
 // build/dev/javascript/client/client/components/playlist_songs/song_row.mjs
 function album_cover(song) {
   return div(
@@ -7080,6 +7142,19 @@ function view6(song) {
             toList([text2(song.album)])
           )
         ])
+      ),
+      button(
+        toList([
+          class$(
+            "rounded-full w-6 h-6 font-bold flex justify-center items-center bg-zinc-800/50 hover:bg-zinc-800/80"
+          ),
+          on_click(
+            new PlaylistSongEvent(
+              new DeletePlaylistSong(song.id)
+            )
+          )
+        ]),
+        toList([circle_x(toList([]))])
       )
     ])
   );
@@ -7218,11 +7293,11 @@ function delete_button(p2) {
 function view9(p2) {
   return toList([
     h3(
-      toList([class$("text-lg mb-4 text-center")]),
+      toList([class$("text-2xl font-bold mb-4 text-center")]),
       toList([text2(p2.name)])
     ),
     div(
-      toList([class$("flex gap-4 mb-4")]),
+      toList([class$("flex justify-center gap-4 mb-4")]),
       toList([edit_button(), delete_button(p2)])
     ),
     view7(p2.songs),

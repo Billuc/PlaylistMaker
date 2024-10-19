@@ -32,8 +32,7 @@ pub fn layout(
           html.div(
             [
               attribute.class(
-                // "w-3/4 md:w-2/3 lg:w-1/2 ",
-                "max-w-3xl flex flex-col items-stretch",
+                "w-3/4 md:w-2/3 lg:w-1/2 max-w-3xl flex flex-col items-stretch",
               ),
             ],
             children,

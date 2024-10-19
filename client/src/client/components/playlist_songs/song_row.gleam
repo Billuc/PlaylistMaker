@@ -1,8 +1,11 @@
+import client/events/playlist_song_events
 import client/types/msg
 import gleam/string
+import lucide_lustre
 import lustre/attribute
 import lustre/element
 import lustre/element/html
+import lustre/event
 import shared/types/playlist_song
 
 pub fn view(song: playlist_song.PlaylistSong) -> element.Element(msg.Msg) {
@@ -23,6 +26,19 @@ pub fn view(song: playlist_song.PlaylistSong) -> element.Element(msg.Msg) {
           html.text(song.album),
         ]),
       ]),
+      html.button(
+        [
+          attribute.class(
+            "rounded-full w-6 h-6 font-bold flex justify-center items-center bg-zinc-800/50 hover:bg-zinc-800/80",
+          ),
+          event.on_click(
+            msg.PlaylistSongEvent(playlist_song_events.DeletePlaylistSong(
+              song.id,
+            )),
+          ),
+        ],
+        [lucide_lustre.circle_x([])],
+      ),
     ],
   )
 }

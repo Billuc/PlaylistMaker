@@ -16,10 +16,11 @@ pub fn view(
   playlists: List(#(String, playlist.Playlist)),
 ) -> List(element.Element(msg.Msg)) {
   [
-    html.div([attribute.class("p-2 flex flex-col gap-2 items-stretch")], [
-      html.h2([attribute.class("text-center font-bold text-3xl")], [
-        html.text("Playlist Maker"),
-      ]),
+    html.div([attribute.class("px-2 py-8 flex flex-col gap-2 items-stretch")], [
+      html.a(
+        [attribute.class("text-center font-bold text-3xl font-bold mb-2")],
+        [html.text("Playlist Maker")],
+      ),
       html.form(
         [
           event.on("submit", on_submit),

@@ -10,8 +10,13 @@ import shared/types/playlist
 
 pub fn view(p: playlist.Playlist) -> List(element.Element(msg.Msg)) {
   [
-    html.h3([attr.class("text-lg mb-4 text-center")], [html.text(p.name)]),
-    html.div([attr.class("flex gap-4 mb-4")], [edit_button(), delete_button(p)]),
+    html.h3([attr.class("text-2xl font-bold mb-4 text-center")], [
+      html.text(p.name),
+    ]),
+    html.div([attr.class("flex justify-center gap-4 mb-4")], [
+      edit_button(),
+      delete_button(p),
+    ]),
     song_list.view(p.songs),
     update_playlist.view(p),
   ]
