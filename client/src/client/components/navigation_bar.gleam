@@ -18,7 +18,10 @@ pub fn view(
   [
     html.div([attribute.class("px-2 py-8 flex flex-col gap-2 items-stretch")], [
       html.a(
-        [attribute.class("text-center font-bold text-3xl font-bold mb-2")],
+        [
+          attribute.class("text-center font-bold text-3xl font-bold mb-2"),
+          attribute.href("/"),
+        ],
         [html.text("Playlist Maker")],
       ),
       html.form(

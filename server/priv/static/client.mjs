@@ -41,10 +41,10 @@ var List = class {
   }
   // @internal
   countLength() {
-    let length5 = 0;
+    let length6 = 0;
     for (let _ of this)
-      length5++;
-    return length5;
+      length6++;
+    return length6;
   }
 };
 function prepend(element2, tail) {
@@ -634,9 +634,9 @@ function key_find(keyword_list, desired_key) {
   return find_map(
     keyword_list,
     (keyword) => {
-      let key2 = keyword[0];
+      let key3 = keyword[0];
       let value3 = keyword[1];
-      let $ = isEqual(key2, desired_key);
+      let $ = isEqual(key3, desired_key);
       if ($) {
         return new Ok(value3);
       } else {
@@ -645,17 +645,17 @@ function key_find(keyword_list, desired_key) {
     }
   );
 }
-function key_set(list3, key2, value3) {
+function key_set(list3, key3, value3) {
   if (list3.hasLength(0)) {
-    return toList([[key2, value3]]);
-  } else if (list3.atLeastLength(1) && isEqual(list3.head[0], key2)) {
+    return toList([[key3, value3]]);
+  } else if (list3.atLeastLength(1) && isEqual(list3.head[0], key3)) {
     let k = list3.head[0];
     let rest$1 = list3.tail;
-    return prepend([key2, value3], rest$1);
+    return prepend([key3, value3], rest$1);
   } else {
     let first$1 = list3.head;
     let rest$1 = list3.tail;
-    return prepend(first$1, key_set(rest$1, key2, value3));
+    return prepend(first$1, key_set(rest$1, key3, value3));
   }
 }
 
@@ -698,6 +698,15 @@ function unwrap2(result, default$) {
     return default$;
   }
 }
+function unwrap_both(result) {
+  if (result.isOk()) {
+    let a2 = result[0];
+    return a2;
+  } else {
+    let a2 = result[0];
+    return a2;
+  }
+}
 function nil_error(result) {
   return map_error(result, (_) => {
     return void 0;
@@ -709,6 +718,15 @@ function replace_error(result, error2) {
     return new Ok(x);
   } else {
     return new Error(error2);
+  }
+}
+function try_recover(result, fun) {
+  if (result.isOk()) {
+    let value3 = result[0];
+    return new Ok(value3);
+  } else {
+    let error2 = result[0];
+    return fun(error2);
   }
 }
 
@@ -1090,7 +1108,7 @@ function spliceOut(arr, at) {
   }
   return out;
 }
-function createNode(shift, key1, val1, key2hash, key2, val2) {
+function createNode(shift, key1, val1, key2hash, key22, val2) {
   const key1hash = getHash(key1);
   if (key1hash === key2hash) {
     return {
@@ -1098,7 +1116,7 @@ function createNode(shift, key1, val1, key2hash, key2, val2) {
       hash: key1hash,
       array: [
         { type: ENTRY, k: key1, v: val1 },
-        { type: ENTRY, k: key2, v: val2 }
+        { type: ENTRY, k: key22, v: val2 }
       ]
     };
   }
@@ -1107,22 +1125,22 @@ function createNode(shift, key1, val1, key2hash, key2, val2) {
     assocIndex(EMPTY, shift, key1hash, key1, val1, addedLeaf),
     shift,
     key2hash,
-    key2,
+    key22,
     val2,
     addedLeaf
   );
 }
-function assoc(root, shift, hash, key2, val, addedLeaf) {
+function assoc(root, shift, hash, key3, val, addedLeaf) {
   switch (root.type) {
     case ARRAY_NODE:
-      return assocArray(root, shift, hash, key2, val, addedLeaf);
+      return assocArray(root, shift, hash, key3, val, addedLeaf);
     case INDEX_NODE:
-      return assocIndex(root, shift, hash, key2, val, addedLeaf);
+      return assocIndex(root, shift, hash, key3, val, addedLeaf);
     case COLLISION_NODE:
-      return assocCollision(root, shift, hash, key2, val, addedLeaf);
+      return assocCollision(root, shift, hash, key3, val, addedLeaf);
   }
 }
-function assocArray(root, shift, hash, key2, val, addedLeaf) {
+function assocArray(root, shift, hash, key3, val, addedLeaf) {
   const idx = mask(hash, shift);
   const node = root.array[idx];
   if (node === void 0) {
@@ -1130,11 +1148,11 @@ function assocArray(root, shift, hash, key2, val, addedLeaf) {
     return {
       type: ARRAY_NODE,
       size: root.size + 1,
-      array: cloneAndSet(root.array, idx, { type: ENTRY, k: key2, v: val })
+      array: cloneAndSet(root.array, idx, { type: ENTRY, k: key3, v: val })
     };
   }
   if (node.type === ENTRY) {
-    if (isEqual(key2, node.k)) {
+    if (isEqual(key3, node.k)) {
       if (val === node.v) {
         return root;
       }
@@ -1143,7 +1161,7 @@ function assocArray(root, shift, hash, key2, val, addedLeaf) {
         size: root.size,
         array: cloneAndSet(root.array, idx, {
           type: ENTRY,
-          k: key2,
+          k: key3,
           v: val
         })
       };
@@ -1155,11 +1173,11 @@ function assocArray(root, shift, hash, key2, val, addedLeaf) {
       array: cloneAndSet(
         root.array,
         idx,
-        createNode(shift + SHIFT, node.k, node.v, hash, key2, val)
+        createNode(shift + SHIFT, node.k, node.v, hash, key3, val)
       )
     };
   }
-  const n = assoc(node, shift + SHIFT, hash, key2, val, addedLeaf);
+  const n = assoc(node, shift + SHIFT, hash, key3, val, addedLeaf);
   if (n === node) {
     return root;
   }
@@ -1169,13 +1187,13 @@ function assocArray(root, shift, hash, key2, val, addedLeaf) {
     array: cloneAndSet(root.array, idx, n)
   };
 }
-function assocIndex(root, shift, hash, key2, val, addedLeaf) {
+function assocIndex(root, shift, hash, key3, val, addedLeaf) {
   const bit = bitpos(hash, shift);
   const idx = index(root.bitmap, bit);
   if ((root.bitmap & bit) !== 0) {
     const node = root.array[idx];
     if (node.type !== ENTRY) {
-      const n = assoc(node, shift + SHIFT, hash, key2, val, addedLeaf);
+      const n = assoc(node, shift + SHIFT, hash, key3, val, addedLeaf);
       if (n === node) {
         return root;
       }
@@ -1186,7 +1204,7 @@ function assocIndex(root, shift, hash, key2, val, addedLeaf) {
       };
     }
     const nodeKey = node.k;
-    if (isEqual(key2, nodeKey)) {
+    if (isEqual(key3, nodeKey)) {
       if (val === node.v) {
         return root;
       }
@@ -1195,7 +1213,7 @@ function assocIndex(root, shift, hash, key2, val, addedLeaf) {
         bitmap: root.bitmap,
         array: cloneAndSet(root.array, idx, {
           type: ENTRY,
-          k: key2,
+          k: key3,
           v: val
         })
       };
@@ -1207,7 +1225,7 @@ function assocIndex(root, shift, hash, key2, val, addedLeaf) {
       array: cloneAndSet(
         root.array,
         idx,
-        createNode(shift + SHIFT, nodeKey, node.v, hash, key2, val)
+        createNode(shift + SHIFT, nodeKey, node.v, hash, key3, val)
       )
     };
   } else {
@@ -1215,7 +1233,7 @@ function assocIndex(root, shift, hash, key2, val, addedLeaf) {
     if (n >= MAX_INDEX_NODE) {
       const nodes = new Array(32);
       const jdx = mask(hash, shift);
-      nodes[jdx] = assocIndex(EMPTY, shift + SHIFT, hash, key2, val, addedLeaf);
+      nodes[jdx] = assocIndex(EMPTY, shift + SHIFT, hash, key3, val, addedLeaf);
       let j = 0;
       let bitmap = root.bitmap;
       for (let i = 0; i < 32; i++) {
@@ -1233,7 +1251,7 @@ function assocIndex(root, shift, hash, key2, val, addedLeaf) {
     } else {
       const newArray = spliceIn(root.array, idx, {
         type: ENTRY,
-        k: key2,
+        k: key3,
         v: val
       });
       addedLeaf.val = true;
@@ -1245,9 +1263,9 @@ function assocIndex(root, shift, hash, key2, val, addedLeaf) {
     }
   }
 }
-function assocCollision(root, shift, hash, key2, val, addedLeaf) {
+function assocCollision(root, shift, hash, key3, val, addedLeaf) {
   if (hash === root.hash) {
-    const idx = collisionIndexOf(root, key2);
+    const idx = collisionIndexOf(root, key3);
     if (idx !== -1) {
       const entry = root.array[idx];
       if (entry.v === val) {
@@ -1256,7 +1274,7 @@ function assocCollision(root, shift, hash, key2, val, addedLeaf) {
       return {
         type: COLLISION_NODE,
         hash,
-        array: cloneAndSet(root.array, idx, { type: ENTRY, k: key2, v: val })
+        array: cloneAndSet(root.array, idx, { type: ENTRY, k: key3, v: val })
       };
     }
     const size = root.array.length;
@@ -1264,7 +1282,7 @@ function assocCollision(root, shift, hash, key2, val, addedLeaf) {
     return {
       type: COLLISION_NODE,
       hash,
-      array: cloneAndSet(root.array, size, { type: ENTRY, k: key2, v: val })
+      array: cloneAndSet(root.array, size, { type: ENTRY, k: key3, v: val })
     };
   }
   return assoc(
@@ -1275,45 +1293,45 @@ function assocCollision(root, shift, hash, key2, val, addedLeaf) {
     },
     shift,
     hash,
-    key2,
+    key3,
     val,
     addedLeaf
   );
 }
-function collisionIndexOf(root, key2) {
+function collisionIndexOf(root, key3) {
   const size = root.array.length;
   for (let i = 0; i < size; i++) {
-    if (isEqual(key2, root.array[i].k)) {
+    if (isEqual(key3, root.array[i].k)) {
       return i;
     }
   }
   return -1;
 }
-function find2(root, shift, hash, key2) {
+function find2(root, shift, hash, key3) {
   switch (root.type) {
     case ARRAY_NODE:
-      return findArray(root, shift, hash, key2);
+      return findArray(root, shift, hash, key3);
     case INDEX_NODE:
-      return findIndex(root, shift, hash, key2);
+      return findIndex(root, shift, hash, key3);
     case COLLISION_NODE:
-      return findCollision(root, key2);
+      return findCollision(root, key3);
   }
 }
-function findArray(root, shift, hash, key2) {
+function findArray(root, shift, hash, key3) {
   const idx = mask(hash, shift);
   const node = root.array[idx];
   if (node === void 0) {
     return void 0;
   }
   if (node.type !== ENTRY) {
-    return find2(node, shift + SHIFT, hash, key2);
+    return find2(node, shift + SHIFT, hash, key3);
   }
-  if (isEqual(key2, node.k)) {
+  if (isEqual(key3, node.k)) {
     return node;
   }
   return void 0;
 }
-function findIndex(root, shift, hash, key2) {
+function findIndex(root, shift, hash, key3) {
   const bit = bitpos(hash, shift);
   if ((root.bitmap & bit) === 0) {
     return void 0;
@@ -1321,31 +1339,31 @@ function findIndex(root, shift, hash, key2) {
   const idx = index(root.bitmap, bit);
   const node = root.array[idx];
   if (node.type !== ENTRY) {
-    return find2(node, shift + SHIFT, hash, key2);
+    return find2(node, shift + SHIFT, hash, key3);
   }
-  if (isEqual(key2, node.k)) {
+  if (isEqual(key3, node.k)) {
     return node;
   }
   return void 0;
 }
-function findCollision(root, key2) {
-  const idx = collisionIndexOf(root, key2);
+function findCollision(root, key3) {
+  const idx = collisionIndexOf(root, key3);
   if (idx < 0) {
     return void 0;
   }
   return root.array[idx];
 }
-function without(root, shift, hash, key2) {
+function without(root, shift, hash, key3) {
   switch (root.type) {
     case ARRAY_NODE:
-      return withoutArray(root, shift, hash, key2);
+      return withoutArray(root, shift, hash, key3);
     case INDEX_NODE:
-      return withoutIndex(root, shift, hash, key2);
+      return withoutIndex(root, shift, hash, key3);
     case COLLISION_NODE:
-      return withoutCollision(root, key2);
+      return withoutCollision(root, key3);
   }
 }
-function withoutArray(root, shift, hash, key2) {
+function withoutArray(root, shift, hash, key3) {
   const idx = mask(hash, shift);
   const node = root.array[idx];
   if (node === void 0) {
@@ -1353,11 +1371,11 @@ function withoutArray(root, shift, hash, key2) {
   }
   let n = void 0;
   if (node.type === ENTRY) {
-    if (!isEqual(node.k, key2)) {
+    if (!isEqual(node.k, key3)) {
       return root;
     }
   } else {
-    n = without(node, shift + SHIFT, hash, key2);
+    n = without(node, shift + SHIFT, hash, key3);
     if (n === node) {
       return root;
     }
@@ -1406,7 +1424,7 @@ function withoutArray(root, shift, hash, key2) {
     array: cloneAndSet(root.array, idx, n)
   };
 }
-function withoutIndex(root, shift, hash, key2) {
+function withoutIndex(root, shift, hash, key3) {
   const bit = bitpos(hash, shift);
   if ((root.bitmap & bit) === 0) {
     return root;
@@ -1414,7 +1432,7 @@ function withoutIndex(root, shift, hash, key2) {
   const idx = index(root.bitmap, bit);
   const node = root.array[idx];
   if (node.type !== ENTRY) {
-    const n = without(node, shift + SHIFT, hash, key2);
+    const n = without(node, shift + SHIFT, hash, key3);
     if (n === node) {
       return root;
     }
@@ -1434,7 +1452,7 @@ function withoutIndex(root, shift, hash, key2) {
       array: spliceOut(root.array, idx)
     };
   }
-  if (isEqual(key2, node.k)) {
+  if (isEqual(key3, node.k)) {
     if (root.bitmap === bit) {
       return void 0;
     }
@@ -1446,8 +1464,8 @@ function withoutIndex(root, shift, hash, key2) {
   }
   return root;
 }
-function withoutCollision(root, key2) {
-  const idx = collisionIndexOf(root, key2);
+function withoutCollision(root, key3) {
+  const idx = collisionIndexOf(root, key3);
   if (idx < 0) {
     return root;
   }
@@ -1522,11 +1540,11 @@ var Dict = class _Dict {
    * @param {NotFound} notFound
    * @returns {NotFound | V}
    */
-  get(key2, notFound) {
+  get(key3, notFound) {
     if (this.root === void 0) {
       return notFound;
     }
-    const found = find2(this.root, 0, getHash(key2), key2);
+    const found = find2(this.root, 0, getHash(key3), key3);
     if (found === void 0) {
       return notFound;
     }
@@ -1537,10 +1555,10 @@ var Dict = class _Dict {
    * @param {V} val
    * @returns {Dict<K,V>}
    */
-  set(key2, val) {
+  set(key3, val) {
     const addedLeaf = { val: false };
     const root = this.root === void 0 ? EMPTY : this.root;
-    const newRoot = assoc(root, 0, getHash(key2), key2, val, addedLeaf);
+    const newRoot = assoc(root, 0, getHash(key3), key3, val, addedLeaf);
     if (newRoot === this.root) {
       return this;
     }
@@ -1550,11 +1568,11 @@ var Dict = class _Dict {
    * @param {K} key
    * @returns {Dict<K,V>}
    */
-  delete(key2) {
+  delete(key3) {
     if (this.root === void 0) {
       return this;
     }
-    const newRoot = without(this.root, 0, getHash(key2), key2);
+    const newRoot = without(this.root, 0, getHash(key3), key3);
     if (newRoot === this.root) {
       return this;
     }
@@ -1567,11 +1585,11 @@ var Dict = class _Dict {
    * @param {K} key
    * @returns {boolean}
    */
-  has(key2) {
+  has(key3) {
     if (this.root === void 0) {
       return false;
     }
-    return find2(this.root, 0, getHash(key2), key2) !== void 0;
+    return find2(this.root, 0, getHash(key3), key3) !== void 0;
   }
   /**
    * @returns {[K,V][]}
@@ -1756,18 +1774,18 @@ function new_map() {
 function map_to_list(map6) {
   return List.fromArray(map6.entries());
 }
-function map_remove(key2, map6) {
-  return map6.delete(key2);
+function map_remove(key3, map6) {
+  return map6.delete(key3);
 }
-function map_get(map6, key2) {
-  const value3 = map6.get(key2, NOT_FOUND);
+function map_get(map6, key3) {
+  const value3 = map6.get(key3, NOT_FOUND);
   if (value3 === NOT_FOUND) {
     return new Error(Nil);
   }
   return new Ok(value3);
 }
-function map_insert(key2, value3, map6) {
-  return map6.set(key2, value3);
+function map_insert(key3, value3, map6) {
+  return map6.set(key3, value3);
 }
 function unsafe_percent_decode_query(string5) {
   return decodeURIComponent((string5 || "").replace("+", " "));
@@ -1779,10 +1797,10 @@ function parse_query(query) {
   try {
     const pairs = [];
     for (const section of query.split("&")) {
-      const [key2, value3] = section.split("=");
-      if (!key2)
+      const [key3, value3] = section.split("=");
+      if (!key3)
         continue;
-      const decodedKey = unsafe_percent_decode_query(key2);
+      const decodedKey = unsafe_percent_decode_query(key3);
       const decodedValue = unsafe_percent_decode_query(value3);
       pairs.push([decodedKey, decodedValue]);
     }
@@ -1885,8 +1903,8 @@ function new$() {
 function get(from2, get3) {
   return map_get(from2, get3);
 }
-function insert(dict, key2, value3) {
-  return map_insert(key2, value3, dict);
+function insert(dict, key3, value3) {
+  return map_insert(key3, value3, dict);
 }
 function fold_list_of_pair(loop$list, loop$initial) {
   while (true) {
@@ -1961,8 +1979,8 @@ function do_values(dict) {
 function values(dict) {
   return do_values(dict);
 }
-function delete$(dict, key2) {
-  return map_remove(key2, dict);
+function delete$(dict, key3) {
+  return map_remove(key3, dict);
 }
 function drop2(loop$dict, loop$disallowed_keys) {
   while (true) {
@@ -2487,9 +2505,9 @@ var Text = class extends CustomType {
   }
 };
 var Element2 = class extends CustomType {
-  constructor(key2, namespace2, tag, attrs, children2, self_closing, void$) {
+  constructor(key3, namespace2, tag, attrs, children2, self_closing, void$) {
     super();
-    this.key = key2;
+    this.key = key3;
     this.namespace = namespace2;
     this.tag = tag;
     this.attrs = attrs;
@@ -2505,10 +2523,10 @@ var Map2 = class extends CustomType {
   }
 };
 var Fragment = class extends CustomType {
-  constructor(elements2, key2) {
+  constructor(elements2, key3) {
     super();
     this.elements = elements2;
-    this.key = key2;
+    this.key = key3;
   }
 };
 var Attribute = class extends CustomType {
@@ -2536,12 +2554,12 @@ function attribute_to_event_handler(attribute2) {
     return new Ok([name$1, handler]);
   }
 }
-function do_element_list_handlers(elements2, handlers2, key2) {
+function do_element_list_handlers(elements2, handlers2, key3) {
   return index_fold(
     elements2,
     handlers2,
     (handlers3, element2, index3) => {
-      let key$1 = key2 + "-" + to_string2(index3);
+      let key$1 = key3 + "-" + to_string2(index3);
       return do_handlers(element2, handlers3, key$1);
     }
   );
@@ -2550,14 +2568,14 @@ function do_handlers(loop$element, loop$handlers, loop$key) {
   while (true) {
     let element2 = loop$element;
     let handlers2 = loop$handlers;
-    let key2 = loop$key;
+    let key3 = loop$key;
     if (element2 instanceof Text) {
       return handlers2;
     } else if (element2 instanceof Map2) {
       let subtree = element2.subtree;
       loop$element = subtree();
       loop$handlers = handlers2;
-      loop$key = key2;
+      loop$key = key3;
     } else if (element2 instanceof Element2) {
       let attrs = element2.attrs;
       let children2 = element2.children;
@@ -2569,16 +2587,16 @@ function do_handlers(loop$element, loop$handlers, loop$key) {
           if ($.isOk()) {
             let name2 = $[0][0];
             let handler = $[0][1];
-            return insert(handlers3, key2 + "-" + name2, handler);
+            return insert(handlers3, key3 + "-" + name2, handler);
           } else {
             return handlers3;
           }
         }
       );
-      return do_element_list_handlers(children2, handlers$1, key2);
+      return do_element_list_handlers(children2, handlers$1, key3);
     } else {
       let elements2 = element2.elements;
-      return do_element_list_handlers(elements2, handlers2, key2);
+      return do_element_list_handlers(elements2, handlers2, key3);
     }
   }
 }
@@ -2652,7 +2670,7 @@ function element(tag, attrs, children2) {
     return new Element2("", "", tag, attrs, children2, false, false);
   }
 }
-function do_keyed(el, key2) {
+function do_keyed(el, key3) {
   if (el instanceof Element2) {
     let namespace2 = el.namespace;
     let tag = el.tag;
@@ -2661,7 +2679,7 @@ function do_keyed(el, key2) {
     let self_closing = el.self_closing;
     let void$ = el.void;
     return new Element2(
-      key2,
+      key3,
       namespace2,
       tag,
       attrs,
@@ -2672,7 +2690,7 @@ function do_keyed(el, key2) {
   } else if (el instanceof Map2) {
     let subtree = el.subtree;
     return new Map2(() => {
-      return do_keyed(subtree(), key2);
+      return do_keyed(subtree(), key3);
     });
   } else if (el instanceof Fragment) {
     let elements2 = el.elements;
@@ -2684,18 +2702,18 @@ function do_keyed(el, key2) {
           let el_key = element2.key;
           let new_key = (() => {
             if (el_key === "") {
-              return key2 + "-" + to_string2(idx);
+              return key3 + "-" + to_string2(idx);
             } else {
-              return key2 + "-" + el_key;
+              return key3 + "-" + el_key;
             }
           })();
           return do_keyed(element2, new_key);
         } else {
-          return do_keyed(element2, key2);
+          return do_keyed(element2, key3);
         }
       }
     );
-    return new Fragment(_pipe$1, key2);
+    return new Fragment(_pipe$1, key3);
   } else {
     return el;
   }
@@ -2705,9 +2723,9 @@ function keyed(el, children2) {
     map2(
       children2,
       (_use0) => {
-        let key2 = _use0[0];
+        let key3 = _use0[0];
         let child = _use0[1];
-        return do_keyed(child, key2);
+        return do_keyed(child, key3);
       }
     )
   );
@@ -3050,9 +3068,9 @@ function getKeyedChildren(el) {
   const keyedChildren = /* @__PURE__ */ new Map();
   if (el) {
     for (const child of children(el)) {
-      const key2 = child?.key || child?.getAttribute?.("data-lustre-key");
-      if (key2)
-        keyedChildren.set(key2, child);
+      const key3 = child?.key || child?.getAttribute?.("data-lustre-key");
+      if (key3)
+        keyedChildren.set(key3, child);
     }
   }
   return keyedChildren;
@@ -3787,6 +3805,12 @@ async function import_(string5) {
 }
 
 // build/dev/javascript/plinth/console_ffi.mjs
+function log(value3) {
+  console.log(value3);
+}
+function warn(value3) {
+  console.warn(value3);
+}
 function error(value3) {
   console.error(value3);
 }
@@ -3800,9 +3824,6 @@ function aside(attrs, children2) {
 }
 function h1(attrs, children2) {
   return element("h1", attrs, children2);
-}
-function h2(attrs, children2) {
-  return element("h2", attrs, children2);
 }
 function h3(attrs, children2) {
   return element("h3", attrs, children2);
@@ -3924,8 +3945,8 @@ function to_uri(request) {
     new None()
   );
 }
-function set_header(request, key2, value3) {
-  let headers = key_set(request.headers, lowercase2(key2), value3);
+function set_header(request, key3, value3) {
+  let headers = key_set(request.headers, lowercase2(key3), value3);
   return request.withFields({ headers });
 }
 function set_body(req, body2) {
@@ -4159,9 +4180,9 @@ var List2 = class extends CustomType {
   }
 };
 var Dict2 = class extends CustomType {
-  constructor(key2, value3) {
+  constructor(key3, value3) {
     super();
-    this.key = key2;
+    this.key = key3;
     this.value = value3;
   }
 };
@@ -5987,10 +6008,13 @@ function on_submit(ev) {
 function view2(playlists) {
   return toList([
     div(
-      toList([class$("p-2 flex flex-col gap-2 items-stretch")]),
+      toList([class$("px-2 py-8 flex flex-col gap-2 items-stretch")]),
       toList([
-        h2(
-          toList([class$("text-center font-bold text-3xl")]),
+        a(
+          toList([
+            class$("text-center font-bold text-3xl font-bold mb-2"),
+            href("/")
+          ]),
           toList([text2("Playlist Maker")])
         ),
         form(
@@ -7576,6 +7600,121 @@ function map_route(uri) {
   }
 }
 
+// build/dev/javascript/plinth/storage_ffi.mjs
+function sessionStorage() {
+  try {
+    if (globalThis.Storage && globalThis.sessionStorage instanceof globalThis.Storage) {
+      return new Ok(globalThis.sessionStorage);
+    } else {
+      return new Error(null);
+    }
+  } catch {
+    return new Error(null);
+  }
+}
+function getItem(storage, keyName) {
+  return null_or(storage.getItem(keyName));
+}
+function setItem(storage, keyName, keyValue) {
+  try {
+    storage.setItem(keyName, keyValue);
+    return new Ok(null);
+  } catch {
+    return new Error(null);
+  }
+}
+function null_or(val) {
+  if (val !== null) {
+    return new Ok(val);
+  } else {
+    return new Error(null);
+  }
+}
+
+// build/dev/javascript/client/token.mjs
+function get_token_from_uri() {
+  return try$(
+    (() => {
+      let _pipe = parse2(location());
+      return replace_error(_pipe, "Couldn't parse window's uri");
+    })(),
+    (uri) => {
+      let _pipe = uri;
+      let _pipe$1 = ((uri2) => {
+        return parse_query2(
+          (() => {
+            let _pipe$12 = uri2.query;
+            return unwrap(_pipe$12, "");
+          })()
+        );
+      })(_pipe);
+      let _pipe$2 = then$(
+        _pipe$1,
+        (q) => {
+          let _pipe$22 = q;
+          return key_find(_pipe$22, "token");
+        }
+      );
+      return replace_error(_pipe$2, "Couldn't get token from URI");
+    }
+  );
+}
+function get_token_from_storage() {
+  return try$(
+    (() => {
+      let _pipe = sessionStorage();
+      return replace_error(_pipe, "Couldn't access local storage");
+    })(),
+    (storage) => {
+      let _pipe = storage;
+      let _pipe$1 = getItem(_pipe, "SpotifyToken");
+      return replace_error(
+        _pipe$1,
+        "Couldn't get token from local storage"
+      );
+    }
+  );
+}
+function set_token_in_storage(token) {
+  let $ = sessionStorage();
+  if (!$.isOk()) {
+    return log("Couldn't access local storage");
+  } else {
+    let sto = $[0];
+    let _pipe = sto;
+    let _pipe$1 = setItem(_pipe, "SpotifyToken", token);
+    let _pipe$2 = try_recover(
+      _pipe$1,
+      (_) => {
+        warn("Couldn't store token in local storage");
+        return new Error(void 0);
+      }
+    );
+    return unwrap_both(_pipe$2);
+  }
+}
+function get_token() {
+  let token = (() => {
+    let _pipe = get_token_from_uri();
+    return try_recover(
+      _pipe,
+      (err) => {
+        warn(err);
+        return get_token_from_storage();
+      }
+    );
+  })();
+  if (token.isOk()) {
+    let t = token[0];
+    set_token_in_storage(t);
+    return t;
+  } else {
+    let err = token[0];
+    warn(err);
+    return "";
+  }
+}
+
 // build/dev/javascript/client/client.mjs
 function init3(_) {
   let $ = parse2(location());
@@ -7590,32 +7729,13 @@ function init3(_) {
     );
   }
   let uri = $[0];
-  let token = (() => {
-    let _pipe = uri;
-    let _pipe$1 = ((uri2) => {
-      return parse_query2(
-        (() => {
-          let _pipe$12 = uri2.query;
-          return unwrap(_pipe$12, "");
-        })()
-      );
-    })(_pipe);
-    let _pipe$2 = then$(
-      _pipe$1,
-      (q) => {
-        let _pipe$22 = q;
-        return key_find(_pipe$22, "token");
-      }
-    );
-    return unwrap2(_pipe$2, "");
-  })();
   return [
     new Model2(
       (() => {
         let _pipe = uri;
         return map_route(_pipe);
       })(),
-      token,
+      get_token(),
       new None(),
       new$()
     ),
