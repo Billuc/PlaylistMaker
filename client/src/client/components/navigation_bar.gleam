@@ -80,11 +80,11 @@ fn on_submit(ev: dynamic.Dynamic) -> Result(msg.Msg, List(dynamic.DecodeError)) 
   event.prevent_default(ev)
 
   let search = document.get_element_by_id("search-songs-2")
-  use el <- utils.guard(
+  use el <- utils.result_guard(
     search,
     Ok(msg.ClientError("Can't find an element with ID search-songs-2")),
   )
-  use value <- utils.guard(
+  use value <- utils.result_guard(
     el |> br_el.value(),
     Ok(msg.ClientError("Can't get value from search input")),
   )

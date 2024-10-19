@@ -1,6 +1,7 @@
 import client/components/layout
 import client/components/navigation_bar
 import client/events/playlist_event_handler
+import client/events/playlist_song_event_handler
 import client/events/song_event_handler
 import client/services/playlist_service
 import client/types/model.{type Model, Model}
@@ -46,7 +47,7 @@ fn init(_) -> #(Model, Effect(msg.Msg)) {
     |> result.unwrap("")
 
   #(
-    Model(uri |> router.map_route, token, dict.new()),
+    Model(uri |> router.map_route, token, option.None, dict.new()),
     effect.batch([
       modem.init(fn(uri) { uri |> router.map_route |> msg.OnRouteChange }),
       playlist_service.get_all(),
@@ -60,6 +61,9 @@ fn update(model: Model, msg: msg.Msg) -> #(Model, Effect(msg.Msg)) {
   case msg {
     msg.SongEvent(ev) -> song_event_handler.on_song_event(model, ev)
     msg.PlaylistEvent(ev) -> playlist_event_handler.on_playlist_event(model, ev)
+    msg.PlaylistSongEvent(ev) ->
+      playlist_song_event_handler.on_playlist_song_event(model, ev)
+    //
     msg.OpenDialog(id) -> #(
       model,
       effect.from(fn(_) {
@@ -101,7 +105,8 @@ fn view(model: Model) -> Element(msg.Msg) {
   let children = case model.token, model.route {
     "", route.Home | "", route.Search(_, _) -> login.view()
     _, route.Home -> home.view()
-    _, route.Search(searching, songs) -> search.search(searching, songs)
+    _, route.Search(searching, songs) ->
+      search.search(searching, songs, model.playlists |> dict.values)
     _, route.Playlist(id) -> {
       model.playlists
       |> dict.get(id)

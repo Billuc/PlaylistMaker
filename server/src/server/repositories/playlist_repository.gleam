@@ -32,7 +32,7 @@ pub fn get(
   id: String,
 ) -> Result(playlist.PlaylistDTO, errors.AppError) {
   s.new()
-  |> cc.cake_select_fields(playlist.playlist_dto_converter())
+  |> cc.cake_select_fields(playlist.playlist_converter())
   |> s.from_table(db_name)
   |> s.where(w.col("id") |> w.eq(w.string(id)))
   |> s.to_query()

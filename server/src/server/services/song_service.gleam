@@ -37,7 +37,7 @@ pub fn search(
   resp.body
   |> json.decode(spotify_search_decode)
   |> result.map_error(fn(_) {
-    // pprint.debug(resp.body)
+    pprint.debug(resp.body)
     errors.InternalError("Error while decoding the results")
   })
 }

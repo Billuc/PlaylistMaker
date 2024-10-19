@@ -67,7 +67,8 @@ fn create_playlist_songs_table(db: pgo.Connection) {
   title VARCHAR(50) NOT NULL,
   artists VARCHAR(100) NOT NULL,
   album VARCHAR(50) NOT NULL,
-  album_cover VARCHAR(100)
+  album_cover VARCHAR(100),
+  source VARCHAR(255)
   )"
 
   pgo.execute(sql, db, with: [], expecting: fn(res) {
