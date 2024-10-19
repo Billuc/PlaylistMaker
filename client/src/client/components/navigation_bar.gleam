@@ -3,6 +3,7 @@ import client/events/song_events
 import client/types/msg
 import gleam/dynamic
 import gleam/list
+import lucide_lustre
 import lustre/attribute
 import lustre/element
 import lustre/element/html
@@ -22,7 +23,10 @@ pub fn view(
           attribute.class("text-center font-bold text-3xl font-bold mb-2"),
           attribute.href("/"),
         ],
-        [html.text("Playlist Maker")],
+        [
+          lucide_lustre.audio_lines([attribute.class("mr-2 inline")]),
+          html.text("Playlist Maker"),
+        ],
       ),
       html.form(
         [
@@ -32,9 +36,8 @@ pub fn view(
           ),
         ],
         [
-          html.img([
-            attribute.src("/search.svg"),
-            attribute.class("w-4 h-4 mx-2"),
+          html.button([attribute.class("w-6 h-6 mx-2")], [
+            lucide_lustre.search([attribute.class("w-full h-full")]),
           ]),
           html.input([
             attribute.class(

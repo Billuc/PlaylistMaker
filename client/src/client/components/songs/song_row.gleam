@@ -2,6 +2,7 @@ import client/events/song_events
 import client/types/msg
 import gleam/option
 import gleam/string
+import lucide_lustre
 import lustre/attribute
 import lustre/element
 import lustre/element/html
@@ -28,12 +29,10 @@ pub fn view(song: song.Song) -> element.Element(msg.Msg) {
       ]),
       html.button(
         [
-          attribute.class(
-            "rounded-full w-6 h-6 font-bold flex justify-center items-center bg-zinc-800/50 hover:bg-zinc-800/80",
-          ),
+          attribute.class("w-6 h-6"),
           event.on_click(msg.SongEvent(song_events.SelectSong(song))),
         ],
-        [html.text("+")],
+        [lucide_lustre.circle_plus([])],
       ),
     ],
   )
@@ -56,7 +55,7 @@ fn album_cover(song: song.Song) -> element.Element(msg.Msg) {
               "absolute w-full h-full top-0 left-0 group-hover:opacity-100 bg-zinc-100/50 text-zinc-800 p-2 opacity-0 transition-opacity duration-300 pointer-events-none",
             ),
           ],
-          [html.img([attribute.src("/play-circle.svg")])],
+          [lucide_lustre.circle_play([attribute.class("w-full h-full")])],
         ),
       ])
     option.None ->

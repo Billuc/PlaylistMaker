@@ -582,8 +582,16 @@ video {
   margin-bottom: 1rem;
 }
 
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
 .mt-8 {
   margin-top: 2rem;
+}
+
+.inline {
+  display: inline;
 }
 
 .flex {
@@ -592,10 +600,6 @@ video {
 
 .h-16 {
   height: 4rem;
-}
-
-.h-4 {
-  height: 1rem;
 }
 
 .h-6 {
@@ -624,10 +628,6 @@ video {
 
 .w-3\/4 {
   width: 75%;
-}
-
-.w-4 {
-  width: 1rem;
 }
 
 .w-6 {

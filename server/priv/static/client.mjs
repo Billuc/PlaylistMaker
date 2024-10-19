@@ -233,11 +233,11 @@ function structurallyCompatibleObjects(a2, b) {
     return false;
   return a2.constructor === b.constructor;
 }
-function makeError(variant, module, line, fn, message, extra) {
+function makeError(variant, module, line2, fn, message, extra) {
   let error2 = new globalThis.Error(message);
   error2.gleam_error = variant;
   error2.module = module;
-  error2.line = line;
+  error2.line = line2;
   error2.function = fn;
   error2.fn = fn;
   for (let k in extra)
@@ -2355,9 +2355,9 @@ function spidermonkeyUnexpectedByteError(err, json) {
   const match = regex.exec(err.message);
   if (!match)
     return null;
-  const line = Number(match[2]);
+  const line2 = Number(match[2]);
   const column = Number(match[3]);
-  const position = getPositionFromMultiline(line, column, json);
+  const position = getPositionFromMultiline(line2, column, json);
   const byte = toHex(json[position]);
   return new UnexpectedByte(byte, position);
 }
@@ -2372,15 +2372,15 @@ function jsCoreUnexpectedByteError(err) {
 function toHex(char) {
   return "0x" + char.charCodeAt(0).toString(16).toUpperCase();
 }
-function getPositionFromMultiline(line, column, string5) {
-  if (line === 1)
+function getPositionFromMultiline(line2, column, string5) {
+  if (line2 === 1)
     return column - 1;
   let currentLn = 1;
   let position = 0;
   string5.split("").find((char, idx) => {
     if (char === "\n")
       currentLn += 1;
-    if (currentLn === line) {
+    if (currentLn === line2) {
       position = idx + column;
       return true;
     }
@@ -3731,11 +3731,11 @@ function getHash2() {
   return new Ok(decodeURIComponent(hash.slice(1)));
 }
 function getSearch() {
-  const search4 = window.location.search;
-  if (search4 == "") {
+  const search5 = window.location.search;
+  if (search5 == "") {
     return new Error();
   }
-  return new Ok(decodeURIComponent(search4.slice(1)));
+  return new Ok(decodeURIComponent(search5.slice(1)));
 }
 function innerHeight(w) {
   return w.innerHeight;
@@ -5219,9 +5219,9 @@ var ServerDeletedPlaylistSong = class extends CustomType {
 
 // build/dev/javascript/client/client/events/song_events.mjs
 var SearchSongs = class extends CustomType {
-  constructor(search4) {
+  constructor(search5) {
     super();
-    this.search = search4;
+    this.search = search5;
   }
 };
 var ServerSentSongs = class extends CustomType {
@@ -5440,6 +5440,292 @@ function view() {
           )
         ])
       )
+    ])
+  );
+}
+
+// build/dev/javascript/lustre/lustre/element/svg.mjs
+var namespace = "http://www.w3.org/2000/svg";
+function circle(attrs) {
+  return namespaced(namespace, "circle", attrs, toList([]));
+}
+function line(attrs) {
+  return namespaced(namespace, "line", attrs, toList([]));
+}
+function polygon(attrs) {
+  return namespaced(namespace, "polygon", attrs, toList([]));
+}
+function svg(attrs, children2) {
+  return namespaced(namespace, "svg", attrs, children2);
+}
+function path(attrs) {
+  return namespaced(namespace, "path", attrs, toList([]));
+}
+
+// build/dev/javascript/client/lucide_lustre.mjs
+function circle_x(attributes) {
+  return svg(
+    prepend(
+      attribute("stroke-linejoin", "round"),
+      prepend(
+        attribute("stroke-linecap", "round"),
+        prepend(
+          attribute("stroke-width", "2"),
+          prepend(
+            attribute("stroke", "currentColor"),
+            prepend(
+              attribute("fill", "none"),
+              prepend(
+                attribute("viewBox", "0 0 24 24"),
+                prepend(
+                  attribute("height", "24"),
+                  prepend(attribute("width", "24"), attributes)
+                )
+              )
+            )
+          )
+        )
+      )
+    ),
+    toList([
+      circle(
+        toList([
+          attribute("r", "10"),
+          attribute("cy", "12"),
+          attribute("cx", "12")
+        ])
+      ),
+      path(toList([attribute("d", "m15 9-6 6")])),
+      path(toList([attribute("d", "m9 9 6 6")]))
+    ])
+  );
+}
+function audio_lines(attributes) {
+  return svg(
+    prepend(
+      attribute("stroke-linejoin", "round"),
+      prepend(
+        attribute("stroke-linecap", "round"),
+        prepend(
+          attribute("stroke-width", "2"),
+          prepend(
+            attribute("stroke", "currentColor"),
+            prepend(
+              attribute("fill", "none"),
+              prepend(
+                attribute("viewBox", "0 0 24 24"),
+                prepend(
+                  attribute("height", "24"),
+                  prepend(attribute("width", "24"), attributes)
+                )
+              )
+            )
+          )
+        )
+      )
+    ),
+    toList([
+      path(toList([attribute("d", "M2 10v3")])),
+      path(toList([attribute("d", "M6 6v11")])),
+      path(toList([attribute("d", "M10 3v18")])),
+      path(toList([attribute("d", "M14 8v7")])),
+      path(toList([attribute("d", "M18 5v13")])),
+      path(toList([attribute("d", "M22 10v3")]))
+    ])
+  );
+}
+function pencil(attributes) {
+  return svg(
+    prepend(
+      attribute("stroke-linejoin", "round"),
+      prepend(
+        attribute("stroke-linecap", "round"),
+        prepend(
+          attribute("stroke-width", "2"),
+          prepend(
+            attribute("stroke", "currentColor"),
+            prepend(
+              attribute("fill", "none"),
+              prepend(
+                attribute("viewBox", "0 0 24 24"),
+                prepend(
+                  attribute("height", "24"),
+                  prepend(attribute("width", "24"), attributes)
+                )
+              )
+            )
+          )
+        )
+      )
+    ),
+    toList([
+      path(
+        toList([
+          attribute(
+            "d",
+            "M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+          )
+        ])
+      ),
+      path(toList([attribute("d", "m15 5 4 4")]))
+    ])
+  );
+}
+function trash_2(attributes) {
+  return svg(
+    prepend(
+      attribute("stroke-linejoin", "round"),
+      prepend(
+        attribute("stroke-linecap", "round"),
+        prepend(
+          attribute("stroke-width", "2"),
+          prepend(
+            attribute("stroke", "currentColor"),
+            prepend(
+              attribute("fill", "none"),
+              prepend(
+                attribute("viewBox", "0 0 24 24"),
+                prepend(
+                  attribute("height", "24"),
+                  prepend(attribute("width", "24"), attributes)
+                )
+              )
+            )
+          )
+        )
+      )
+    ),
+    toList([
+      path(toList([attribute("d", "M3 6h18")])),
+      path(
+        toList([attribute("d", "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6")])
+      ),
+      path(toList([attribute("d", "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2")])),
+      line(
+        toList([
+          attribute("y2", "17"),
+          attribute("y1", "11"),
+          attribute("x2", "10"),
+          attribute("x1", "10")
+        ])
+      ),
+      line(
+        toList([
+          attribute("y2", "17"),
+          attribute("y1", "11"),
+          attribute("x2", "14"),
+          attribute("x1", "14")
+        ])
+      )
+    ])
+  );
+}
+function circle_plus(attributes) {
+  return svg(
+    prepend(
+      attribute("stroke-linejoin", "round"),
+      prepend(
+        attribute("stroke-linecap", "round"),
+        prepend(
+          attribute("stroke-width", "2"),
+          prepend(
+            attribute("stroke", "currentColor"),
+            prepend(
+              attribute("fill", "none"),
+              prepend(
+                attribute("viewBox", "0 0 24 24"),
+                prepend(
+                  attribute("height", "24"),
+                  prepend(attribute("width", "24"), attributes)
+                )
+              )
+            )
+          )
+        )
+      )
+    ),
+    toList([
+      circle(
+        toList([
+          attribute("r", "10"),
+          attribute("cy", "12"),
+          attribute("cx", "12")
+        ])
+      ),
+      path(toList([attribute("d", "M8 12h8")])),
+      path(toList([attribute("d", "M12 8v8")]))
+    ])
+  );
+}
+function circle_play(attributes) {
+  return svg(
+    prepend(
+      attribute("stroke-linejoin", "round"),
+      prepend(
+        attribute("stroke-linecap", "round"),
+        prepend(
+          attribute("stroke-width", "2"),
+          prepend(
+            attribute("stroke", "currentColor"),
+            prepend(
+              attribute("fill", "none"),
+              prepend(
+                attribute("viewBox", "0 0 24 24"),
+                prepend(
+                  attribute("height", "24"),
+                  prepend(attribute("width", "24"), attributes)
+                )
+              )
+            )
+          )
+        )
+      )
+    ),
+    toList([
+      circle(
+        toList([
+          attribute("r", "10"),
+          attribute("cy", "12"),
+          attribute("cx", "12")
+        ])
+      ),
+      polygon(toList([attribute("points", "10 8 16 12 10 16 10 8")]))
+    ])
+  );
+}
+function search(attributes) {
+  return svg(
+    prepend(
+      attribute("stroke-linejoin", "round"),
+      prepend(
+        attribute("stroke-linecap", "round"),
+        prepend(
+          attribute("stroke-width", "2"),
+          prepend(
+            attribute("stroke", "currentColor"),
+            prepend(
+              attribute("fill", "none"),
+              prepend(
+                attribute("viewBox", "0 0 24 24"),
+                prepend(
+                  attribute("height", "24"),
+                  prepend(attribute("width", "24"), attributes)
+                )
+              )
+            )
+          )
+        )
+      )
+    ),
+    toList([
+      circle(
+        toList([
+          attribute("r", "8"),
+          attribute("cy", "11"),
+          attribute("cx", "11")
+        ])
+      ),
+      path(toList([attribute("d", "m21 21-4.3-4.3")]))
     ])
   );
 }
@@ -5987,9 +6273,9 @@ function playlist_link(p2) {
 }
 function on_submit(ev) {
   prevent_default(ev);
-  let search4 = getElementById("search-songs-2");
+  let search5 = getElementById("search-songs-2");
   return result_guard(
-    search4,
+    search5,
     new Ok(new ClientError("Can't find an element with ID search-songs-2")),
     (el) => {
       return result_guard(
@@ -6015,7 +6301,12 @@ function view2(playlists) {
             class$("text-center font-bold text-3xl font-bold mb-2"),
             href("/")
           ]),
-          toList([text2("Playlist Maker")])
+          toList([
+            audio_lines(
+              toList([class$("mr-2 inline")])
+            ),
+            text2("Playlist Maker")
+          ])
         ),
         form(
           toList([
@@ -6025,10 +6316,12 @@ function view2(playlists) {
             )
           ]),
           toList([
-            img(
+            button(
+              toList([class$("w-6 h-6 mx-2")]),
               toList([
-                src("/search.svg"),
-                class$("w-4 h-4 mx-2")
+                search(
+                  toList([class$("w-full h-full")])
+                )
               ])
             ),
             input(
@@ -6890,9 +7183,9 @@ async function play(audio) {
 
 // build/dev/javascript/shared/shared/routes/song_routes.mjs
 var SearchQuery = class extends CustomType {
-  constructor(search4, token) {
+  constructor(search5, token) {
     super();
-    this.search = search4;
+    this.search = search5;
     this.token = token;
   }
 };
@@ -6902,17 +7195,17 @@ function search_encoder(query) {
 function search_decoder(value3) {
   return try$(
     key_find(value3, "q"),
-    (search4) => {
+    (search5) => {
       return try$(
         key_find(value3, "token"),
         (token) => {
-          return new Ok(new SearchQuery(search4, token));
+          return new Ok(new SearchQuery(search5, token));
         }
       );
     }
   );
 }
-function search() {
+function search2() {
   let _pipe = new$5();
   let _pipe$1 = with_method(_pipe, new Get());
   let _pipe$2 = with_path(
@@ -6940,9 +7233,9 @@ function search() {
 }
 
 // build/dev/javascript/client/client/services/song_service.mjs
-function search2(q, token) {
+function search3(q, token) {
   let _pipe = factory();
-  let _pipe$1 = for_route(_pipe, search());
+  let _pipe$1 = for_route(_pipe, search2());
   let _pipe$2 = with_path2(_pipe$1, void 0);
   let _pipe$3 = with_query2(_pipe$2, new SearchQuery(q, token));
   return send3(
@@ -6975,7 +7268,7 @@ function on_song_event(model, event2) {
       batch(
         toList([
           push("search", new None(), new None()),
-          search2(q, model.token)
+          search3(q, model.token)
         ])
       )
     ];
@@ -7014,8 +7307,11 @@ function on_song_event(model, event2) {
 function view3() {
   return toList([
     h3(
-      toList([class$("text-lg mb-4 text-center")]),
-      toList([text2("Search songs and create playlists")])
+      toList([class$("text-xl font-semibold mb-4 text-center")]),
+      toList([
+        audio_lines(toList([class$("mr-2 inline")])),
+        text2("Search songs and create playlists")
+      ])
     ),
     p(
       toList([class$("mb-4 text-center")]),
@@ -7067,57 +7363,6 @@ function view5() {
       ])
     )
   ]);
-}
-
-// build/dev/javascript/lustre/lustre/element/svg.mjs
-var namespace = "http://www.w3.org/2000/svg";
-function circle(attrs) {
-  return namespaced(namespace, "circle", attrs, toList([]));
-}
-function svg(attrs, children2) {
-  return namespaced(namespace, "svg", attrs, children2);
-}
-function path(attrs) {
-  return namespaced(namespace, "path", attrs, toList([]));
-}
-
-// build/dev/javascript/client/lucide_lustre.mjs
-function circle_x(attributes) {
-  return svg(
-    prepend(
-      attribute("stroke-linejoin", "round"),
-      prepend(
-        attribute("stroke-linecap", "round"),
-        prepend(
-          attribute("stroke-width", "2"),
-          prepend(
-            attribute("stroke", "currentColor"),
-            prepend(
-              attribute("fill", "none"),
-              prepend(
-                attribute("viewBox", "0 0 24 24"),
-                prepend(
-                  attribute("height", "24"),
-                  prepend(attribute("width", "24"), attributes)
-                )
-              )
-            )
-          )
-        )
-      )
-    ),
-    toList([
-      circle(
-        toList([
-          attribute("r", "10"),
-          attribute("cy", "12"),
-          attribute("cx", "12")
-        ])
-      ),
-      path(toList([attribute("d", "m15 9-6 6")])),
-      path(toList([attribute("d", "m9 9 6 6")]))
-    ])
-  );
 }
 
 // build/dev/javascript/client/client/components/playlist_songs/song_row.mjs
@@ -7300,7 +7545,10 @@ function edit_button() {
       class$("py-2 px-4 bg-cyan-600 hover:bg-cyan-500/50 rounded-md"),
       on_click(new OpenDialog("update-playlist"))
     ]),
-    toList([text2("Edit")])
+    toList([
+      pencil(toList([class$("inline mr-2")])),
+      text2("Edit")
+    ])
   );
 }
 function delete_button(p2) {
@@ -7311,7 +7559,10 @@ function delete_button(p2) {
         new PlaylistEvent(new DeletePlaylist(p2.id))
       )
     ]),
-    toList([text2("Delete")])
+    toList([
+      trash_2(toList([class$("inline mr-2")])),
+      text2("Delete")
+    ])
   );
 }
 function view9(p2) {
@@ -7472,7 +7723,11 @@ function album_cover2(song) {
               "absolute w-full h-full top-0 left-0 group-hover:opacity-100 bg-zinc-100/50 text-zinc-800 p-2 opacity-0 transition-opacity duration-300 pointer-events-none"
             )
           ]),
-          toList([img(toList([src("/play-circle.svg")]))])
+          toList([
+            circle_play(
+              toList([class$("w-full h-full")])
+            )
+          ])
         )
       ])
     );
@@ -7525,12 +7780,10 @@ function view11(song) {
       ),
       button(
         toList([
-          class$(
-            "rounded-full w-6 h-6 font-bold flex justify-center items-center bg-zinc-800/50 hover:bg-zinc-800/80"
-          ),
+          class$("w-6 h-6"),
           on_click(new SongEvent(new SelectSong(song)))
         ]),
-        toList([text2("+")])
+        toList([circle_plus(toList([]))])
       )
     ])
   );
@@ -7568,7 +7821,7 @@ function spinner() {
 }
 
 // build/dev/javascript/client/client/views/search.mjs
-function search3(searching, results, playlists) {
+function search4(searching, results, playlists) {
   return toList([
     p(
       toList([class$("text-xl font-black mb-4")]),
@@ -7829,7 +8082,7 @@ function view13(model) {
     } else if ($1 instanceof Search) {
       let searching = $1.searching;
       let songs = $1.results;
-      return search3(
+      return search4(
         searching,
         songs,
         (() => {
