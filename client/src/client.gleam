@@ -13,7 +13,6 @@ import client/views/not_found
 import client/views/playlist_page
 import client/views/search
 import gleam/dict
-import gleam/list
 import gleam/option
 import gleam/result
 import gleam/uri
@@ -25,6 +24,7 @@ import plinth/browser/document
 import plinth/browser/window
 import plinth/javascript/console
 import router
+import token
 import utils
 
 // ------------------ MAIN -------------------
@@ -40,14 +40,9 @@ pub fn main() {
 
 fn init(_) -> #(Model, Effect(msg.Msg)) {
   let assert Ok(uri) = uri.parse(window.location())
-  let token =
-    uri
-    |> fn(uri: uri.Uri) { uri.parse_query(uri.query |> option.unwrap("")) }
-    |> result.then(fn(q) { q |> list.key_find("token") })
-    |> result.unwrap("")
 
   #(
-    Model(uri |> router.map_route, token, option.None, dict.new()),
+    Model(uri |> router.map_route, token.get_token(), option.None, dict.new()),
     effect.batch([
       modem.init(fn(uri) { uri |> router.map_route |> msg.OnRouteChange }),
       playlist_service.get_all(),
