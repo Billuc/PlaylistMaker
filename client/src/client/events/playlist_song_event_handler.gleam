@@ -1,12 +1,13 @@
 import client/events/playlist_song_events
 import client/services/playlist_song_service
 import client/types/model
+import client/utils/dialog
+import client/utils/utils
 import gleam/dict
 import gleam/list
 import lustre/effect
 import shared/types/playlist
 import shared/types/playlist_song
-import utils
 
 pub fn on_playlist_song_event(
   model: model.Model,
@@ -39,7 +40,7 @@ pub fn on_playlist_song_event(
     )
     playlist_song_events.ServerCreatedPlaylistSong(song) -> #(
       model |> add_playlist_song(song),
-      effect.from(fn(_) { utils.show_modal_by_id("create-playlist-song") }),
+      effect.from(fn(_) { dialog.show_modal_by_id("create-playlist-song") }),
     )
     playlist_song_events.ServerDeletedPlaylistSong(id) -> #(
       model |> remove_playlist_song(id),

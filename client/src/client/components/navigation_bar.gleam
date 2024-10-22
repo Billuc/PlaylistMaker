@@ -1,6 +1,7 @@
 import client/components/playlists/create_playlist
 import client/events/song_events
 import client/types/msg
+import client/utils/utils
 import gleam/dynamic
 import gleam/list
 import lucide_lustre
@@ -11,7 +12,6 @@ import lustre/event
 import plinth/browser/document
 import plinth/browser/element as br_el
 import shared/types/playlist
-import utils
 
 pub fn view(
   playlists: List(#(String, playlist.Playlist)),

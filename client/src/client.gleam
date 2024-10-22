@@ -7,6 +7,8 @@ import client/services/playlist_service
 import client/types/model.{type Model, Model}
 import client/types/msg
 import client/types/route
+import client/utils/dialog
+import client/utils/token
 import client/views/home
 import client/views/login
 import client/views/not_found
@@ -20,12 +22,9 @@ import lustre
 import lustre/effect.{type Effect}
 import lustre/element.{type Element}
 import modem
-import plinth/browser/document
 import plinth/browser/window
 import plinth/javascript/console
 import router
-import token
-import utils
 
 // ------------------ MAIN -------------------
 
@@ -61,19 +60,11 @@ fn update(model: Model, msg: msg.Msg) -> #(Model, Effect(msg.Msg)) {
     //
     msg.OpenDialog(id) -> #(
       model,
-      effect.from(fn(_) {
-        document.get_element_by_id(id)
-        |> result.map(utils.show_modal)
-        |> result.unwrap(Nil)
-      }),
+      effect.from(fn(_) { dialog.show_modal_by_id(id) }),
     )
     msg.CloseDialog(id) -> #(
       model,
-      effect.from(fn(_) {
-        document.get_element_by_id(id)
-        |> result.map(utils.close_modal)
-        |> result.unwrap(Nil)
-      }),
+      effect.from(fn(_) { dialog.close_modal_by_id(id) }),
     )
     msg.ClientError(err) -> #(
       model,

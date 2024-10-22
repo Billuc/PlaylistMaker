@@ -1,14 +1,13 @@
 import client/events/song_events
-import client/services/factory
+import client/services/server
 import client/types/msg
 import glitr/lustre as gl
 import lustre/effect
 import shared/routes/song_routes
 
 pub fn search(q: String, token: String) {
-  factory.factory()
+  server.request_factory()
   |> gl.for_route(song_routes.search())
-  |> gl.with_path(Nil)
   |> gl.with_query(song_routes.SearchQuery(q, token))
   |> gl.send(
     fn(res) {

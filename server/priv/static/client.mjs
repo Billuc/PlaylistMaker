@@ -975,9 +975,9 @@ function hashObject(o) {
   const proto = Object.getPrototypeOf(o);
   if (proto !== null && typeof proto.hashCode === "function") {
     try {
-      const code = o.hashCode(o);
-      if (typeof code === "number") {
-        return code;
+      const code2 = o.hashCode(o);
+      if (typeof code2 === "number") {
+        return code2;
       }
     } catch {
     }
@@ -4149,9 +4149,9 @@ function response_to_result(response) {
     let body2 = response.body;
     return new Error(new InternalServerError(body2));
   } else {
-    let code = response.status;
+    let code2 = response.status;
     let body2 = response.body;
-    return new Error(new OtherError(code, body2));
+    return new Error(new OtherError(code2, body2));
   }
 }
 function expect_text(to_msg) {
@@ -4617,10 +4617,10 @@ function type_def(converter) {
 
 // build/dev/javascript/shared/shared/types/song.mjs
 var Song = class extends CustomType {
-  constructor(id2, title, artists, album, album_cover3, source, preview_url) {
+  constructor(id2, title2, artists, album, album_cover3, source, preview_url) {
     super();
     this.id = id2;
-    this.title = title;
+    this.title = title2;
     this.artists = artists;
     this.album = album;
     this.album_cover = album_cover3;
@@ -4710,7 +4710,7 @@ function song_converter() {
     parameter(
       (id2) => {
         return parameter(
-          (title) => {
+          (title2) => {
             return parameter(
               (artists) => {
                 return parameter(
@@ -4725,7 +4725,7 @@ function song_converter() {
                                   () => {
                                     return new Song(
                                       id2,
-                                      title,
+                                      title2,
                                       artists,
                                       album,
                                       album_cover3,
@@ -4810,12 +4810,12 @@ function song_converter() {
 
 // build/dev/javascript/shared/shared/types/playlist_song.mjs
 var PlaylistSong = class extends CustomType {
-  constructor(id2, playlist_id, song_id, title, artists, album, album_cover3, source) {
+  constructor(id2, playlist_id, song_id, title2, artists, album, album_cover3, source) {
     super();
     this.id = id2;
     this.playlist_id = playlist_id;
     this.song_id = song_id;
-    this.title = title;
+    this.title = title2;
     this.artists = artists;
     this.album = album;
     this.album_cover = album_cover3;
@@ -4823,11 +4823,11 @@ var PlaylistSong = class extends CustomType {
   }
 };
 var UpsertPlaylistSong = class extends CustomType {
-  constructor(playlist_id, song_id, title, artists, album, album_cover3, source) {
+  constructor(playlist_id, song_id, title2, artists, album, album_cover3, source) {
     super();
     this.playlist_id = playlist_id;
     this.song_id = song_id;
-    this.title = title;
+    this.title = title2;
     this.artists = artists;
     this.album = album;
     this.album_cover = album_cover3;
@@ -4843,7 +4843,7 @@ function playlist_song_converter() {
             return parameter(
               (song_id) => {
                 return parameter(
-                  (title) => {
+                  (title2) => {
                     return parameter(
                       (artists) => {
                         return parameter(
@@ -4858,7 +4858,7 @@ function playlist_song_converter() {
                                           id2,
                                           playlist_id,
                                           song_id,
-                                          title,
+                                          title2,
                                           artists,
                                           album,
                                           album_cover3,
@@ -4956,7 +4956,7 @@ function upsert_converter() {
         return parameter(
           (song_id) => {
             return parameter(
-              (title) => {
+              (title2) => {
                 return parameter(
                   (artists) => {
                     return parameter(
@@ -4970,7 +4970,7 @@ function upsert_converter() {
                                     return new UpsertPlaylistSong(
                                       playlist_id,
                                       song_id,
-                                      title,
+                                      title2,
                                       artists,
                                       album,
                                       album_cover3,
@@ -5813,6 +5813,10 @@ function get_type2(body2) {
 
 // build/dev/javascript/glitr/glitr/path.mjs
 var StaticPath = class extends CustomType {
+  constructor(root) {
+    super();
+    this.root = root;
+  }
 };
 var ComplexPath = class extends CustomType {
 };
@@ -5832,7 +5836,7 @@ var RoutePath = class extends CustomType {
 };
 function static_path(root) {
   return new RoutePath(
-    new StaticPath(),
+    new StaticPath(root),
     new PathConverter(
       (_) => {
         return root;
@@ -6044,9 +6048,9 @@ function add_path(req, rreq, on_error, then$2) {
     return get_type3(_pipe);
   })();
   let $1 = rreq.path_opt;
-  if ($1 instanceof None) {
+  if ($ instanceof ComplexPath && $1 instanceof None) {
     return on_error("Path option is missing, please call with_path before send");
-  } else {
+  } else if ($ instanceof ComplexPath && $1 instanceof Some) {
     let path2 = $1[0];
     return then$2(
       (() => {
@@ -6057,6 +6061,20 @@ function add_path(req, rreq, on_error, then$2) {
             let _pipe$1 = rreq.route.path;
             let _pipe$2 = encode3(_pipe$1, path2);
             return join2(_pipe$2, "/");
+          })()
+        );
+      })()
+    );
+  } else {
+    let root = $.root;
+    return then$2(
+      (() => {
+        let _pipe = req;
+        return set_path(
+          _pipe,
+          (() => {
+            let _pipe$1 = root;
+            return join2(_pipe$1, "/");
           })()
         );
       })()
@@ -6291,6 +6309,33 @@ function on_submit(ev) {
     }
   );
 }
+function search_bar() {
+  return form(
+    toList([
+      on2("submit", on_submit),
+      class$(
+        "rounded-md bg-zinc-800 hover:bg-zinc-700/50 opacity-50 hover:opacity-100 flex mb-4 items-center"
+      )
+    ]),
+    toList([
+      button(
+        toList([class$("w-6 h-6 mx-2")]),
+        toList([
+          search(toList([class$("w-full h-full")]))
+        ])
+      ),
+      input(
+        toList([
+          class$(
+            "py-2 px-4 bg-zinc-700/30 hover:bg-zinc-700/70 focus:bg-zinc-600/80 grow"
+          ),
+          id("search-songs-2"),
+          placeholder("Search")
+        ])
+      )
+    ])
+  );
+}
 function view2(playlists) {
   return toList([
     div(
@@ -6308,33 +6353,7 @@ function view2(playlists) {
             text2("Playlist Maker")
           ])
         ),
-        form(
-          toList([
-            on2("submit", on_submit),
-            class$(
-              "rounded-md bg-zinc-800 hover:bg-zinc-700/50 opacity-50 hover:opacity-100 flex mb-4 items-center"
-            )
-          ]),
-          toList([
-            button(
-              toList([class$("w-6 h-6 mx-2")]),
-              toList([
-                search(
-                  toList([class$("w-full h-full")])
-                )
-              ])
-            ),
-            input(
-              toList([
-                class$(
-                  "py-2 px-4 bg-zinc-700/30 hover:bg-zinc-700/70 focus:bg-zinc-600/80 grow"
-                ),
-                id("search-songs-2"),
-                placeholder("Search")
-              ])
-            )
-          ])
-        ),
+        search_bar(),
         keyed(
           (_capture) => {
             return div(
@@ -7344,7 +7363,7 @@ function view4() {
             src(
               "https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_Green.png"
             ),
-            class$("h-6")
+            class$("h-6 mx-auto")
           ])
         ),
         text2("Login to Spotify")

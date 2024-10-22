@@ -1,5 +1,6 @@
 import client/events/playlist_song_events
 import client/types/msg
+import client/utils/utils
 import gleam/dynamic
 import gleam/javascript/array
 import gleam/list
@@ -10,7 +11,6 @@ import lustre/event
 import plinth/browser/document
 import plinth/browser/element as br_el
 import shared/types/playlist
-import utils
 
 pub fn view(playlists: List(playlist.Playlist)) -> element.Element(msg.Msg) {
   html.dialog(

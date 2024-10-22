@@ -2,11 +2,11 @@ import client/events/song_events
 import client/services/song_service
 import client/types/model
 import client/types/route
+import client/utils/dialog
 import gleam/option
 import lustre/effect
 import modem
 import plinth/browser/audio
-import utils
 
 pub fn on_song_event(
   model: model.Model,
@@ -33,7 +33,7 @@ pub fn on_song_event(
     )
     song_events.SelectSong(song) -> #(
       model.Model(..model, current_song: option.Some(song)),
-      effect.from(fn(_) { utils.show_modal_by_id("create-playlist-song") }),
+      effect.from(fn(_) { dialog.show_modal_by_id("create-playlist-song") }),
     )
   }
 }

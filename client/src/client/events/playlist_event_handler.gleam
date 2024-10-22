@@ -1,6 +1,7 @@
 import client/events/playlist_events
 import client/services/playlist_service
 import client/types/model
+import client/utils/dialog
 import gleam/dict
 import gleam/list
 import gleam/option
@@ -9,7 +10,6 @@ import gleam/uri
 import lustre/effect
 import modem
 import plinth/browser/window
-import utils
 
 pub fn on_playlist_event(
   model: model.Model,
@@ -34,7 +34,7 @@ pub fn on_playlist_event(
     )
     playlist_events.ServerCreatedPlaylist(p) -> #(
       model.Model(..model, playlists: model.playlists |> dict.insert(p.id, p)),
-      effect.from(fn(_) { utils.show_modal_by_id("create-playlist") }),
+      effect.from(fn(_) { dialog.show_modal_by_id("create-playlist") }),
     )
     playlist_events.ServerUpdatedPlaylist(p)
     | playlist_events.ServerSentPlaylist(p) -> #(
