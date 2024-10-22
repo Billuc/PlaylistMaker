@@ -3619,18 +3619,6 @@ function to_list3(items) {
   );
 }
 
-// build/dev/javascript/plinth/document_ffi.mjs
-function querySelectorAll(query) {
-  return Array.from(document.querySelectorAll(query));
-}
-function getElementById(id2) {
-  let found = document.getElementById(id2);
-  if (!found) {
-    return new Error();
-  }
-  return new Ok(found);
-}
-
 // build/dev/javascript/gleam_javascript/gleam/javascript/promise.mjs
 function tap(promise, callback) {
   let _pipe = promise;
@@ -3658,18 +3646,6 @@ function try_await(promise, callback) {
   );
 }
 
-// build/dev/javascript/plinth/element_ffi.mjs
-function value2(element2) {
-  let value3 = element2.value;
-  if (value3 != void 0) {
-    return new Ok(value3);
-  }
-  return new Error();
-}
-function getChecked(el) {
-  return el.checked;
-}
-
 // build/dev/javascript/plinth/window_ffi.mjs
 function self() {
   return globalThis;
@@ -3685,7 +3661,7 @@ function prompt(message, defaultValue) {
     return new Error();
   }
 }
-function addEventListener3(type, listener) {
+function addEventListener(type, listener) {
   return window.addEventListener(type, listener);
 }
 async function requestWakeLock() {
@@ -3720,7 +3696,7 @@ function reload() {
 function reloadOf(w) {
   return w.location.reload();
 }
-function focus2(w) {
+function focus(w) {
   return w.focus();
 }
 function getHash2() {
@@ -5360,6 +5336,30 @@ function on_click(msg) {
   });
 }
 
+// build/dev/javascript/plinth/document_ffi.mjs
+function querySelectorAll(query) {
+  return Array.from(document.querySelectorAll(query));
+}
+function getElementById(id2) {
+  let found = document.getElementById(id2);
+  if (!found) {
+    return new Error();
+  }
+  return new Ok(found);
+}
+
+// build/dev/javascript/plinth/element_ffi.mjs
+function value2(element2) {
+  let value3 = element2.value;
+  if (value3 != void 0) {
+    return new Ok(value3);
+  }
+  return new Error();
+}
+function getChecked(el) {
+  return el.checked;
+}
+
 // build/dev/javascript/client/client/components/playlists/create_playlist.mjs
 function on_create(_) {
   let element2 = getElementById("create-playlist-name");
@@ -5442,6 +5442,24 @@ function view() {
       )
     ])
   );
+}
+
+// build/dev/javascript/client/client/utils/utils.mjs
+function result_guard(result, return$, otherwise) {
+  if (result.isOk()) {
+    let value3 = result[0];
+    return otherwise(value3);
+  } else {
+    return return$;
+  }
+}
+function option_guard(value3, return$, otherwise) {
+  if (value3 instanceof None) {
+    return return$;
+  } else {
+    let val = value3[0];
+    return otherwise(val);
+  }
 }
 
 // build/dev/javascript/lustre/lustre/element/svg.mjs
@@ -5730,6 +5748,118 @@ function search(attributes) {
   );
 }
 
+// build/dev/javascript/client/client/components/navigation_bar.mjs
+function playlist_link(p2) {
+  return a(
+    toList([
+      class$(
+        "text-center font-bold bg-zinc-800 hover:bg-zinc-700/50 rounded-md py-2 px-4"
+      ),
+      href("/playlists/" + p2.id)
+    ]),
+    toList([text2(p2.name)])
+  );
+}
+function on_submit(ev) {
+  prevent_default(ev);
+  let search5 = getElementById("search-songs-2");
+  return result_guard(
+    search5,
+    new Ok(new ClientError("Can't find an element with ID search-songs-2")),
+    (el) => {
+      return result_guard(
+        (() => {
+          let _pipe = el;
+          return value2(_pipe);
+        })(),
+        new Ok(new ClientError("Can't get value from search input")),
+        (value3) => {
+          return new Ok(new SongEvent(new SearchSongs(value3)));
+        }
+      );
+    }
+  );
+}
+function search_bar() {
+  return form(
+    toList([
+      on2("submit", on_submit),
+      class$(
+        "rounded-md bg-zinc-800 hover:bg-zinc-700/50 opacity-50 hover:opacity-100 flex mb-4 items-center"
+      )
+    ]),
+    toList([
+      button(
+        toList([class$("w-6 h-6 mx-2")]),
+        toList([
+          search(toList([class$("w-full h-full")]))
+        ])
+      ),
+      input(
+        toList([
+          class$(
+            "py-2 px-4 bg-zinc-700/30 hover:bg-zinc-700/70 focus:bg-zinc-600/80 grow"
+          ),
+          id("search-songs-2"),
+          placeholder("Search")
+        ])
+      )
+    ])
+  );
+}
+function view2(playlists) {
+  return toList([
+    div(
+      toList([class$("px-2 py-8 flex flex-col gap-2 items-stretch")]),
+      toList([
+        a(
+          toList([
+            class$("text-center font-bold text-3xl font-bold mb-2"),
+            href("/")
+          ]),
+          toList([
+            audio_lines(
+              toList([class$("mr-2 inline")])
+            ),
+            text2("Playlist Maker")
+          ])
+        ),
+        search_bar(),
+        keyed(
+          (_capture) => {
+            return div(
+              toList([class$("flex flex-col items-stretch")]),
+              _capture
+            );
+          },
+          map2(
+            playlists,
+            (p2) => {
+              let child = playlist_link(p2[1]);
+              return [p2[0], child];
+            }
+          )
+        ),
+        button(
+          toList([
+            class$(
+              "text-center font-bold bg-zinc-800 hover:bg-zinc-700/50 rounded-md py-2 px-4"
+            ),
+            on2(
+              "click",
+              (_) => {
+                return new Ok(new OpenDialog("create-playlist"));
+              }
+            )
+          ]),
+          toList([text2("+ Create playlist")])
+        )
+      ])
+    ),
+    view()
+  ]);
+}
+
 // build/dev/javascript/glitr/glitr/error.mjs
 var RouteError = class extends CustomType {
   constructor(msg) {
@@ -6009,25 +6139,25 @@ var RouteRequest = class extends CustomType {
 function create_factory() {
   return new RequestFactory(new Http(), "localhost", 80);
 }
-function with_scheme(factory2, scheme) {
+function with_scheme(factory, scheme) {
   if (scheme instanceof Http) {
-    return new RequestFactory(new Http(), factory2.host, 80);
+    return new RequestFactory(new Http(), factory.host, 80);
   } else {
-    return new RequestFactory(new Https(), factory2.host, 443);
+    return new RequestFactory(new Https(), factory.host, 443);
   }
 }
-function with_host(factory2, host) {
-  return factory2.withFields({ host });
+function with_host(factory, host) {
+  return factory.withFields({ host });
 }
-function with_port(factory2, port) {
-  return factory2.withFields({ port });
+function with_port(factory, port) {
+  return factory.withFields({ port });
 }
-function for_route(factory2, route) {
+function for_route(factory, route) {
   return new RouteRequest(
     route,
-    factory2.scheme,
-    factory2.host,
-    factory2.port,
+    factory.scheme,
+    factory.host,
+    factory.port,
     new None(),
     new None(),
     new None()
@@ -6213,180 +6343,6 @@ function send3(rreq, as_msg, on_error) {
       );
     }
   );
-}
-
-// build/dev/javascript/client/modal_dialog_ffi.mjs
-function showModal(element2) {
-  if (!element2 || !(element2 instanceof HTMLDialogElement))
-    return;
-  element2.showModal();
-}
-function closeModal(element2) {
-  if (!element2 || !(element2 instanceof HTMLDialogElement))
-    return;
-  element2.close();
-}
-
-// build/dev/javascript/client/utils.mjs
-function send_and_handle_errors(req, on_success) {
-  let _pipe = req;
-  return send3(
-    _pipe,
-    (res) => {
-      if (res.isOk()) {
-        let ok = res[0];
-        return on_success(ok);
-      } else {
-        let err = res[0];
-        return new ServerError(err);
-      }
-    },
-    (msg) => {
-      return from(
-        (dispatch) => {
-          return dispatch(new ClientError(msg));
-        }
-      );
-    }
-  );
-}
-function show_modal_by_id(id2) {
-  requestAnimationFrame(
-    (_) => {
-      let _pipe = getElementById(id2);
-      let _pipe$1 = map3(_pipe, showModal);
-      return unwrap2(_pipe$1, void 0);
-    }
-  );
-  return void 0;
-}
-function result_guard(result, return$, otherwise) {
-  if (result.isOk()) {
-    let value3 = result[0];
-    return otherwise(value3);
-  } else {
-    return return$;
-  }
-}
-function option_guard(value3, return$, otherwise) {
-  if (value3 instanceof None) {
-    return return$;
-  } else {
-    let val = value3[0];
-    return otherwise(val);
-  }
-}
-
-// build/dev/javascript/client/client/components/navigation_bar.mjs
-function playlist_link(p2) {
-  return a(
-    toList([
-      class$(
-        "text-center font-bold bg-zinc-800 hover:bg-zinc-700/50 rounded-md py-2 px-4"
-      ),
-      href("/playlists/" + p2.id)
-    ]),
-    toList([text2(p2.name)])
-  );
-}
-function on_submit(ev) {
-  prevent_default(ev);
-  let search5 = getElementById("search-songs-2");
-  return result_guard(
-    search5,
-    new Ok(new ClientError("Can't find an element with ID search-songs-2")),
-    (el) => {
-      return result_guard(
-        (() => {
-          let _pipe = el;
-          return value2(_pipe);
-        })(),
-        new Ok(new ClientError("Can't get value from search input")),
-        (value3) => {
-          return new Ok(new SongEvent(new SearchSongs(value3)));
-        }
-      );
-    }
-  );
-}
-function search_bar() {
-  return form(
-    toList([
-      on2("submit", on_submit),
-      class$(
-        "rounded-md bg-zinc-800 hover:bg-zinc-700/50 opacity-50 hover:opacity-100 flex mb-4 items-center"
-      )
-    ]),
-    toList([
-      button(
-        toList([class$("w-6 h-6 mx-2")]),
-        toList([
-          search(toList([class$("w-full h-full")]))
-        ])
-      ),
-      input(
-        toList([
-          class$(
-            "py-2 px-4 bg-zinc-700/30 hover:bg-zinc-700/70 focus:bg-zinc-600/80 grow"
-          ),
-          id("search-songs-2"),
-          placeholder("Search")
-        ])
-      )
-    ])
-  );
-}
-function view2(playlists) {
-  return toList([
-    div(
-      toList([class$("px-2 py-8 flex flex-col gap-2 items-stretch")]),
-      toList([
-        a(
-          toList([
-            class$("text-center font-bold text-3xl font-bold mb-2"),
-            href("/")
-          ]),
-          toList([
-            audio_lines(
-              toList([class$("mr-2 inline")])
-            ),
-            text2("Playlist Maker")
-          ])
-        ),
-        search_bar(),
-        keyed(
-          (_capture) => {
-            return div(
-              toList([class$("flex flex-col items-stretch")]),
-              _capture
-            );
-          },
-          map2(
-            playlists,
-            (p2) => {
-              let child = playlist_link(p2[1]);
-              return [p2[0], child];
-            }
-          )
-        ),
-        button(
-          toList([
-            class$(
-              "text-center font-bold bg-zinc-800 hover:bg-zinc-700/50 rounded-md py-2 px-4"
-            ),
-            on2(
-              "click",
-              (_) => {
-                return new Ok(new OpenDialog("create-playlist"));
-              }
-            )
-          ]),
-          toList([text2("+ Create playlist")])
-        )
-      ])
-    ),
-    view()
-  ]);
 }
 
 // build/dev/javascript/glitr_convert/glitr/convert/json.mjs
@@ -6872,33 +6828,53 @@ function delete$2() {
   return delete_route(_pipe);
 }
 
-// build/dev/javascript/client/client/services/factory.mjs
-function factory() {
+// build/dev/javascript/client/client/services/server.mjs
+function request_factory() {
   let _pipe = create_factory();
   let _pipe$1 = with_scheme(_pipe, new Http());
   let _pipe$2 = with_host(_pipe$1, "localhost");
   return with_port(_pipe$2, 2345);
 }
+function send_and_handle_errors(req, on_success) {
+  let _pipe = req;
+  return send3(
+    _pipe,
+    (res) => {
+      if (res.isOk()) {
+        let ok = res[0];
+        return on_success(ok);
+      } else {
+        let err = res[0];
+        return new ServerError(err);
+      }
+    },
+    (msg) => {
+      return from(
+        (dispatch) => {
+          return dispatch(new ClientError(msg));
+        }
+      );
+    }
+  );
+}
 
 // build/dev/javascript/client/client/services/playlist_service.mjs
 function get_all2() {
-  let _pipe = factory();
+  let _pipe = request_factory();
   let _pipe$1 = for_route(_pipe, get_all());
-  let _pipe$2 = with_path2(_pipe$1, void 0);
   return send_and_handle_errors(
-    _pipe$2,
+    _pipe$1,
     (d) => {
       return new PlaylistEvent(new ServerSentPlaylists(d));
     }
   );
 }
 function create2(name2) {
-  let _pipe = factory();
+  let _pipe = request_factory();
   let _pipe$1 = for_route(_pipe, create());
-  let _pipe$2 = with_path2(_pipe$1, void 0);
-  let _pipe$3 = with_body(_pipe$2, new UpsertPlaylist(name2));
+  let _pipe$2 = with_body(_pipe$1, new UpsertPlaylist(name2));
   return send_and_handle_errors(
-    _pipe$3,
+    _pipe$2,
     (d) => {
       return new PlaylistEvent(
         new ServerCreatedPlaylist(d)
@@ -6907,7 +6883,7 @@ function create2(name2) {
   );
 }
 function update2(id2, name2) {
-  let _pipe = factory();
+  let _pipe = request_factory();
   let _pipe$1 = for_route(_pipe, update());
   let _pipe$2 = with_path2(_pipe$1, id2);
   let _pipe$3 = with_body(_pipe$2, new UpsertPlaylist(name2));
@@ -6921,7 +6897,7 @@ function update2(id2, name2) {
   );
 }
 function delete$3(id2) {
-  let _pipe = factory();
+  let _pipe = request_factory();
   let _pipe$1 = for_route(_pipe, delete$2());
   let _pipe$2 = with_path2(_pipe$1, id2);
   return send_and_handle_errors(
@@ -6944,6 +6920,40 @@ var Model2 = class extends CustomType {
     this.playlists = playlists;
   }
 };
+
+// build/dev/javascript/client/modal_dialog_ffi.mjs
+function showModal(element2) {
+  if (!element2 || !(element2 instanceof HTMLDialogElement))
+    return;
+  element2.showModal();
+}
+function closeModal(element2) {
+  if (!element2 || !(element2 instanceof HTMLDialogElement))
+    return;
+  element2.close();
+}
+
+// build/dev/javascript/client/client/utils/dialog.mjs
+function show_modal_by_id(id2) {
+  requestAnimationFrame(
+    (_) => {
+      let _pipe = getElementById(id2);
+      let _pipe$1 = map3(_pipe, showModal);
+      return unwrap2(_pipe$1, void 0);
+    }
+  );
+  return void 0;
+}
+function close_modal_by_id(id2) {
+  requestAnimationFrame(
+    (_) => {
+      let _pipe = getElementById(id2);
+      let _pipe$1 = map3(_pipe, closeModal);
+      return unwrap2(_pipe$1, void 0);
+    }
+  );
+  return void 0;
+}
 
 // build/dev/javascript/client/client/events/playlist_event_handler.mjs
 function on_playlist_event(model, event2) {
@@ -7058,12 +7068,11 @@ function delete$4() {
 
 // build/dev/javascript/client/client/services/playlist_song_service.mjs
 function create4(data) {
-  let _pipe = factory();
+  let _pipe = request_factory();
   let _pipe$1 = for_route(_pipe, create3());
-  let _pipe$2 = with_path2(_pipe$1, void 0);
-  let _pipe$3 = with_body(_pipe$2, data);
+  let _pipe$2 = with_body(_pipe$1, data);
   return send_and_handle_errors(
-    _pipe$3,
+    _pipe$2,
     (d) => {
       return new PlaylistSongEvent(
         new ServerCreatedPlaylistSong(d)
@@ -7072,7 +7081,7 @@ function create4(data) {
   );
 }
 function delete$5(id2) {
-  let _pipe = factory();
+  let _pipe = request_factory();
   let _pipe$1 = for_route(_pipe, delete$4());
   let _pipe$2 = with_path2(_pipe$1, id2);
   return send_and_handle_errors(
@@ -7253,12 +7262,11 @@ function search2() {
 
 // build/dev/javascript/client/client/services/song_service.mjs
 function search3(q, token) {
-  let _pipe = factory();
+  let _pipe = request_factory();
   let _pipe$1 = for_route(_pipe, search2());
-  let _pipe$2 = with_path2(_pipe$1, void 0);
-  let _pipe$3 = with_query2(_pipe$2, new SearchQuery(q, token));
+  let _pipe$2 = with_query2(_pipe$1, new SearchQuery(q, token));
   return send3(
-    _pipe$3,
+    _pipe$2,
     (res) => {
       if (res.isOk()) {
         let songs = res[0];
@@ -7319,6 +7327,121 @@ function on_song_event(model, event2) {
         }
       )
     ];
+  }
+}
+
+// build/dev/javascript/plinth/storage_ffi.mjs
+function sessionStorage() {
+  try {
+    if (globalThis.Storage && globalThis.sessionStorage instanceof globalThis.Storage) {
+      return new Ok(globalThis.sessionStorage);
+    } else {
+      return new Error(null);
+    }
+  } catch {
+    return new Error(null);
+  }
+}
+function getItem(storage, keyName) {
+  return null_or(storage.getItem(keyName));
+}
+function setItem(storage, keyName, keyValue) {
+  try {
+    storage.setItem(keyName, keyValue);
+    return new Ok(null);
+  } catch {
+    return new Error(null);
+  }
+}
+function null_or(val) {
+  if (val !== null) {
+    return new Ok(val);
+  } else {
+    return new Error(null);
+  }
+}
+
+// build/dev/javascript/client/client/utils/token.mjs
+function get_token_from_uri() {
+  return try$(
+    (() => {
+      let _pipe = parse2(location());
+      return replace_error(_pipe, "Couldn't parse window's uri");
+    })(),
+    (uri) => {
+      let _pipe = uri;
+      let _pipe$1 = ((uri2) => {
+        return parse_query2(
+          (() => {
+            let _pipe$12 = uri2.query;
+            return unwrap(_pipe$12, "");
+          })()
+        );
+      })(_pipe);
+      let _pipe$2 = then$(
+        _pipe$1,
+        (q) => {
+          let _pipe$22 = q;
+          return key_find(_pipe$22, "token");
+        }
+      );
+      return replace_error(_pipe$2, "Couldn't get token from URI");
+    }
+  );
+}
+function get_token_from_storage() {
+  return try$(
+    (() => {
+      let _pipe = sessionStorage();
+      return replace_error(_pipe, "Couldn't access local storage");
+    })(),
+    (storage) => {
+      let _pipe = storage;
+      let _pipe$1 = getItem(_pipe, "SpotifyToken");
+      return replace_error(
+        _pipe$1,
+        "Couldn't get token from local storage"
+      );
+    }
+  );
+}
+function set_token_in_storage(token) {
+  let $ = sessionStorage();
+  if (!$.isOk()) {
+    return log("Couldn't access local storage");
+  } else {
+    let sto = $[0];
+    let _pipe = sto;
+    let _pipe$1 = setItem(_pipe, "SpotifyToken", token);
+    let _pipe$2 = try_recover(
+      _pipe$1,
+      (_) => {
+        warn("Couldn't store token in local storage");
+        return new Error(void 0);
+      }
+    );
+    return unwrap_both(_pipe$2);
+  }
+}
+function get_token() {
+  let token = (() => {
+    let _pipe = get_token_from_uri();
+    return try_recover(
+      _pipe,
+      (err) => {
+        warn(err);
+        return get_token_from_storage();
+      }
+    );
+  })();
+  if (token.isOk()) {
+    let t = token[0];
+    set_token_in_storage(t);
+    return t;
+  } else {
+    let err = token[0];
+    warn(err);
+    return "";
   }
 }
 
@@ -7872,121 +7995,6 @@ function map_route(uri) {
   }
 }
 
-// build/dev/javascript/plinth/storage_ffi.mjs
-function sessionStorage() {
-  try {
-    if (globalThis.Storage && globalThis.sessionStorage instanceof globalThis.Storage) {
-      return new Ok(globalThis.sessionStorage);
-    } else {
-      return new Error(null);
-    }
-  } catch {
-    return new Error(null);
-  }
-}
-function getItem(storage, keyName) {
-  return null_or(storage.getItem(keyName));
-}
-function setItem(storage, keyName, keyValue) {
-  try {
-    storage.setItem(keyName, keyValue);
-    return new Ok(null);
-  } catch {
-    return new Error(null);
-  }
-}
-function null_or(val) {
-  if (val !== null) {
-    return new Ok(val);
-  } else {
-    return new Error(null);
-  }
-}
-
-// build/dev/javascript/client/token.mjs
-function get_token_from_uri() {
-  return try$(
-    (() => {
-      let _pipe = parse2(location());
-      return replace_error(_pipe, "Couldn't parse window's uri");
-    })(),
-    (uri) => {
-      let _pipe = uri;
-      let _pipe$1 = ((uri2) => {
-        return parse_query2(
-          (() => {
-            let _pipe$12 = uri2.query;
-            return unwrap(_pipe$12, "");
-          })()
-        );
-      })(_pipe);
-      let _pipe$2 = then$(
-        _pipe$1,
-        (q) => {
-          let _pipe$22 = q;
-          return key_find(_pipe$22, "token");
-        }
-      );
-      return replace_error(_pipe$2, "Couldn't get token from URI");
-    }
-  );
-}
-function get_token_from_storage() {
-  return try$(
-    (() => {
-      let _pipe = sessionStorage();
-      return replace_error(_pipe, "Couldn't access local storage");
-    })(),
-    (storage) => {
-      let _pipe = storage;
-      let _pipe$1 = getItem(_pipe, "SpotifyToken");
-      return replace_error(
-        _pipe$1,
-        "Couldn't get token from local storage"
-      );
-    }
-  );
-}
-function set_token_in_storage(token) {
-  let $ = sessionStorage();
-  if (!$.isOk()) {
-    return log("Couldn't access local storage");
-  } else {
-    let sto = $[0];
-    let _pipe = sto;
-    let _pipe$1 = setItem(_pipe, "SpotifyToken", token);
-    let _pipe$2 = try_recover(
-      _pipe$1,
-      (_) => {
-        warn("Couldn't store token in local storage");
-        return new Error(void 0);
-      }
-    );
-    return unwrap_both(_pipe$2);
-  }
-}
-function get_token() {
-  let token = (() => {
-    let _pipe = get_token_from_uri();
-    return try_recover(
-      _pipe,
-      (err) => {
-        warn(err);
-        return get_token_from_storage();
-      }
-    );
-  })();
-  if (token.isOk()) {
-    let t = token[0];
-    set_token_in_storage(t);
-    return t;
-  } else {
-    let err = token[0];
-    warn(err);
-    return "";
-  }
-}
-
 // build/dev/javascript/client/client.mjs
 function init3(_) {
   let $ = parse2(location());
@@ -7994,7 +8002,7 @@ function init3(_) {
     throw makeError(
       "let_assert",
       "client",
-      42,
+      41,
       "init",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
@@ -8039,25 +8047,17 @@ function update3(model, msg) {
     let id2 = msg.id;
     return [
       model,
-      from(
-        (_) => {
-          let _pipe = getElementById(id2);
-          let _pipe$1 = map3(_pipe, showModal);
-          return unwrap2(_pipe$1, void 0);
-        }
-      )
+      from((_) => {
+        return show_modal_by_id(id2);
+      })
     ];
   } else if (msg instanceof CloseDialog) {
     let id2 = msg.id;
     return [
       model,
-      from(
-        (_) => {
-          let _pipe = getElementById(id2);
-          let _pipe$1 = map3(_pipe, closeModal);
-          return unwrap2(_pipe$1, void 0);
-        }
-      )
+      from((_) => {
+        return close_modal_by_id(id2);
+      })
     ];
   } else if (msg instanceof ClientError) {
     let err = msg.message;
@@ -8134,7 +8134,7 @@ function main() {
     throw makeError(
       "let_assert",
       "client",
-      34,
+      33,
       "main",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
